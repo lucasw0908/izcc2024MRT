@@ -1,0 +1,16 @@
+{
+    "builds": [
+      {
+        "src":"main.py",
+        "use": "@vercel/python"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "main.py"
+      }
+    ],
+    "installCommand": "npm install",
+    "buildCommand": "npm run build"
+}
