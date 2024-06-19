@@ -86,7 +86,17 @@ class Line:
             setattr(self, station["StationID"], Station(station))
 
 
-class Metro:
+class TaipeiMetro:
+    def __init__(self) -> None:
+        self.BL: Line = None
+        self.BR: Line = None
+        self.G: Line = None
+        self.O: Line = None
+        self.R: Line = None
+        self.Y: Line = None
+        
+        
+class Metro(TaipeiMetro):
     """
     Properties
     ----------
