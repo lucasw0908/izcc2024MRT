@@ -1,5 +1,5 @@
-from dotenv import load_dotenv
 import os
+from dotenv import load_dotenv
 from datetime import timedelta
 
 
@@ -11,7 +11,7 @@ CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 REDIRECT_URI = os.getenv("REDIRECT_URI")
 SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
-OAUTH_URL = "https://discord.com/oauth2/authorize?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URI + "&response_type=code&scope=identify+email" 
+OAUTH_URL = "https://discord.com/oauth2/authorize?client_id=" + CLIENT_ID + "&redirect_uri=" + REDIRECT_URI + "&response_type=code&scope=identify+email"
 
 
 class Config(object):
@@ -20,7 +20,7 @@ class Config(object):
     PERMANENT_SESSION_LIFETIME = timedelta(days=31)
     SESSION_COOKIE_SECURE = True,
     SESSION_COOKIE_HTTPONLY = True,
-    SESSION_COOKIE_SAMESITE = 'Lax',
+    SESSION_COOKIE_SAMESITE = "Lax",
 
 
 class ProdConfig(Config):
