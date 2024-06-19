@@ -12,16 +12,11 @@ class Station:
     """
     Properties
     ----------
-    
     sqeuence: :type:`int`
         The sequence of the station.
         e.g. 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ...
         
-    id: :type:`int`
-        The id of the station.
-        e.g. 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, ...
-        
-    old_id: :type:`str`
+    id: :type:`str`
         The id of the station.
         e.g. "BL01", "BL02", "BL03", "BL04", "BL05", "BL06", "BL07", "BL08", "BL09", "BL10", ...
         
@@ -54,8 +49,7 @@ class Station:
     def __init__(self, station: dict) -> None:
         self.__dict__.update({
             "sequence": int(station["Sequence"]),
-            "id": int(self.encode(station["StationID"])),
-            "old_id": str(station["StationID"]),
+            "id": str(station["StationID"]),
             "name": str(station["StationName"]["Zh_tw"]),
             "english_name": str(station["StationName"]["En"]),
             "distance": float(station["CumulativeDistance"]),
@@ -75,6 +69,15 @@ class Station:
         
 
 class Line:
+    """
+    Properties
+    ----------
+    name: :type:`str`
+        The name of the line.
+    
+    `station_id`: :class:`Station`
+        The station object.
+    """
     def __init__(self, line: dict) -> None:
         
         self.name = line["LineID"]
@@ -84,6 +87,12 @@ class Line:
 
 
 class Metro:
+    """
+    Properties
+    ----------
+    `line_id`: :class:`Line`
+        The line object.
+    """
     def __init__(self) -> None:   
         index = 1
         headers = {
@@ -103,7 +112,20 @@ class Metro:
             index += 1
             
             
-    def findline(self, station_id: str) -> Line | None:
+    def find_line(self, station_id: str) -> Line | None:
+        """
+        Find the line object by station id.
+        
+        Parameters
+        ----------
+        station_id: :type:`str`
+            The id of the station.
+            
+        Returns
+        -------
+        line: :class:`Line`
+            The line object.
+        """
         
         for line in self.__dict__.values():
             if station_id in line.__dict__.keys():
@@ -111,7 +133,20 @@ class Metro:
             
         return None
             
-    def find(self, station_id: str) -> Station | None:
+    def find_station(self, station_id: str) -> Station | None:
+        """
+        Find the station object by station id.
+        
+        Parameters
+        ----------
+        station_id: :type:`str`
+            The id of the station.
+            
+        Returns
+        -------
+        station: :class:`Station`
+            The station object.
+        """
         
         for line in self.__dict__.values():
             for station in line.__dict__.values():
@@ -120,7 +155,20 @@ class Metro:
                 
         return None
     
-    def find_by_name(self, name: str) -> Station | None:
+    def find_station_by_name(self, name: str) -> Station | None:
+        """
+        Find the station object by station name.
+        
+        Parameters
+        ----------
+        name: :type:`str`
+            The name of the station.
+            
+        Returns
+        -------
+        station: :class:`Station`
+            The station object.
+        """
         
         for line in self.__dict__.values():
             for station in line.__dict__.values():

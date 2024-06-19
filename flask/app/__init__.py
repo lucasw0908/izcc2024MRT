@@ -13,6 +13,8 @@ log = logging.getLogger(__name__)
 
 def init_logger(debug: bool=False) -> None:
     """
+    Initialize the logger.
+    
     Parameters
     ----------
     debug: :type:`bool`
@@ -67,6 +69,8 @@ def app_load_blueprints(app: Flask) -> None:
     
 def create_app() -> Flask:
     """
+    Initialize the app.
+    
     Returns
     -------
     app: :class:`Flask`
