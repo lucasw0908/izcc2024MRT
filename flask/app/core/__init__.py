@@ -1,8 +1,10 @@
 import random
 import logging
+from setuptools import find_namespace_packages
 
 from .metro import Metro
 from .team import Team
+from .card import Card
 
 
 log = logging.getLogger(__name__)
@@ -13,6 +15,22 @@ class Core:
         self.metro = Metro()
         self.teams: dict[str: Team] = None
         self.current_round = 0
+        self.cards: list[Card] = []
+        self._load_cards()
+        
+        
+    def _load_cards(self) -> None:
+        """Load all the cards."""
+        
+        for card_path in find_namespace_packages(include=["app.cards.*"]):
+            
+            try:
+                card: Card = __import__(card_path).NewCard
+                self.cards.append(card)
+                log.info(f"Loaded card {card.name}")
+            except Exception:
+                log.error(f"Failed to load card {card.name}!", exc_info=True)
+                
         
     def get_metro(self) -> Metro:
         """
@@ -24,6 +42,7 @@ class Core:
             The metro object.
         """
         return self.metro
+    
         
     def create_team(self, name: str, location: str, players: list[str]) -> Team | None:
         """
@@ -51,6 +70,7 @@ class Core:
             
         self.teams[name] = team(name, location, players)
         return self.teams[name]
+    
         
     def get_team(self, name: str) -> Team | None:
         """
@@ -67,6 +87,7 @@ class Core:
                 return team
             
         return None
+    
     
     def move(self, name: str, step: int) -> list[str] | None:
         """
@@ -93,6 +114,7 @@ class Core:
         
         return choice
     
+    
     def move_to_location(self, name: str, location: str) -> None:
         """
         Move the team to the location.
@@ -108,6 +130,7 @@ class Core:
         self.teams[name].point += self.metro.find(location).point
         self.teams[name].location = location
         
+        
     def dice(self, faces: int=6) -> int:
         """
         Just a dice.
@@ -122,6 +145,4 @@ class Core:
         result: :type:`int`
             The result of the dice.
         """
-        return random.randint(1, faces)
-        
-        
+        return random.randint(1, faces)     
