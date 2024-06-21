@@ -10,7 +10,7 @@ from .card import Card
 log = logging.getLogger(__name__)
 
 
-class TestCore:
+class Core:
     def __init__(self) -> None:
         self.metro = Metro()
         self.teams: dict[str: Team] = None
