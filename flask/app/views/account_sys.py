@@ -1,5 +1,4 @@
 import logging
-import os
 from flask import Blueprint, request, redirect, render_template, session
 from zenora import APIClient
 
@@ -8,7 +7,8 @@ from  ..config import OAUTH_URL, REDIRECT_URI, CLIENT_SECRET, TOKEN
 
 log = logging.getLogger(__name__)
 account_sys = Blueprint("account_sys", __name__)
-client = APIClient(TOKEN, client_secret=CLIENT_SECRET, validate_token=False)
+if TOKEN is not None: 
+    client = APIClient(TOKEN, client_secret=CLIENT_SECRET, validate_token=False)
 
 
 @account_sys.route("/oauth/callback")
@@ -24,6 +24,8 @@ def callback():
 
 @account_sys.route("/login")
 def login():
+    if OAUTH_URL is None:
+        return redirect("/")
     return redirect(OAUTH_URL)
 
 
