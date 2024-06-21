@@ -8,10 +8,19 @@ from  ..config import OAUTH_URL, REDIRECT_URI, CLIENT_SECRET, TOKEN
 
 log = logging.getLogger(__name__)
 account_sys = Blueprint("account_sys", __name__)
-client = APIClient(TOKEN, client_secret=CLIENT_SECRET, validate_token=False)
+if TOKEN and CLIENT_SECRET:
+    client = APIClient(TOKEN, client_secret=CLIENT_SECRET, validate_token=False)
+else:
+    client = None
 current_path = os.path.dirname(__file__)
 
+def check_client(func):
+    if client:
+        func()
+    else:
+        return
 
+@check_client
 @account_sys.route("/oauth/callback")
 def callback():
     if "code" in request.args:
@@ -22,7 +31,7 @@ def callback():
         
     return redirect("/")
 
-
+@check_client
 @account_sys.route("/login")
 def login():
     return redirect(OAUTH_URL)
