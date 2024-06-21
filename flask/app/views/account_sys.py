@@ -9,6 +9,8 @@ log = logging.getLogger(__name__)
 account_sys = Blueprint("account_sys", __name__)
 if TOKEN is not None: 
     client = APIClient(TOKEN, client_secret=CLIENT_SECRET, validate_token=False)
+else:
+    log.warning("No token provided.")
 
 
 @account_sys.route("/oauth/callback")
