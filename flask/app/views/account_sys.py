@@ -9,7 +9,6 @@ from  ..config import OAUTH_URL, REDIRECT_URI, CLIENT_SECRET, TOKEN
 log = logging.getLogger(__name__)
 account_sys = Blueprint("account_sys", __name__)
 client = APIClient(TOKEN, client_secret=CLIENT_SECRET, validate_token=False)
-current_path = os.path.dirname(__file__)
 
 
 @account_sys.route("/oauth/callback")
