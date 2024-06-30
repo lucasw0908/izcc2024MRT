@@ -15,7 +15,7 @@ scheduler = BlockingScheduler()
 class Core:
     def __init__(self) -> None:
         self.metro = MetroSystem()
-        self.teams: dict[str: Team] = None
+        self.teams: dict[str: Team] = {}
         self.current_round = 0
         self.collapse_status = 0
         
@@ -106,6 +106,10 @@ class Core:
             The list of possible station ids to move.
         """
 
+        if name not in self.teams.keys():
+            log.warning(f"Team {name} does not exist.")
+            return None
+        
         choice = []
         current_station = self.teams[name].location
         for index in range(step):
@@ -137,8 +141,11 @@ class Core:
         """
         
         station = self.metro.find_station(location)
+        self.teams[name].location = station.name
         
-
+        if station.team != name:
+            self.teams[name].point -= station.point
+            self.teams[station.team].point += station.point
         
         if station.is_special:
             return f"card{self.dice(CARD)}"
@@ -158,8 +165,11 @@ class Core:
             self.teams[name].point += 30
             self.metro.__dict__[station].team = name
         elif station.team != name:
-            self.teams[name].point -= station.point
-        
+            match station.point:
+                case 20: self.teams[name].point += 10
+                case 35: self.teams[name].point += 15
+                case 50: self.teams[name].point += 20
+            
         
     def dice(self, faces: int=6) -> int:
         """
