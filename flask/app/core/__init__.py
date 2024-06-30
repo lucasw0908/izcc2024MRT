@@ -61,7 +61,7 @@ class Core:
         self.teams[name] = team(name, players, admins, location)
         
         
-    def check_player(self, player: str) -> tuple[Team, bool] | None:
+    def check_player(self, player: str) -> tuple[Team | None, bool]:
         """
         Check if the player is in the team.
         
@@ -84,6 +84,8 @@ class Core:
                 return team.name, False
             if player in team.admins:
                 return team.name, True
+            
+        return None, False
     
     
     def move(self, name: str, step: int) -> list[str] | None:

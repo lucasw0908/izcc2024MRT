@@ -1,8 +1,10 @@
 import logging
 from flask import Blueprint, request, render_template, jsonify
 from flask_socketio import SocketIO
+
 from ..core import core, Station
 from .socketio import socketio
+from ..modules.checker import is_admin, is_player
 
 
 log = logging.getLogger(__name__)
@@ -32,8 +34,17 @@ def stations():
     return jsonify(data)
 
 
+@api.route("/collapse_status")
+def collapse_status():
+    return jsonify(core.collapse_status)
+
+
 @api.route("/create_team", methods=["POST"])
 def create_team():
+    
+    if not is_admin():
+        return "You are not an admin."
+    
     if request.method == "POST":
         if "name" not in request.form:
             return "Name not provided."
@@ -48,6 +59,10 @@ def create_team():
     
 @api.route("/delete_team", methods=["POST"])
 def delete_team():
+        
+    if not is_admin():
+        return "You are not an admin."
+    
     if request.method == "POST":
         if "name" not in request.form:
             return "Name not provided."
@@ -58,13 +73,12 @@ def delete_team():
     
 @api.route("/move", methods=["POST"])
 def move():
+    
+    if not is_player():
+        return "You are not a player."
+    
     if request.method == "POST":
         if "id" not in request.form:
             return "ID not provided."
         
         return jsonify(core.move(request.form["id"]))
-    
-    
-@api.route("/collapse_status")
-def collapse_status():
-    return jsonify(core.collapse_status)
