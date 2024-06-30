@@ -1,13 +1,19 @@
+import json
+import random
 import requests
+import logging
+import os
 from typing import overload
-from ..game_config import STATION_POINTS, SPECIAL_STATIONS, DELETE_STATIONS, API_URL
+from ..game_config import DELETE_STATIONS, API_URL, IS_SPECIAL
 
+
+log = logging.getLogger(__name__)
 
 class Station:
     """
     Properties
     ----------
-    sqeuence: :type:`int`
+    sequence: :type:`int`
         The sequence of the station.
         e.g. 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, ...
         
@@ -29,11 +35,14 @@ class Station:
         
     is_special: :type:`bool`
         If the station is a special station.
+        
+    team: :type:`str`
+        which team owns the station.
     """
     
     @overload
     def __init__(self, station: dict) -> None:
-        self.sqeuence = None
+        self.sequence = None
         self.id = None
         self.name = None
         self.english_name = None
@@ -50,8 +59,8 @@ class Station:
             "name": str(station["StationName"]["Zh_tw"]),
             "english_name": str(station["StationName"]["En"]),
             "distance": float(station["CumulativeDistance"]),
-            "point": int(STATION_POINTS[station["StationName"]["Zh_tw"]]) if station["StationName"]["Zh_tw"] in STATION_POINTS else 0,
-            "is_special": station["StationName"]["Zh_tw"] in SPECIAL_STATIONS,
+            "point": random.choice([20, 35, 50]),
+            "is_special": random.random() <= IS_SPECIAL,
         })
     
     
@@ -67,8 +76,8 @@ class MetroSystem:
     """
     Properties
     ----------
-    `line_id`: :class:`Line`
-        The line object.
+    `station_name`: :class:`Station`
+        The station object.
     """
     
     def __init__(self) -> None:
@@ -80,8 +89,14 @@ class MetroSystem:
         }
         
         response = requests.get(API_URL, headers=headers).json()
+        
         if response is None:
             raise ConnectionError()
+        
+        if "message" in response:
+            log.error(response["message"])
+            with open(os.path.join(os.path.dirname(__file__), "api_data.json"), "r", encoding="utf-8") as file:
+                response = json.load(file)
         
         for line in response:
             for station in line["Stations"]:
@@ -90,9 +105,8 @@ class MetroSystem:
         for line in response:
             for index, station in enumerate(line["Stations"]):
                 current_station_name = station["StationName"]["Zh_tw"]
-                if station_name not in self.graph:
-                    self.graph[station_name] = []
-                    delattr(self, station_name)
+                if current_station_name not in self.graph:
+                    self.graph[current_station_name] = []
                     
                 if index != 0:
                     station_name = line["Stations"][index - 1]["StationName"]["Zh_tw"]
@@ -106,6 +120,8 @@ class MetroSystem:
                     
         self.graph["七張"].append("小碧潭")
         self.graph["小碧潭"].append("七張")
+        
+        self.delete_stations()
             
     
     def find_station(self, name: str) -> Station | None:

@@ -1,7 +1,7 @@
 import logging
 from flask import Blueprint, request, render_template, jsonify
 from flask_socketio import SocketIO
-from ..core import core
+from ..core import core, Station
 from .socketio import socketio
 
 
@@ -14,7 +14,25 @@ def graph():
     return jsonify(core.metro.graph)
 
 
-@api.route("/create_team", method=["POST"])
+@api.route("/stations")
+def stations():
+    data = []
+    graph = core.metro.graph
+    for station_name in graph.keys():
+        station = core.metro.find_station(station_name)
+        data.append({
+            "sequence": station.sequence,
+            "id": station.id,
+            "name": station.name,
+            "english_name": station.english_name,
+            "point": station.point,
+            "is_special": station.is_special,
+            "neighbors": graph.get(station.name, []),
+        })
+    return jsonify(data)
+
+
+@api.route("/create_team", methods=["POST"])
 def create_team():
     if request.method == "POST":
         if "name" not in request.form:
@@ -28,7 +46,7 @@ def create_team():
         return "Team created."
     
     
-@api.route("/delete_team", method=["POST"])
+@api.route("/delete_team", methods=["POST"])
 def delete_team():
     if request.method == "POST":
         if "name" not in request.form:
@@ -38,7 +56,7 @@ def delete_team():
         return "Team deleted."
     
     
-@api.route("/move", method=["POST"])
+@api.route("/move", methods=["POST"])
 def move():
     if request.method == "POST":
         if "id" not in request.form:

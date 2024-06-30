@@ -6,7 +6,7 @@ class Team:
         self.location = location if location is not None else START_STATION
         self.players: players
         self.admins = admins
-        self.point = 0
+        self.point = 10
         
         
     def __str__(self) -> str:

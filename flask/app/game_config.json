@@ -1,18 +1,8 @@
 {
     "card": 26,
     "start_station": "中正紀念堂",
-    "station_points": {
-        "頂埔": 20,
-        "中正紀念堂": 30,
-        "淡水": 40
-    },
-    "special_stations": [
-        "景美",
-        "南港展覽館"
-    ],
-    "delete_stations": [
-        "迴龍"
-    ],
+    "delete_stations": ["迴龍", "新埔", "永寧"],
+    "is_special": 0.3,
     "collapse": [
         {
             "status": 0,

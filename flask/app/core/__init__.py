@@ -4,7 +4,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
 
 from ..game_config import CARD, COLLAPSE, DELETE_STATIONS
-from .metro import MetroSystem
+from .metro import MetroSystem, Station
 from .team import Team
 
 
@@ -135,11 +135,28 @@ class Core:
         """
         
         station = self.metro.find_station(location)
-        self.teams[name].point += station.point
-        self.teams[name].location = location
+        
+
         
         if station.is_special:
             return f"card{self.dice(CARD)}"
+        
+        
+    def mission_finish(self, name: str) -> None:
+        """
+        Finish the mission.
+        
+        Parameters
+        ----------
+        name: :type:`str`
+            The name of the team.
+        """
+        station = self.teams[name].location
+        if station.team is None:
+            self.teams[name].point += 30
+            self.metro.__dict__[station].team = name
+        elif station.team != name:
+            self.teams[name].point -= station.point
         
         
     def dice(self, faces: int=6) -> int:

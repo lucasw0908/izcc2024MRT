@@ -61,14 +61,14 @@ def app_load_blueprints(app: Flask) -> None:
     from .views.api import api
     from .views.error_handler import error_handler
     from .views.main import main
-    from .views.socketio import socketio
+    from .views.socketio import socketio_bp
     from .views.test import test
     
     app.register_blueprint(account_sys)
     app.register_blueprint(api)
     app.register_blueprint(error_handler)
     app.register_blueprint(main)
-    app.register_blueprint(socketio)
+    app.register_blueprint(socketio_bp)
     app.register_blueprint(test)
     
     

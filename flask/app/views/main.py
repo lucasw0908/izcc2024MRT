@@ -18,17 +18,20 @@ def checking(response: Response):
 
 @main.route("/")
 def index():
-    bearer_client = APIClient(session.get("token"), bearer=True)
-    current_user = bearer_client.users.get_current_user()
-    team, _ = core.check_player(current_user.id)
-    return render_template("index.html", current_user=current_user, team=team)
+    if "token" in session:
+        bearer_client = APIClient(session.get("token"), bearer=True)
+        current_user = bearer_client.users.get_current_user()
+        team, _ = core.check_player(current_user.id)
+        return render_template("index.html", current_user=current_user, team=team)
+    return render_template("index.html")
 
 
 @main.route("/admin")
 def admin():
-    bearer_client = APIClient(session.get("token"), bearer=True)
-    current_user = bearer_client.users.get_current_user()
-    team, is_admin = core.check_player(current_user.id)
+    if "token" in session:
+        bearer_client = APIClient(session.get("token"), bearer=True)
+        current_user = bearer_client.users.get_current_user()
+        team, is_admin = core.check_player(current_user.id)
     
     if is_admin:
         return render_template("admin.html", current_user=current_user, team=team)
