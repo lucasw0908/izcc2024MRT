@@ -1,8 +1,9 @@
 import logging
-from flask import Blueprint, request, redirect, render_template, session
+from flask import Blueprint, request, redirect, url_for, session
 from zenora import APIClient
 
 from  ..config import OAUTH_URL, REDIRECT_URI, CLIENT_SECRET, TOKEN
+from .api import core
 
 
 log = logging.getLogger(__name__)
@@ -18,10 +19,16 @@ def callback():
     if "code" in request.args:
         code = request.args["code"]
         access_token = client.oauth.get_access_token(code, REDIRECT_URI).access_token
+        bearer_client = APIClient(access_token, bearer=True)
+        current_user = bearer_client.users.get_current_user()
         session["token"] = access_token
         session.permanent = True
+        team, is_admin = core.check_player(current_user.id)
         
-    return redirect("/")
+        if is_admin:
+            return redirect(url_for("/admin", current_user=current_user, team=team))
+        
+    return redirect(url_for("/", current_user=current_user, team=team))
 
 
 @account_sys.route("/login")

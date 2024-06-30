@@ -1,50 +1,39 @@
 import random
 import logging
-from setuptools import find_namespace_packages
+from apscheduler.schedulers.blocking import BlockingScheduler
+from datetime import datetime
 
-from .metro import Metro
+from ..game_config import CARD, COLLAPSE, DELETE_STATIONS
+from .metro import MetroSystem
 from .team import Team
-from .card import Card
 
 
 log = logging.getLogger(__name__)
+scheduler = BlockingScheduler()
 
 
 class Core:
     def __init__(self) -> None:
-        self.metro = Metro()
+        self.metro = MetroSystem()
         self.teams: dict[str: Team] = None
         self.current_round = 0
-        self.cards: list[Card] = []
-        self._load_cards()
+        self.collapse_status = 0
         
-        
-    def _load_cards(self) -> None:
-        """Load all the cards."""
-        
-        for card_path in find_namespace_packages(include=["app.cards.*"]):
-            
-            try:
-                card: Card = __import__(card_path).NewCard
-                self.cards.append(card)
-                log.info(f"Loaded card {card.name}")
-            except Exception:
-                log.error(f"Failed to load card {card.name}!", exc_info=True)
-                
-        
-    def get_metro(self) -> Metro:
-        """
-        Get the metro object.
-        
-        Returns
-        -------
-        metro: :class:`Metro`
-            The metro object.
-        """
-        return self.metro
+        for collapse in COLLAPSE:
+            hour, minute = collapse["time"].split(":")
+            scheduler.add_job(self._collapse, "cron", hour=hour, minute=minute)
     
-        
-    def create_team(self, name: str, location: str, players: list[str]) -> Team | None:
+    
+    def _collapse(self) -> None:
+        for collapse in COLLAPSE:
+            if collapse["status"] == self.collapse_status:
+                for station in collapse["stations"]:
+                    DELETE_STATIONS.append(station)
+                    self.metro.delete_stations()
+                self.collapse_status += 1
+
+    
+    def create_team(self, name: str, players: list[str], admins: list[str], location: str=None) -> None:
         """
         Create a new team.
         
@@ -54,39 +43,47 @@ class Core:
             The name of the team.
             
         location: :type:`str`
-            The id of the station.
+            The name of the station.
             
         players: :type:`list[str]`
-            The list of player names.
+            The list of player discord ids.
             
         Returns
         -------
         team: :class:`Team`
             The team object.
         """
-        if name in [team.name for team in self.teams.values()]:
-            log.warning(f"team {name} already exists.")
+        
+        if name in self.teams.keys():
+            log.error(f"Team {name} already exists.")
             return None
             
-        self.teams[name] = team(name, location, players)
-        return self.teams[name]
-    
+        self.teams[name] = team(name, players, admins, location)
         
-    def get_team(self, name: str) -> Team | None:
+        
+    def check_player(self, player: str) -> tuple[Team, bool] | None:
         """
-        Get the team object.
+        Check if the player is in the team.
         
         Parameters
         ----------
-        name: :type:`str`
-            The name of the team.
+        player: :type:`str`
+            The discord id of the player.
+            
+        Returns
+        -------
+        team: :class:`Team`
+            The team object.
+            
+        is_admin: :type:`bool`
+            If the player is an admin.
         """
         
         for team in self.teams:
-            if team.name == name:
-                return team
-            
-        return None
+            if player in team.players:
+                return team.name, False
+            if player in team.admins:
+                return team.name, True
     
     
     def move(self, name: str, step: int) -> list[str] | None:
@@ -106,16 +103,20 @@ class Core:
         choice: :type:`list[str]`
             The list of possible station ids to move.
         """
-        
-        sqeuence = self.teams[name].sqeuence
+
         choice = []
-        if self.metro.find(sqeuence[:-2] + str(int(sqeuence[-2:]) + step)) is not None: choice.append(sqeuence[:-2] + str(int(sqeuence[-2:]) + step))
-        if self.metro.find(sqeuence[:-2] + str(int(sqeuence[-2:]) - step)) is not None: choice.append(sqeuence[:-2] + str(int(sqeuence[-2:]) - step))
+        current_station = self.teams[name].location
+        for index in range(step):
+            for station in self.metro.move(current_station):
+                if index == step:
+                    choice.append(station)
+                else:
+                    current_station = station
         
         return choice
     
     
-    def move_to_location(self, name: str, location: str) -> None:
+    def move_to_location(self, name: str, location: str) -> str | None:
         """
         Move the team to the location.
         
@@ -125,10 +126,20 @@ class Core:
             The name of the team.
 
         location: :type:`str`
-            The id of the station to move to.
+            The name of the station to move to.
+            
+        Returns
+        -------
+        card: :type:`str`
+            The card to draw.
         """
-        self.teams[name].point += self.metro.find(location).point
+        
+        station = self.metro.find_station(location)
+        self.teams[name].point += station.point
         self.teams[name].location = location
+        
+        if station.is_special:
+            return f"card{self.dice(CARD)}"
         
         
     def dice(self, faces: int=6) -> int:
@@ -145,4 +156,8 @@ class Core:
         result: :type:`int`
             The result of the dice.
         """
-        return random.randint(1, faces)     
+        
+        return random.randint(1, faces)
+    
+    
+core = Core()

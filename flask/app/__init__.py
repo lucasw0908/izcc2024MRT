@@ -6,6 +6,7 @@ from flask_wtf import CSRFProtect
 
 from .config import DevConfig, ProdConfig
 from .models import db
+from .views.socketio import socketio
 
 
 log = logging.getLogger(__name__)
@@ -57,13 +58,17 @@ def app_load_blueprints(app: Flask) -> None:
     """
     
     from .views.account_sys import account_sys
+    from .views.api import api
     from .views.error_handler import error_handler
     from .views.main import main
+    from .views.socketio import socketio
     from .views.test import test
     
     app.register_blueprint(account_sys)
+    app.register_blueprint(api)
     app.register_blueprint(error_handler)
     app.register_blueprint(main)
+    app.register_blueprint(socketio)
     app.register_blueprint(test)
     
     
@@ -82,6 +87,7 @@ def create_app() -> Flask:
     csrf = CSRFProtect(app)
     app_load_blueprints(app)
     db.__init__(app)
+    socketio.init_app(app)
     with app.app_context(): db.create_all()
     
     return app

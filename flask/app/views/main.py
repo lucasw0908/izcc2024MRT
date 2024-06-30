@@ -1,5 +1,7 @@
 import logging
-from flask import Blueprint, Response, render_template
+from flask import Blueprint, Response, render_template, redirect, session
+from zenora import APIClient
+from ..core import core
 
 
 log = logging.getLogger(__name__)
@@ -16,4 +18,18 @@ def checking(response: Response):
 
 @main.route("/")
 def index():
-    return render_template("index.html")
+    bearer_client = APIClient(session.get("token"), bearer=True)
+    current_user = bearer_client.users.get_current_user()
+    team, _ = core.check_player(current_user.id)
+    return render_template("index.html", current_user=current_user, team=team)
+
+
+@main.route("/admin")
+def admin():
+    bearer_client = APIClient(session.get("token"), bearer=True)
+    current_user = bearer_client.users.get_current_user()
+    team, is_admin = core.check_player(current_user.id)
+    
+    if is_admin:
+        return render_template("admin.html", current_user=current_user, team=team)
+    return redirect("/")

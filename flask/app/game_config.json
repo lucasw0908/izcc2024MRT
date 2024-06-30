@@ -1,8 +1,33 @@
 {
+    "card": 26,
+    "start_station": "中正紀念堂",
     "station_points": {
         "頂埔": 20,
         "中正紀念堂": 30,
         "淡水": 40
     },
-    "special_stations": ["景美", "南港展覽館"]
+    "special_stations": [
+        "景美",
+        "南港展覽館"
+    ],
+    "delete_stations": [
+        "迴龍"
+    ],
+    "collapse": [
+        {
+            "status": 0,
+            "time": "15:00",
+            "stations": ["中正紀念堂", "景美", "南港展覽館"]
+        },
+        {
+            "status": 1,
+            "time": "16:00",
+            "stations": ["中正紀念堂", "景美", "南港展覽館"]
+        },
+        {
+            "status": 2,
+            "time": "17:00",
+            "stations": ["中正紀念堂", "景美", "南港展覽館"]
+        }
+    ]
 }

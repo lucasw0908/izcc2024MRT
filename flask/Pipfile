@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+apscheduler = "==3.10.4"
 flask = "==2.3.3"
 flask-bcrypt = "==1.0.1"
 flask-migrate = "==4.0.5"

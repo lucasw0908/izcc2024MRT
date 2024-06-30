@@ -1,12 +1,7 @@
 import requests
 from typing import overload
-from ..game_config import STATION_POINTS, SPECIAL_STATIONS, API_URL
+from ..game_config import STATION_POINTS, SPECIAL_STATIONS, DELETE_STATIONS, API_URL
 
-
-class MetroGraph:
-    encode_table: dict[str, int] = {}
-    decode_table: dict[int, str] = {}
-    graph: list[list[str]] = []
 
 class Station:
     """
@@ -35,16 +30,18 @@ class Station:
     is_special: :type:`bool`
         If the station is a special station.
     """
+    
     @overload
     def __init__(self, station: dict) -> None:
         self.sqeuence = None
         self.id = None
-        self.old_id = None
         self.name = None
         self.english_name = None
         self.distance = None
         self.point = None
         self.is_special = False
+        self.team = None
+        
         
     def __init__(self, station: dict) -> None:
         self.__dict__.update({
@@ -56,45 +53,26 @@ class Station:
             "point": int(STATION_POINTS[station["StationName"]["Zh_tw"]]) if station["StationName"]["Zh_tw"] in STATION_POINTS else 0,
             "is_special": station["StationName"]["Zh_tw"] in SPECIAL_STATIONS,
         })
-        
-        
-    def encode(self, station_id: str) -> int:
-        return MetroGraph.encode_table[station_id[:-2]] * 100 + int(station_id[-2:])
     
-    def decode(self, code: int) -> str:
-        if code // 100 not in MetroGraph.decode_table:
-            return None
-        return MetroGraph.decode_table[code // 100] + str(code % 100).zfill(2)
-
-        
-
-class Line:
-    """
-    Properties
-    ----------
-    name: :type:`str`
-        The name of the line.
     
-    `station_id`: :class:`Station`
-        The station object.
-    """
-    def __init__(self, line: dict) -> None:
-        
-        self.name = line["LineID"]
-        
-        for station in line["Stations"]:
-            setattr(self, station["StationID"], Station(station))
+    def __str__(self) -> str:
+        return self.name
+    
+    
+    def __repr__(self) -> str:
+        return self.name
 
 
-class Metro:
+class MetroSystem:
     """
     Properties
     ----------
     `line_id`: :class:`Line`
         The line object.
     """
-    def __init__(self) -> None:   
-        index = 1
+    
+    def __init__(self) -> None:
+        self.graph = {}
         headers = {
             "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
@@ -106,56 +84,31 @@ class Metro:
             raise ConnectionError()
         
         for line in response:
-            MetroGraph.encode_table[line["LineID"]] = index
-            MetroGraph.decode_table[index] = line["LineID"]
-            setattr(self, line["LineID"], Line(line))
-            index += 1
-            
-            
-    def find_line(self, station_id: str) -> Line | None:
-        """
-        Find the line object by station id.
-        
-        Parameters
-        ----------
-        station_id: :type:`str`
-            The id of the station.
-            
-        Returns
-        -------
-        line: :class:`Line`
-            The line object.
-        """
-        
-        for line in self.__dict__.values():
-            if station_id in line.__dict__.keys():
-                return line
-            
-        return None
-            
-    def find_station(self, station_id: str) -> Station | None:
-        """
-        Find the station object by station id.
-        
-        Parameters
-        ----------
-        station_id: :type:`str`
-            The id of the station.
-            
-        Returns
-        -------
-        station: :class:`Station`
-            The station object.
-        """
-        
-        for line in self.__dict__.values():
-            for station in line.__dict__.values():
-                if station.id == station_id:
-                    return station
+            for station in line["Stations"]:
+                setattr(self, station["StationName"]["Zh_tw"], Station(station))
                 
-        return None
+        for line in response:
+            for index, station in enumerate(line["Stations"]):
+                current_station_name = station["StationName"]["Zh_tw"]
+                if station_name not in self.graph:
+                    self.graph[station_name] = []
+                    delattr(self, station_name)
+                    
+                if index != 0:
+                    station_name = line["Stations"][index - 1]["StationName"]["Zh_tw"]
+                    if station_name not in DELETE_STATIONS:
+                        self.graph[current_station_name].append(station_name)
+                        
+                if index != len(line["Stations"]) - 1:
+                    station_name = line["Stations"][index + 1]["StationName"]["Zh_tw"]
+                    if station_name not in DELETE_STATIONS:
+                        self.graph[current_station_name].append(station_name)
+                    
+        self.graph["七張"].append("小碧潭")
+        self.graph["小碧潭"].append("七張")
+            
     
-    def find_station_by_name(self, name: str) -> Station | None:
+    def find_station(self, name: str) -> Station | None:
         """
         Find the station object by station name.
         
@@ -169,10 +122,34 @@ class Metro:
         station: :class:`Station`
             The station object.
         """
-        
-        for line in self.__dict__.values():
-            for station in line.__dict__.values():
-                if station.name == name:
-                    return station
                 
-        return None
+        return self.__dict__.get(name, None)
+    
+    
+    def move(self, name: str) -> list[str] | None:
+        """
+        Calculate the possible stations to move.
+        
+        Parameters
+        ----------
+        name: :type:`str`
+            The name of the current station.
+            
+        Returns
+        -------
+        choice: :type:`list[str]`
+            The list of possible station ids to move.
+        """
+        
+        return self.graph.get(name, None)
+    
+    
+    def delete_stations(self) -> None:
+        for station_name in DELETE_STATIONS:
+            self.graph.pop(station_name, None)
+            delattr(self, station_name)
+            
+        for current_station_name in self.graph:
+            for station_name in self.graph[current_station_name]:
+                if station_name in DELETE_STATIONS:
+                    self.graph[station_name].remove(station_name)
