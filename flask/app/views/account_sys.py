@@ -26,9 +26,9 @@ def callback():
         team, is_admin = core.check_player(current_user.id)
         
         if is_admin:
-            return redirect(url_for("/admin", current_user=current_user, team=team))
+            return redirect("/admin")
         
-    return redirect(url_for("/", current_user=current_user, team=team))
+    return redirect("/")
 
 
 @account_sys.route("/login")

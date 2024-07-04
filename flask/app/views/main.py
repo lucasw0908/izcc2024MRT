@@ -1,5 +1,5 @@
 import logging
-from flask import Blueprint, Response, render_template, redirect, session
+from flask import Blueprint, Response, render_template, redirect, session, abort
 from zenora import APIClient
 
 from ..core import core
@@ -11,20 +11,21 @@ main = Blueprint("main", __name__)
 
 @main.after_request
 def checking(response: Response):
-    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-    response.headers["X-Content-Type-Options"] = "nosniff"
-    response.headers["X-Frame-Options"] = "deny"
-    return response
+    abort(404)
+    # response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    # response.headers["X-Content-Type-Options"] = "nosniff"
+    # response.headers["X-Frame-Options"] = "deny"
+    # return response
     
 
 @main.route("/")
 def index():
-    if "token" in session:
+    if session.get("token"):
         bearer_client = APIClient(session.get("token"), bearer=True)
         current_user = bearer_client.users.get_current_user()
         team, _ = core.check_player(current_user.id)
         return render_template("index.html", current_user=current_user, team=team)
-    return render_template("index.html")
+    return redirect("/login")
 
 
 @main.route("/admin")
