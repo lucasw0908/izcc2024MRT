@@ -34,7 +34,7 @@ def callback():
 @account_sys.route("/login")
 def login():
     if OAUTH_URL is None:
-        return redirect("/")
+        return redirect(url_for("main.index", message="No OAuth"))
     return redirect(OAUTH_URL)
 
 

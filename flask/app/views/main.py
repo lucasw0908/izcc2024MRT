@@ -1,5 +1,5 @@
 import logging
-from flask import Blueprint, Response, render_template, redirect, session, abort
+from flask import Blueprint, Response, render_template, redirect, session, request
 from zenora import APIClient
 
 from ..core import core
@@ -19,6 +19,10 @@ def checking(response: Response):
 
 @main.route("/")
 def index():
+    message = request.args.get("message")
+    print(message)
+    if message == "No OAuth":
+        return render_template("index.html")
     if session.get("token"):
         bearer_client = APIClient(session.get("token"), bearer=True)
         current_user = bearer_client.users.get_current_user()
