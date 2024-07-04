@@ -46,7 +46,7 @@ class Core:
             The name of the station.
             
         players: :type:`list[str]`
-            The list of player discord ids.
+            The list of player discord usernames.
             
         Returns
         -------
@@ -58,7 +58,7 @@ class Core:
             log.error(f"Team {name} already exists.")
             return None
             
-        self.teams[name] = team(name, players, admins, location)
+        self.teams[name] = Team(name, players, admins, location)
         
         
     def check_player(self, player: str) -> tuple[Team | None, bool]:
@@ -80,10 +80,10 @@ class Core:
         """
         
         for team in self.teams:
-            if player in team.players:
-                return team.name, False
-            if player in team.admins:
-                return team.name, True
+            if player in self.teams[team].admins:
+                return self.teams[team], True
+            if player in self.teams[team].players:
+                return self.teams[team], False
             
         return None, False
     

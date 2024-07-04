@@ -21,6 +21,7 @@ def callback():
         access_token = client.oauth.get_access_token(code, REDIRECT_URI).access_token
         bearer_client = APIClient(access_token, bearer=True)
         current_user = bearer_client.users.get_current_user()
+        log.log(20, f"{current_user.username} logged in")
         session["token"] = access_token
         session.permanent = True
         team, is_admin = core.check_player(current_user.id)

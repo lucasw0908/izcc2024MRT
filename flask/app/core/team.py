@@ -4,7 +4,7 @@ class Team:
     def __init__(self, name: str, players: list[str], admins: list[str], location: str=None) -> None:
         self.name = name
         self.location = location if location is not None else START_STATION
-        self.players: players
+        self.players = players
         self.admins = admins
         self.point = 10
         
