@@ -18,9 +18,9 @@ class Config(object):
     SECRET_KEY = os.urandom(12).hex()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PERMANENT_SESSION_LIFETIME = timedelta(days=31)
-    SESSION_COOKIE_SECURE = True,
-    SESSION_COOKIE_HTTPONLY = True,
-    SESSION_COOKIE_SAMESITE = "Lax",
+    # SESSION_COOKIE_SECURE = True,
+    # SESSION_COOKIE_HTTPONLY = True,
+    # SESSION_COOKIE_SAMESITE = "Lax",
 
 
 class ProdConfig(Config):
