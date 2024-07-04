@@ -2,6 +2,17 @@ body{
     font-family: "IBM Plex Sans JP", sans-serif;
 }
 
+.top{
+    display: inline-flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.user_info p{
+    font-size: 200%;
+}
+
 .nav {
     display: inline-flex;
     margin-left: auto;
@@ -13,6 +24,7 @@ body{
     border-radius: 20px;
     box-shadow: 0 10px 50px rgba(159, 162, 177, .8);
     font-size: 200%;
+    margin-right: 30vw;
   }
   
   .nav-item {

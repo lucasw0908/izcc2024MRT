@@ -85,18 +85,6 @@
             background-size: cover;
             background-position: center;
         }
-        button {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 10px 20px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -106,16 +94,11 @@
             <div class="back-facing"></div>
         </div>
     </div>
-    <button id="animateCard">抽卡</button>
 
     <script>
        document.addEventListener('DOMContentLoaded', function() {
     var elementCard = document.querySelector('.element-card');
     var animateButton = document.getElementById('animateCard');
-
-    animateButton.addEventListener('click', function() {
-        elementCard.classList.toggle('show');
-    });
 
     elementCard.addEventListener('click', function() {
         elementCard.classList.toggle('stopped');

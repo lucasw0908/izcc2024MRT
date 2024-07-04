@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <link href="../static/css/style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&display=swap" rel="stylesheet">
+
+    <body>
+        <div class="top">
+            <nav class="nav">
+                <a href="index.html" class="nav-item" active-color="gray">主頁</a>
+                <a href="set.html" class="nav-item" active-color="gray">組合</a>
+                <a href="team_follower.html" class="nav-item" active-color="gray">隊隨</a>
+                <span class="nav-indicator"></span>
+            </nav>
+            <div class="user_info">
+                <p>{{ team }} - {{current_user}}</p>
+            </div>
+        </div>
+        <button><a href="card.html">抽卡</a></button>
+    </body>
+</html>
