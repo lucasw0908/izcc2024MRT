@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>旋轉卡片</title>
+    <title>捷運大富翁-抽卡</title>
     <style>
         html, body {
             position: relative;
@@ -85,6 +85,18 @@
             background-size: cover;
             background-position: center;
         }
+        button {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -94,14 +106,21 @@
             <div class="back-facing"></div>
         </div>
     </div>
+    <button id="animateCard">抽卡</button>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var elementCard = document.querySelector('.element-card');
-            elementCard.addEventListener('click', function() {
-                elementCard.classList.toggle('stopped');
-            });
-        });
+       document.addEventListener('DOMContentLoaded', function() {
+    var elementCard = document.querySelector('.element-card');
+    var animateButton = document.getElementById('animateCard');
+
+    animateButton.addEventListener('click', function() {
+        elementCard.classList.toggle('show');
+    });
+
+    elementCard.addEventListener('click', function() {
+        elementCard.classList.toggle('stopped');
+    });
+});
     </script>
 </body>
 </html>
