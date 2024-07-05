@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>捷運大富翁-抽卡</title>
+    
     <style>
         html, body {
             position: relative;
@@ -16,13 +17,13 @@
             font-family: 'helvetica', sans-serif;
             font-size: 16px;
             transform: translate3d(0, 0, 0);
-            background: linear-gradient(135deg, #2980b9 0%, #9b59b6 100%);
-            overflow:hidden;
+            overflow: hidden;
         }
+
         .container {
             position: relative;
             width: 100%;
-            max-width: 960px;
+            max-width: 1080px;
             min-height: 100%;
             margin: 0 auto;
             padding: 20px;
@@ -32,17 +33,23 @@
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
-        }
+            overflow: hidden; /* 確保子元素不會超出容器 */
+        }       
+
         .element-card {
             position: relative;
-            width: 200px; /* 調整卡片大小 */
-            height: 300px; /* 調整卡片大小 */
+            width: 300px; /* 使用百分比調整卡片寬度 */
+            height: 450px; /* 使用百分比調整卡片高度 */
             transform-style: preserve-3d;
-            transform: rotateY(0deg) translateX(0px) translateY(0px);
+            transform: rotateY(0deg) translateX(0px) translateY(1000px);
             transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.4);
             margin: 10px;
             cursor: pointer;
+            opacity: 0; /* 初始隱藏 */
+        }
+        .element-card.show {
+            opacity: 1;
             animation: draw 2s ease-out, spin 2s linear infinite 2s;
         }
         .element-card.stopped {
@@ -71,7 +78,6 @@
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            /* border: 2px white solid; */
             border-radius: 5px;
         }
         .element-card .front-facing {
@@ -85,25 +91,108 @@
             background-size: cover;
             background-position: center;
         }
+
+        .arrow {
+    position: absolute;
+    bottom: 20px;
+    left: 35vw;
+    transform: translateX(-50%);
+    font-size: 100px; /* 調整箭頭字體大小 */
+    line-height: 1; /* 調整行高 */
+    color: rgb(255, 255, 255);
+    animation: bounce 2s infinite;
+}
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-30px);
+            }
+        }
+        button {
+            display: flex;
+            height: 3em;
+            width: 100px;
+            align-items: center;
+            justify-content: center;
+            background-color: #eeeeee4b;
+            border-radius: 3px;
+            letter-spacing: 1px;
+            transition: all 0.2s linear;
+            cursor: pointer;
+            border: none;
+            background: #fff;
+        }
+
+        button > svg {
+            margin-right: 5px;
+            margin-left: 5px;
+            font-size: 20px;
+            transition: all 0.4s ease-in;
+        }
+
+        button:hover > svg {
+            font-size: 1.2em;
+            transform: translateX(-5px);
+        }
+
+        button:hover {
+            box-shadow: 9px 9px 33px #d1d1d1, -9px -9px 33px #ffffff;
+            transform: translateY(-2px);
+        }
+
+        a{
+            text-decoration:none;
+        }
     </style>
 </head>
 <body>
+    <a id="backpage" href="team_follower.html">
+        <button>
+            <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024">
+                <path d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z"></path>
+            </svg>
+            <span>Back</span>
+        </button>
+    </a>
     <div class="container">
         <div class="element-card">
             <div class="front-facing"></div>
             <div class="back-facing"></div>
         </div>
     </div>
+    <div class="arrow">
+        <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16"> 
+            <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l4.146 4.147a.5.5 0 0 0 .708-.708l-5-5a.5.5 0 0 0-.708 0l-5 5a.5.5 0 1 0 .708.708L7.5 2.707V14.5A.5.5 0 0 0 8 15z"/>
+        </svg>
+    </div>
 
     <script>
-       document.addEventListener('DOMContentLoaded', function() {
-    var elementCard = document.querySelector('.element-card');
-    var animateButton = document.getElementById('animateCard');
+        document.addEventListener('DOMContentLoaded', function() {
+            var elementCard = document.querySelector('.element-card');
+            var arrow = document.querySelector('.arrow');
+            var startY, endY;
 
-    elementCard.addEventListener('click', function() {
-        elementCard.classList.toggle('stopped');
-    });
-});
+            document.addEventListener('touchstart', function(e) {
+                startY = e.touches[0].clientY;
+            });
+
+            document.addEventListener('touchend', function(e) {
+                endY = e.changedTouches[0].clientY;
+                if (startY - endY > 50) { // 檢查滑動距離是否大於50px
+                    elementCard.classList.add('show');
+                    arrow.style.display = 'none'; // 隱藏箭頭
+                }
+            });
+
+            elementCard.addEventListener('click', function() {
+                elementCard.classList.toggle('stopped');
+                if (elementCard.classList.contains('stopped')) {
+                    elementCard.style.transform = 'rotateY(0deg)'; // 停止在正面
+                }
+            });
+        });
     </script>
 </body>
 </html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="../static/css/style.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&display=swap" rel="stylesheet">
+    </head>
+   <body>
+    <div class="top">
+        <nav class="nav">
+            <a href="index.html" class="nav-item" active-color="gray">主頁</a>
+            <a href="collection.html" class="nav-item" active-color="gray">組合</a>
+            <a href="team_follower.html" class="nav-item" active-color="gray">隊隨</a>
+            <span class="nav-indicator"></span>
+        </nav>
+        <div class="user_info">
+            <p>{{ team }} - {{current_user}}</p>
+        </div>
+    </div>
+   </body>
+   <script>
+    //nav
+    const indicator = document.querySelector('.nav-indicator');
+    const items = document.querySelectorAll('.nav-item');
+    function handleIndicator(el) {
+    items.forEach(item => {
+        item.classList.remove('is-active');
+        item.removeAttribute('style');
+    });
+    indicator.style.width = `${el.offsetWidth}px`;
+    indicator.style.left = `${el.offsetLeft}px`;
+    indicator.style.backgroundColor = el.getAttribute('active-color');
+    el.classList.add('is-active');
+    el.style.color = el.getAttribute('active-color');
+    }
+    items.forEach((item, index) => {
+    item.addEventListener('click', (e) => { handleIndicator(e.target)});
+    item.classList.contains('is-active') && handleIndicator(item);
+    });
+</script>
+</html>
