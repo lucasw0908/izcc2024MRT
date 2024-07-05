@@ -200,7 +200,6 @@
                 </div>
             </div>
         </div>
-
     </body>
 
     <script>
@@ -230,12 +229,14 @@
             Swal.fire({
                     title: `${station_name}站`,
                     // 任務 要前往了小隊員才能知道
+                    // 邊界狀態：安全 / 危險 / 圈外 
                     html: `<link href="../static/css/style.css" rel="stylesheet">
                     <div class="station_info_text">
                         <p> 佔領的小隊: </p>
                         <p> 特殊站: </p>
                         <p> 任務: </p>
                         <p> 任務分數: </p>
+                        <p> 邊界狀態: </p>
                     </div>
                     
                     `,
