@@ -1,16 +1,32 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <link href="../static/css/style.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<html lang="zh-Hant">
+<head>
+    <link href="../static/css/style.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&display=swap" rel="stylesheet">
-    </head>
-   <body>
+    <style>
+        .container {
+            margin: 20px auto;
+            background: #fff;
+            padding: 5%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            max-width: 85%;
+        }
+        .item {
+            margin-bottom: 4%;
+        }
+        .item span {
+            font-weight: bold;
+            color: #828282;
+        }
+    </style>
+    <title>捷運大富翁-組合</title>
+</head>
+<body>
     <div class="top">
         <nav class="nav">
             <a href="index.html" class="nav-item" active-color="gray">主頁</a>
-            <a href="collection.html" class="nav-item" active-color="gray">組合</a>
+            <a href="collection.html" class="nav-item is-active" active-color="gray">組合</a>
             <a href="team_follower.html" class="nav-item" active-color="gray">隊隨</a>
             <span class="nav-indicator"></span>
         </nav>
@@ -18,25 +34,22 @@
             <p>{{ team }} - {{current_user}}</p>
         </div>
     </div>
-   </body>
-   <script>
-    //nav
-    const indicator = document.querySelector('.nav-indicator');
-    const items = document.querySelectorAll('.nav-item');
-    function handleIndicator(el) {
-    items.forEach(item => {
-        item.classList.remove('is-active');
-        item.removeAttribute('style');
-    });
-    indicator.style.width = `${el.offsetWidth}px`;
-    indicator.style.left = `${el.offsetLeft}px`;
-    indicator.style.backgroundColor = el.getAttribute('active-color');
-    el.classList.add('is-active');
-    el.style.color = el.getAttribute('active-color');
-    }
-    items.forEach((item, index) => {
-    item.addEventListener('click', (e) => { handleIndicator(e.target)});
-    item.classList.contains('is-active') && handleIndicator(item);
-    });
-</script>
+
+    <div class="container">
+        <div class="item"><span>機捷霸權：</span>新北產業園區、三重、北門，+6分</div>
+        <div class="item"><span>端點霸權：</span>新北產業園區、新店、南勢角、松山、象山、南港展覽館、淡水、大坪林、迴龍中的任3/4/5站，+6/10/15分。</div>
+        <div class="item"><span>高鐵霸權：</span>南港、板橋、台北車站，+6分。</div>
+        <div class="item"><span>首長Collection：</span>板橋(新北)、市政府(台北)、小南門(總統府)，+6分</div>
+        <div class="item"><span>白色巨塔：</span>亞東醫院、台大醫院，+3分。</div>
+        <div class="item"><span>8+9：</span>龍山寺、善導寺、先嗇宮、行天宮，+9分。</div>
+        <div class="item"><span>全方位前進：</span>北投、東湖、西湖、南港、任意中字，+12分</div>
+        <div class="item"><span>國父：</span>中山國小、中山國中、國父紀念館、中山，+9分</div>
+        <div class="item"><span>Bridge：</span>秀朗橋、台北橋、板橋，+7分</div>
+        <div class="item"><span>百年好合：</span>雙連、幸福，+3分</div>
+        <div class="item"><span>ON LINE：</span>同一線超過7站，+15分。</div>
+        <div class="item"><span>台北城：</span>東門(會被關監獄一次)、西門、北門、小南門，+9分</div>
+    </div>
+    <script>
+    </script>
+</body>
 </html>
