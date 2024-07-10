@@ -43,20 +43,17 @@ class Station:
     team: :type:`str`
         which team owns the station.
     """
-    
-    @overload
-    def __init__(self, station: dict) -> None:
-        self.sequence: int = None
-        self.id: str = None
-        self.name: str = None
-        self.english_name: str = None
-        self.distance: float = None
-        self.point: int = None
-        self.is_special: bool = False
-        self.team: str = None
-        
         
     def __init__(self, station: dict) -> None:
+        self.sequence: int
+        self.id: str
+        self.name: str
+        self.english_name: str
+        self.distance: float
+        self.point: int
+        self.is_special: bool
+        self.team: str
+        
         self.__dict__.update({
             "sequence": int(station["Sequence"]),
             "id": str(station["StationID"]),
