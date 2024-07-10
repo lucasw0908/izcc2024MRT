@@ -39,6 +39,18 @@ def collapse_status():
     return jsonify(core.collapse_status)
 
 
+@api.route("/teams")
+def teams():
+    return jsonify([team.__dict__ for team in core.teams.values()])
+
+
+@api.route("/team/<name>")
+def team(name: str):
+    if name in core.teams:
+        return jsonify(core.teams[name].__dict__)
+    return jsonify({})
+
+
 @api.route("/create_team/<name>/<location>")
 def create_team(name: str, location: str):
            
@@ -89,15 +101,3 @@ def move_to_location(name: str, location: str):
         abort(403)
         
     return jsonify(core.move_to_location(name=name, location=location))
-
-
-@api.route("/teams")
-def teams():
-    return jsonify([team.__dict__ for team in core.teams.values()])
-
-
-@api.route("/team/<name>")
-def team(name: str):
-    if name in core.teams:
-        return jsonify(core.teams[name].__dict__)
-    return jsonify({})
