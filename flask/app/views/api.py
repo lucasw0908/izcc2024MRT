@@ -39,7 +39,7 @@ def collapse_status():
     return jsonify(core.collapse_status)
 
 
-@api.route("/create_team")
+@api.route("/create_team/<name>/<location>")
 def create_team(name: str, location: str):
            
     if not is_admin():
