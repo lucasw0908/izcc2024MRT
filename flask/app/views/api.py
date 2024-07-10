@@ -38,32 +38,38 @@ def collapse_status():
     return jsonify(core.collapse_status)
 
 
-@api.route("/create_team", methods=["POST"])
-def create_team():
-    
+@api.route("/create_team")
+def create_team(name: str, location: str):
+           
     if not is_admin():
         abort(403)
-    
-    if request.method == "POST":
-        if "name" not in request.form:
-            return "Name not provided."
-        if "players" not in request.form:
-            return "Players not provided."
-        if "admins" not in request.form:
-            return "Admins not provided."
         
-        core.create_team(**request.form)
-        return "Team created."
+    core.create_team(name=name, location=location, players=[], admins=[])
+    return "Team created."
     
     
 @api.route("/delete_team/<name>")
-def delete_team(name):
+def delete_team(name: str):
         
     if not is_admin():
         abort(403)
         
     core.teams.pop(name, None)
     return "Team deleted."
+
+
+@api.route("/join_team/<name>/<player_name>/<is_admin>")
+def join_team(name: str, player_name: str, is_admin: bool):
+    
+    if not is_player():
+        abort(403)
+        
+    if is_admin:
+        core.teams[name].admins.append(player_name)
+    else:
+        core.teams[name].players.append(player_name)
+        
+    return "Player joined team."
     
     
 @api.route("/move/<name>/<step>")
@@ -73,3 +79,24 @@ def move(name: str, step: int):
         abort(403)
         
     return jsonify(core.move(name=name, step=step))
+
+
+@api.route("/move_to_location/<name>/<station>")
+def move_to_location(name: str, location: str):
+    
+    if not is_player():
+        abort(403)
+        
+    return jsonify(core.move_to_location(name=name, location=location))
+
+
+@api.route("/teams")
+def teams():
+    return jsonify([team.__dict__ for team in core.teams.values()])
+
+
+@api.route("/team/<name>")
+def team(name: str):
+    if name in core.teams:
+        return jsonify(core.teams[name].__dict__)
+    return jsonify({})

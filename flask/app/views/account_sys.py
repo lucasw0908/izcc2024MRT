@@ -11,7 +11,7 @@ account_sys = Blueprint("account_sys", __name__)
 if TOKEN is not None: 
     client = APIClient(TOKEN, client_secret=CLIENT_SECRET, validate_token=False)
 else:
-    log.warning("No token provided.")
+    log.error("No token provided.")
 
 
 @account_sys.route("/oauth/callback")
@@ -21,7 +21,7 @@ def callback():
         access_token = client.oauth.get_access_token(code, REDIRECT_URI).access_token
         bearer_client = APIClient(access_token, bearer=True)
         current_user = bearer_client.users.get_current_user()
-        log.log(20, f"{current_user.username} logged in")
+        log.debug(f"{current_user.username} logged in")
         session["token"] = access_token
         session.permanent = True
         team, is_admin = core.check_player(current_user.id)
@@ -35,7 +35,7 @@ def callback():
 @account_sys.route("/login")
 def login():
     if OAUTH_URL is None:
-        return redirect(url_for("main.index", message="No OAuth"))
+        return redirect("/")
     return redirect(OAUTH_URL)
 
 

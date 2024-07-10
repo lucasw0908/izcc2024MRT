@@ -20,14 +20,14 @@ def checking(response: Response):
 
 @main.route("/")
 def index():
-    message = request.args.get("message")
-    if message == "No OAuth":
-        return render_template("index.html")
-    if session.get("token"):
+    if "token" in session:
         bearer_client = APIClient(session.get("token"), bearer=True)
         current_user = bearer_client.users.get_current_user()
-        team, _ = core.check_player(current_user.username)
-        return render_template("index.html", current_user=current_user.username, team=team)
+        team, is_admin = core.check_player(current_user.username)
+        if is_admin:
+            return redirect("/admin")
+        else:
+            return render_template("index.html", current_user=current_user.username, team=team)
     return redirect("/login")
 
 

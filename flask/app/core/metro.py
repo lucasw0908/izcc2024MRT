@@ -4,7 +4,7 @@ import requests
 import logging
 import os
 from typing import overload
-from ..game_config import DELETE_STATIONS, API_URL, IS_SPECIAL
+from ..game_config import DELETE_STATIONS, IS_SPECIAL, API_URL_TP, API_URL_NTP
 
 
 log = logging.getLogger(__name__)
@@ -82,13 +82,17 @@ class MetroSystem:
     
     def __init__(self) -> None:
         self.graph = {}
+        self.load(API_URL_TP)
+        self.load(API_URL_NTP)
+        
+    def load(self, url: str) -> None:
         headers = {
             "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
             "Accept": "application/json",
         }
         
-        response = requests.get(API_URL, headers=headers).json()
+        response = requests.get(url, headers=headers).json()
         
         if response is None:
             raise ConnectionError()
@@ -104,22 +108,34 @@ class MetroSystem:
                 
         for line in response:
             for index, station in enumerate(line["Stations"]):
-                current_station_name = station["StationName"]["Zh_tw"]
+                
+                current_station_name: str = station["StationName"]["Zh_tw"]
+                current_station_id: str = station["StationID"]
+                
                 if current_station_name not in self.graph:
                     self.graph[current_station_name] = []
                     
-                if index != 0:
-                    station_name = line["Stations"][index - 1]["StationName"]["Zh_tw"]
-                    if station_name not in DELETE_STATIONS:
-                        self.graph[current_station_name].append(station_name)
-                        
-                if index != len(line["Stations"]) - 1:
-                    station_name = line["Stations"][index + 1]["StationName"]["Zh_tw"]
-                    if station_name not in DELETE_STATIONS:
-                        self.graph[current_station_name].append(station_name)
+                if current_station_id.endswith("A"):
+                    for station in line["Stations"]:
+                        if station["StationID"] == current_station_id[:-1]:
+                            station_name = station["StationName"]["Zh_tw"]
+                            if station_name not in DELETE_STATIONS:
+                                self.graph[current_station_name].append(station_name)
+                                self.graph[station_name].append(current_station_name)
                     
-        self.graph["七張"].append("小碧潭")
-        self.graph["小碧潭"].append("七張")
+                else:
+                    if index != 0:
+                        station_name = line["Stations"][index - 1]["StationName"]["Zh_tw"]
+                        if station_name not in DELETE_STATIONS:
+                            self.graph[current_station_name].append(station_name)
+                            
+                    if index != len(line["Stations"]) - 1:
+                        station_name = line["Stations"][index + 1]["StationName"]["Zh_tw"]
+                        if station_name not in DELETE_STATIONS:
+                            self.graph[current_station_name].append(station_name)
+                
+                
+                
         
         self.delete_stations()
             
@@ -163,7 +179,8 @@ class MetroSystem:
     def delete_stations(self) -> None:
         for station_name in DELETE_STATIONS:
             self.graph.pop(station_name, None)
-            delattr(self, station_name)
+            if station_name in self.__dict__:
+                delattr(self, station_name)
             
         for current_station_name in self.graph:
             for station_name in self.graph[current_station_name]:
