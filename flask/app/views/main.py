@@ -1,5 +1,7 @@
+import io
 import logging
-from flask import Blueprint, Response, render_template, redirect, session, request
+import json
+from flask import Blueprint, Response, render_template, redirect, send_file, session 
 from zenora import APIClient
 
 from ..core import core
@@ -41,3 +43,12 @@ def admin():
         if is_admin:
             return render_template("admin.html", current_user=current_user.username, team=team, graph=core.metro.graph)
     return redirect("/")
+
+
+@main.route("/download_graph")
+def download_graph():
+    with io.StringIO() as file:
+        json.dump(core.metro.graph, file, ensure_ascii=False, indent=4)
+        response = send_file(file.name, as_attachment=True, download_name="graph.json")
+        
+    return response
