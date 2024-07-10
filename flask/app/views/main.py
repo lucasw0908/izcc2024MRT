@@ -27,7 +27,7 @@ def index():
         if is_admin:
             return redirect("/admin")
         else:
-            return render_template("index.html", current_user=current_user.username, team=team)
+            return render_template("index.html", current_user=current_user.username, team=team, graph=core.metro.graph)
     return redirect("/login")
 
 
@@ -39,5 +39,5 @@ def admin():
         team, is_admin = core.check_player(current_user.username)
     
         if is_admin:
-            return render_template("admin.html", current_user=current_user.username, team=team)
+            return render_template("admin.html", current_user=current_user.username, team=team, graph=core.metro.graph)
     return redirect("/")
