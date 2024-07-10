@@ -8,7 +8,11 @@ from ..game_config import DELETE_STATIONS, IS_SPECIAL, API_URL_TP, API_URL_NTP
 
 
 log = logging.getLogger(__name__)
-
+headers = {
+    "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
+    "Accept": "application/json",
+}
 class Station:
     """
     Properties
@@ -82,15 +86,10 @@ class MetroSystem:
     
     def __init__(self) -> None:
         self.graph = {}
-        self.load(API_URL_TP)
-        self.load(API_URL_NTP)
+        self._load(API_URL_TP)
+        self._load(API_URL_NTP)
         
-    def load(self, url: str) -> None:
-        headers = {
-            "Accept-Language": "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7",
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
-            "Accept": "application/json",
-        }
+    def _load(self, url: str, save: bool=False) -> None:
         
         response = requests.get(url, headers=headers).json()
         
@@ -101,6 +100,14 @@ class MetroSystem:
             log.error(response["message"])
             with open(os.path.join(os.path.dirname(__file__), "api_data.json"), "r", encoding="utf-8") as file:
                 response = json.load(file)
+                
+        if save:
+            with open(os.path.join(os.path.dirname(__file__), "api_data.json"), "r+", encoding="utf-8") as file:
+                data: list = json.load(file)
+                for line in response:
+                    if line not in data:
+                        data.append(line)
+                json.dump(data, file, ensure_ascii=False, indent=4)
         
         for line in response:
             for station in line["Stations"]:
@@ -133,8 +140,6 @@ class MetroSystem:
                         station_name = line["Stations"][index + 1]["StationName"]["Zh_tw"]
                         if station_name not in DELETE_STATIONS:
                             self.graph[current_station_name].append(station_name)
-                
-                
                 
         
         self.delete_stations()
