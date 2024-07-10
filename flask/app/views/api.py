@@ -28,6 +28,7 @@ def stations():
             "english_name": station.english_name,
             "point": station.point,
             "is_special": station.is_special,
+            "team": station.team,
             "neighbors": graph.get(station.name, []),
         })
     return jsonify(data)
