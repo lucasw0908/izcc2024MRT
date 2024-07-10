@@ -46,14 +46,14 @@ class Station:
     
     @overload
     def __init__(self, station: dict) -> None:
-        self.sequence = None
-        self.id = None
-        self.name = None
-        self.english_name = None
-        self.distance = None
-        self.point = None
-        self.is_special = False
-        self.team = None
+        self.sequence: int = None
+        self.id: str = None
+        self.name: str = None
+        self.english_name: str = None
+        self.distance: float = None
+        self.point: int = None
+        self.is_special: bool = False
+        self.team: str = None
         
         
     def __init__(self, station: dict) -> None:
@@ -85,7 +85,7 @@ class MetroSystem:
     """
     
     def __init__(self) -> None:
-        self.graph = {}
+        self.graph: dict[str, list] = {}
         self._load(API_URL_TP)
         self._load(API_URL_NTP)
         

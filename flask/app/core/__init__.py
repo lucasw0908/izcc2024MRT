@@ -1,7 +1,6 @@
 import random
 import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
-from datetime import datetime
 
 from ..game_config import CARD, COLLAPSE, DELETE_STATIONS
 from .metro import MetroSystem, Station
@@ -15,7 +14,7 @@ scheduler = BlockingScheduler()
 class Core:
     def __init__(self) -> None:
         self.metro = MetroSystem()
-        self.teams: dict[str: Team] = {}
+        self.teams: dict[str, Team] = {}
         self.current_round = 0
         self.collapse_status = 0
         
@@ -150,8 +149,10 @@ class Core:
         if station.is_special:
             return f"card{self.dice(CARD)}"
         
+        self.teams[name].current_mission_finished = False
         
-    def mission_finish(self, name: str) -> None:
+        
+    def finish_mission(self, name: str) -> None:
         """
         Finish the mission.
         
@@ -160,15 +161,23 @@ class Core:
         name: :type:`str`
             The name of the team.
         """
-        station = self.teams[name].location
+        
+        if self.teams[name].current_mission_finished:
+            return None
+        
+        station = self.metro.find_station(self.teams[name].location)
+        
         if station.team is None:
             self.teams[name].point += 30
             self.metro.__dict__[station].team = name
+            
         elif station.team != name:
             match station.point:
                 case 20: self.teams[name].point += 10
                 case 35: self.teams[name].point += 15
                 case 50: self.teams[name].point += 20
+                
+        self.teams[name].current_mission_finished = True
             
         
     def dice(self, faces: int=6) -> int:

@@ -57,7 +57,7 @@ def create_team(name: str, location: str):
     if not is_admin():
         abort(403)
         
-    core.create_team(name=name, location=location, players=[], admins=[])
+    core.create_team(name=name, location=location)
     return "Team created."
     
     
@@ -101,3 +101,36 @@ def move_to_location(name: str, location: str):
         abort(403)
         
     return jsonify(core.move_to_location(name=name, location=location))
+
+
+@api.route("add_point/<name>/<point>")
+def add_point(name: str, point: int):
+    
+    if not is_admin():
+        abort(403)
+        
+    core.teams[name].point += point
+    return "Point added."
+
+
+@api.route("set_point/<name>/<point>")
+def set_point(name: str, point: int):
+    
+    if not is_admin():
+        abort(403)
+        
+    core.teams[name].point = point
+    return "Point set."
+
+
+@api.route("finish_mission/<name>")
+def finish_mission(name: str):
+    
+    if not is_admin():
+        abort(403)
+    
+    if name not in core.teams:
+        return "Team does not exist."
+    
+    core.finish_mission(name=name)
+    return "Mission finished."
