@@ -40,6 +40,15 @@ class Station:
     point: :type:`int`
         The point of the station.
         
+    difficult: :type:`int`
+        The difficult of the station.
+    
+    exit: :type:`str`
+        The exit of the station.
+        
+    mission: :type:`str`
+        The mission description of the station.
+        
     is_special: :type:`bool`
         If the station is a special station.
         
