@@ -227,16 +227,15 @@
     
         function station_info(station_name) {
     Promise.all([
-        fetch('../static/data/station_info.json').then(response => response.json()),
         fetch('http://localhost/api/stations').then(response => response.json())
     ])
-    .then(([data1, data2]) => {
-        const stationInfo = data1[station_name];
+    .then(data => {
+        const stationInfo = data[station_name];
         Swal.fire({
             title: `${station_name} 站點資訊`,
             html: `
-                <p>佔領的小隊: ${data2[station_name]["team"]}</p>
-                <p>特殊站: ${data2[station_name]["is_special"]}</p>
+                <p>佔領的小隊: ${stationInfo["team"]}</p>
+                <p>特殊站: ${stationInfo["is_special"]}</p>
                 <p>任務: ${stationInfo["任務"]}</p>
                 <p>任務出口: ${stationInfo["任務出口"]}</p>
                 <p>任務難度: ${stationInfo["任務難度"]}</p>
