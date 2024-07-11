@@ -1,9 +1,9 @@
 import json
 
-from .config import BASEDIR
+from .data import load_data
 
 
-GAME_CONFIG = json.load(open(BASEDIR + "/game_config.json", "r", encoding="utf-8"))
+GAME_CONFIG = load_data("game_config")
 CARD = GAME_CONFIG["card"]
 START_STATION = GAME_CONFIG["start_station"]
 DELETE_STATIONS = GAME_CONFIG["delete_stations"]

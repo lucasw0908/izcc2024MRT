@@ -3,8 +3,10 @@ import random
 import requests
 import logging
 import os
-from typing import overload
+
+from ..config import BASEDIR
 from ..game_config import DELETE_STATIONS, IS_SPECIAL, API_URL_TP, API_URL_NTP
+from ..data import load_data
 
 
 log = logging.getLogger(__name__)
@@ -95,11 +97,10 @@ class MetroSystem:
         
         if "message" in response:
             log.error(response["message"])
-            with open(os.path.join(os.path.dirname(__file__), "api_data.json"), "r", encoding="utf-8") as file:
-                response = json.load(file)
+            response = load_data("api_data")
                 
         if save:
-            with open(os.path.join(os.path.dirname(__file__), "api_data.json"), "r+", encoding="utf-8") as file:
+            with open(os.path.join(BASEDIR, "data", "api_data.json"), "r+", encoding="utf-8") as file:
                 data: list = json.load(file)
                 for line in response:
                     if line not in data:
