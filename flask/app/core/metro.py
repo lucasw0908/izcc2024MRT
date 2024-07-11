@@ -86,10 +86,15 @@ class MetroSystem:
     
     def __init__(self) -> None:
         self.graph: dict[str, list] = {}
+        self.is_loaded: bool = False
         self._load(API_URL_TP)
         self._load(API_URL_NTP)
+        self.is_loaded = True
         
     def _load(self, url: str, save: bool=False) -> None:
+        
+        if self.is_loaded:
+            return None
         
         response = requests.get(url, headers=headers).json()
         
@@ -99,6 +104,7 @@ class MetroSystem:
         if "message" in response:
             log.error(response["message"])
             response = load_data("api_data")
+            self.is_loaded = True
                 
         if save:
             with open(os.path.join(BASEDIR, "data", "api_data.json"), "r+", encoding="utf-8") as file:
