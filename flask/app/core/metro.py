@@ -37,9 +37,6 @@ class Station:
     distance: :type:`float`
         The distance of the station from the starting point of the line.
         
-    point: :type:`int`
-        The point of the station.
-        
     difficult: :type:`int`
         The difficult of the station.
     
@@ -54,6 +51,9 @@ class Station:
         
     team: :type:`str`
         which team owns the station.
+              
+    point: :type:`int`
+        The point of the station.
     """
         
     def __init__(self, station: dict) -> None:
@@ -77,6 +77,7 @@ class Station:
             "exit": str(station["Exit"]),
             "mission": str(station["Mission"]),
             "is_special": random.random() <= IS_SPECIAL,
+            "point": {1: 20, 2: 35, 3: 50}.get(station["Difficult"], 0)
         })
     
     
