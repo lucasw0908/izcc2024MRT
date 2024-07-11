@@ -85,13 +85,18 @@ def join_team(name: str, player_name: str, is_admin: bool):
     return "Player joined team."
     
     
-@api.route("/move/<name>/<step>")
-def move(name: str, step: int):
+@api.route("/move/<name>")
+def move(name: str):
     
     if not is_player():
         abort(403)
         
-    return jsonify(core.move(name=name, step=step))
+    step = core.dice()
+        
+    return jsonify({
+        "step": step,
+        "choice": core.move(name=name, step=step)
+    })
 
 
 @api.route("/move_to_location/<name>/<station>")

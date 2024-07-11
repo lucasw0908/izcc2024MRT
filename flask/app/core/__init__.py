@@ -127,7 +127,7 @@ class Core:
         return choice
     
     
-    def move_to_location(self, name: str, location: str) -> str | None:
+    def move_to_location(self, name: str, location: str) -> None:
         """
         Move the team to the location.
         
@@ -138,11 +138,6 @@ class Core:
 
         location: :type:`str`
             The name of the station to move to.
-            
-        Returns
-        -------
-        card: :type:`str`
-            The card to draw.
         """
         
         station = self.metro.find_station(location)
@@ -152,13 +147,10 @@ class Core:
             self.teams[name].point -= station.point
             self.teams[station.team].point += station.point
         
-        if station.is_special:
-            return f"card{self.dice(CARD)}"
-        
         self.teams[name].current_mission_finished = False
         
         
-    def finish_mission(self, name: str) -> None:
+    def finish_mission(self, name: str) -> str | None:
         """
         Finish the mission.
         
@@ -166,6 +158,11 @@ class Core:
         ----------
         name: :type:`str`
             The name of the team.
+                        
+        Returns
+        -------
+        card: :type:`str`
+            The card to draw.
         """
         
         if self.teams[name].current_mission_finished:
@@ -184,6 +181,9 @@ class Core:
                 case 50: self.teams[name].point += 20
                 
         self.teams[name].current_mission_finished = True
+        
+        if station.is_special:
+            return f"card{self.dice(CARD)}"
             
         
     def dice(self, faces: int=6) -> int:
