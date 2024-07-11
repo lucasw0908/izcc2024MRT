@@ -54,7 +54,8 @@ class Station:
         self.distance: float
         self.point: int
         self.is_special: bool
-        self.team: str
+        
+        self.team: str = None
         
         self.__dict__.update({
             "sequence": int(station["Sequence"]),
