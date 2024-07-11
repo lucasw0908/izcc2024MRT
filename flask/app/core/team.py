@@ -6,6 +6,7 @@ class Team:
         self.location = location if location is not None else START_STATION
         self.players = players
         self.admins = admins
+        self.leader = None
         self.point = 10
         self.current_mission_finished = True
         self.stations = []
