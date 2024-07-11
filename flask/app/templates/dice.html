@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" type="text/css" href="./../static/css/dice.css"/> 
+</head>
+<body>
+    <div class="container">
+        <canvas id="canvas"></canvas>
+    </div>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.164.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.164.0/examples/jsm/"
+        }
+    }
+    </script>
+    <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+    <script type="module" src="./../static/js/dice-orig.js"></script>
+</body>
+</html>
