@@ -6,7 +6,6 @@ from zenora import APIClient
 
 from ..core import core
 
-core.create_team("test", ["0"], ["e04._.40e", "a.uuu", "lucasw0"])
 
 log = logging.getLogger(__name__)
 main = Blueprint("main", __name__)
