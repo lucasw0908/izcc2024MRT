@@ -152,7 +152,7 @@
 
         <h1>各小隊位置</h1>
         <div class="team_locate">
-            <p>零小: 中正紀念堂</p>
+            <p>零小: </p>
             <p>一小: </p>
             <p>二小: </p>
             <p>三小: </p>
@@ -226,23 +226,21 @@
         window.addEventListener('load', resizeMap);
     
         function station_info(station_name) {
-    Promise.all([
-        fetch('http://localhost/api/stations').then(response => response.json())
-    ])
-    .then(data => {
-        const stationInfo = data[station_name];
+        fetch(`http://localhost:8080/api/station/${station_name}`).then(response => response.json())
+        .then(data => {
+        const stationInfo = data;
         Swal.fire({
-            title: `${station_name} 站點資訊`,
+             title: `${station_name} 站點資訊`,
             html: `
                 <p>佔領的小隊: ${stationInfo["team"]}</p>
                 <p>特殊站: ${stationInfo["is_special"]}</p>
-                <p>任務: ${stationInfo["任務"]}</p>
-                <p>任務出口: ${stationInfo["任務出口"]}</p>
-                <p>任務難度: ${stationInfo["任務難度"]}</p>
+                <p>任務: ${stationInfo["mission"]}</p>
+                <p>任務出口: ${stationInfo["exit"]}</p>
+                <p>任務難度: ${stationInfo["difficult"]}</p>
             `,
             confirmButtonText: "關閉",
-        });
-    })
+            });
+        })
             .catch(error => {
                 console.error('Error fetching data:', error);
                 Swal.fire({
@@ -267,6 +265,17 @@
         const widthPercent = (score / maxScore) * 100;
         progressBar.style.width = widthPercent + "%";
     });
-});
+}); 
     </script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function(){
+            var socket = io.connect();
+            socket.on('connected', (message) => {
+            console.log('Received message:', message);
+            alert(`Connected: ${message.data}`);
+            });
+        });
+    </script>
+    
 </html>
