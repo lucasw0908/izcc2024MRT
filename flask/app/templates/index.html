@@ -227,7 +227,7 @@
     
         function station_info(station_name) {
     Promise.all([
-        fetch('http://localhost/stations').then(response => response.json())
+        fetch('http://localhost/api/stations').then(response => response.json())
     ])
     .then(data => {
         const stationInfo = data[station_name];
