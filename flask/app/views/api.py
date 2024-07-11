@@ -2,7 +2,6 @@ import logging
 from flask import abort, Blueprint, request, render_template, jsonify
 
 from ..core import core
-from .socketio import socketio
 from ..modules.checker import is_admin, is_player
 
 

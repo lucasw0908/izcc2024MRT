@@ -20,3 +20,8 @@ def error404(error):
 def error500(error):
     log.error(error)
     return render_template("error/500.html", error=error), 500
+
+
+@error_handler.on_error_default
+def default_error_handler(error):
+    log.error(error)

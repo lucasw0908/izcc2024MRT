@@ -1,6 +1,7 @@
 import random
 import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
+from flask_socketio import SocketIO
 
 from ..game_config import CARD, COLLAPSE, DELETE_STATIONS
 from .metro import MetroSystem, Station
@@ -14,6 +15,7 @@ scheduler = BlockingScheduler()
 class Core:
     def __init__(self) -> None:
         self.metro = MetroSystem()
+        self.socketio = None
         self.teams: dict[str, Team] = {}
         self.current_round = 0
         self.collapse_status = 0
@@ -30,6 +32,10 @@ class Core:
                     DELETE_STATIONS.append(station)
                     self.metro.delete_stations()
                 self.collapse_status += 1
+                
+                
+    def init_socketio(self, socketio: SocketIO) -> None:
+        self.socketio = socketio
 
     
     def create_team(self, name: str, players: list[str], admins: list[str], location: str=None) -> None:
