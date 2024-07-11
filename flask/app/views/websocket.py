@@ -8,7 +8,7 @@ from ..modules.socketio import socketio
 log = logging.getLogger(__name__)
 
 
-socketio.on("connect")
+@socketio.on("connect")
 def connect():
     log.info("Client connected")
     socketio.emit("connected", {"data": "Connected"})
