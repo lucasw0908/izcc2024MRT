@@ -4,6 +4,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from flask_socketio import SocketIO
 
 from ..game_config import CARD, COLLAPSE, DELETE_STATIONS
+from ..data import load_data
 from .metro import MetroSystem, Station
 from .team import Team
 
@@ -17,7 +18,6 @@ class Core:
         self.metro = MetroSystem()
         self.socketio = None
         self.teams: dict[str, Team] = {}
-        self.current_round = 0
         self.collapse_status = 0
         
         for collapse in COLLAPSE:
@@ -123,11 +123,13 @@ class Core:
                     choice.append(station)
                 else:
                     current_station = station
+                    
+        self.teams[name].choice = choice
         
         return choice
     
     
-    def move_to_location(self, name: str, location: str) -> None:
+    def move_to_location(self, name: str, location: str) -> tuple[list[str], int]:
         """
         Move the team to the location.
         
@@ -138,16 +140,39 @@ class Core:
 
         location: :type:`str`
             The name of the station to move to.
+            
+        Returns
+        -------
+        combos: :type:`list[str]`
+            The list of new combo.
+            
+        point: :type:`int`
+            The point to add.
         """
         
+        point = 0
+        combos = []
         station = self.metro.find_station(location)
         self.teams[name].location = station.name
+        self.teams[name].stations.append(station.name)
+        
+        for combo in load_data("combo"):
+            if combo["name"] in self.teams[name].combos:
+                continue
+            
+            if combo["stations"] == set(combo["stations"]).intersection(set(self.teams[name].stations)):
+                self.teams[name].point += combo["point"]
+                point += combo["point"]
+                self.teams[name].combos.append(combo["name"])
+                combos.append(combo["name"])
         
         if station.team != name:
             self.teams[name].point -= station.point
             self.teams[station.team].point += station.point
         
         self.teams[name].current_mission_finished = False
+        
+        return combos, point
         
         
     def finish_mission(self, name: str) -> str | None:

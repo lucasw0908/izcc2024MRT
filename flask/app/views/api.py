@@ -3,6 +3,7 @@ from flask import abort, Blueprint, request, render_template, jsonify
 
 from ..core import core
 from ..modules.checker import is_admin, is_player
+from ..data import load_data
 
 
 log = logging.getLogger(__name__)
@@ -18,9 +19,11 @@ def graph():
 def stations():
     data = []
     graph = core.metro.graph
+    
     for station_name in graph.keys():
         station = core.metro.find_station(station_name)
         data.append(station.__dict__)
+    
     return jsonify(data)
 
 
@@ -99,11 +102,16 @@ def move(name: str):
     })
 
 
-@api.route("/move_to_location/<name>/<station>")
+@api.route("/move_to_location/<name>/<location>")
 def move_to_location(name: str, location: str):
     
     if not is_player():
         abort(403)
+        
+    if location not in core.teams[name].choice:
+        return "Invalid location."
+    
+    core.teams[name].choice = []
         
     return jsonify(core.move_to_location(name=name, location=location))
 
@@ -139,3 +147,8 @@ def finish_mission(name: str):
     
     core.finish_mission(name=name)
     return "Mission finished."
+
+
+@api.route("combo")
+def combo():
+    return jsonify(load_data("combo"))

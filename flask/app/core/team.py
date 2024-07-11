@@ -8,6 +8,9 @@ class Team:
         self.admins = admins
         self.point = 10
         self.current_mission_finished = True
+        self.stations = []
+        self.combos = []
+        self.choice = []
         
         
     def __str__(self) -> str:
