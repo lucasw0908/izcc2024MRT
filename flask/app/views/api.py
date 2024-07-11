@@ -20,16 +20,7 @@ def stations():
     graph = core.metro.graph
     for station_name in graph.keys():
         station = core.metro.find_station(station_name)
-        data.append({
-            "sequence": station.sequence,
-            "id": station.id,
-            "name": station.name,
-            "english_name": station.english_name,
-            "point": station.point,
-            "is_special": station.is_special,
-            "team": station.team,
-            "neighbors": graph.get(station.name, []),
-        })
+        data.append(station.__dict__)
     return jsonify(data)
 
 
@@ -40,16 +31,7 @@ def station(name: str):
     if station is None:
         return jsonify({})
     
-    return jsonify({
-        "sequence": station.sequence,
-        "id": station.id,
-        "name": station.name,
-        "english_name": station.english_name,
-        "point": station.point,
-        "is_special": station.is_special,
-        "team": station.team,
-        "neighbors": core.metro.graph.get(station.name, []),
-    })
+    return jsonify(station.__dict__)
 
 
 @api.route("/collapse_status")

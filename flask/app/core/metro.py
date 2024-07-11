@@ -15,6 +15,7 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36",
     "Accept": "application/json",
 }
+
 class Station:
     """
     Properties
@@ -63,7 +64,9 @@ class Station:
             "name": str(station["StationName"]["Zh_tw"]),
             "english_name": str(station["StationName"]["En"]),
             "distance": float(station["CumulativeDistance"]),
-            "point": random.choice([20, 35, 50]),
+            "difficult": int(station["Difficult"]),
+            "exit": str(station["Exit"]),
+            "mission": str(station["Mission"]),
             "is_special": random.random() <= IS_SPECIAL,
         })
     
@@ -86,17 +89,19 @@ class MetroSystem:
     
     def __init__(self) -> None:
         self.graph: dict[str, list] = {}
+        self.station_info = load_data("station_info")
         self.is_loaded: bool = False
         self._load(API_URL_TP)
         self._load(API_URL_NTP)
         self.is_loaded = True
+        
         
     def _load(self, url: str, save: bool=False) -> None:
         
         if self.is_loaded:
             return None
         
-        response = requests.get(url, headers=headers).json()
+        response: list[dict] | None = requests.get(url, headers=headers).json()
         
         if response is None:
             raise ConnectionError()
@@ -116,6 +121,14 @@ class MetroSystem:
         
         for line in response:
             for station in line["Stations"]:
+                
+                current_station_name: str = station["StationName"]["Zh_tw"]
+                
+                if current_station_name in self.station_info:
+                    station.update(self.station_info[current_station_name])
+                else:
+                    station.update({"Mission": "無", "Exit": "不限", "Difficult": 0})
+                
                 setattr(self, station["StationName"]["Zh_tw"], Station(station))
                 
         for line in response:

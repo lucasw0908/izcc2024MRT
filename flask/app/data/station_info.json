@@ -1,7 +1,7 @@
 {
     "明德":{
-        "mission": "跟一個電線桿拍照",
-        "exit": "2",
-        "difficult": "難"
+        "Mission": "跟一個電線桿拍照",
+        "Exit": "2",
+        "Difficult": "3"
     }
 }
