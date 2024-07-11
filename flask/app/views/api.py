@@ -34,6 +34,25 @@ def stations():
     return jsonify(data)
 
 
+@api.route("/station/<name>")
+def station(name: str):
+    station = core.metro.find_station(name)
+    
+    if station is None:
+        return jsonify({})
+    
+    return jsonify({
+        "sequence": station.sequence,
+        "id": station.id,
+        "name": station.name,
+        "english_name": station.english_name,
+        "point": station.point,
+        "is_special": station.is_special,
+        "team": station.team,
+        "neighbors": core.metro.graph.get(station.name, []),
+    })
+
+
 @api.route("/collapse_status")
 def collapse_status():
     return jsonify(core.collapse_status)
