@@ -116,7 +116,7 @@ def move_to_location(name: str, location: str):
     return jsonify(core.move_to_location(name=name, location=location))
 
 
-@api.route("add_point/<name>/<point>")
+@api.route("/add_point/<name>/<point>")
 def add_point(name: str, point: int):
     
     if not is_admin():
@@ -126,7 +126,7 @@ def add_point(name: str, point: int):
     return "Point added."
 
 
-@api.route("set_point/<name>/<point>")
+@api.route("/set_point/<name>/<point>")
 def set_point(name: str, point: int):
     
     if not is_admin():
@@ -136,7 +136,7 @@ def set_point(name: str, point: int):
     return "Point set."
 
 
-@api.route("finish_mission/<name>")
+@api.route("/finish_mission/<name>")
 def finish_mission(name: str):
     
     if not is_admin():
@@ -149,6 +149,6 @@ def finish_mission(name: str):
     return "Mission finished."
 
 
-@api.route("combo")
+@api.route("/combo")
 def combo():
     return jsonify(load_data("combo"))

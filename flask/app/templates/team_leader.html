@@ -125,9 +125,9 @@
     <body>
         <div class="top">
             <nav class="nav">
-                <a href="index.html" class="nav-item" active-color="gray">主頁</a>
-                <a href="collection.html" class="nav-item" active-color="gray">組合</a>
-                <a href="team_follower.html" class="nav-item" active-color="gray">隊隨</a>
+                <a href="/" class="nav-item" active-color="gray">主頁</a>
+                <a href="/combo" class="nav-item" active-color="gray">組合</a>
+                <a href="/team_leader" class="nav-item" active-color="gray">隊隨</a>
                 <span class="nav-indicator"></span>
             </nav>
             <div class="user_info">
@@ -136,28 +136,28 @@
         </div>
 
         <div class="link">
-            <a href="dice.html">
+            <a href="/dice">
                 <button class="button">
                     骰子<i class="bi bi-dice-6-fill"></i>
                 </button>
             </a>
 
-            <a href="card.html">
+            <a href="/card">
                 <button class="button">
                     抽卡<i class="bi bi-card-text"></i>
                 </button>
             </a>
 
-            <a href="">
-              <button class="button">
+            <button class="button" onclick="finish_misson()">
                   任務完成<i class="bi bi-check-lg"></i>
-              </button>
-          </a>
+            </button>
 
        
           
     </body>
     <script>
-        
+        function finish_misson(){
+            fetch(`http://localhost:8080/api/finish_mission/{{ team }}`)
+        }
     </script>
 </html>

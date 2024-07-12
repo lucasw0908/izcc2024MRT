@@ -5,46 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin</title>
     <style>
-        .input-table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 20px auto;
+        input{
+            width: 60%;
         }
-        .input-table td {
-            padding: 10px;
-        }
-        .label {
-            font-weight: bold;
-            font-size: 80%;
-        }
-        .input-field {
-            padding: 5px;
-            font-size: 16px;
-            width: 100%;
-        }
-        .submit-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: rgb(148, 148, 255);
-            border: none;
-            cursor: pointer;
-        }
-    </style>
     </style>
 </head>
 <body>
     <h1>Admin</h1>
     Hello {{ current_user }}
+    <h3>加分</h2>
     <table class="input-table">
         <tr>
             <td class="label"><label for="team-number">小隊:</label></td>
-            <td><input type="text" id="team-number" class="input-field"></td>
+            <td><input type="text" id="add_team-number" class="input-field"></td>
             <td class="label"><label for="points">分數:</label></td>
-            <td><input type="text" id="points" class="input-field"></td>
-            <td><button type="submit" class="submit-button">submit</button></td>
+            <td><input type="text" id="add_points" class="input-field"></td>
+            <td><button type="submit" class="submit-button" onclick="add_point()">確認</button></td>
         </tr>
     </table>
+    <h3>設定分數</h2>
+    <table class="input-table">
+        <tr>
+            <td class="label"><label for="team-number">小隊:</label></td>
+            <td><input type="text" id="set_team-number" class="input-field"></td>
+            <td class="label"><label for="points">分數:</label></td>
+            <td><input type="text" id="set_points" class="input-field"></td>
+            <td><button type="submit" class="submit-button" onclick="set_point()">確認</button></td>
+        </tr>
+    </table>
+
+    <h3>任務完成</h2>
+        <table class="input-table">
+            <tr>
+                <td class="label"><label for="team-number">小隊:</label></td>
+                <td><input type="text" id="misson_team-number" class="input-field"></td>
+                <td><button type="submit" class="submit-button" onclick="finish_misson()">確認</button></td>
+            </tr>
+        </table>
+
+    <script>
+        function add_point(){
+            const team = document.getElementById('add_team-number').value;
+            const points = document.getElementById('add_points').value;
+            fetch(`http://localhost:8080/api/add_point/${team}/${points}`)
+        }
+
+        function set_point(){
+            const team = document.getElementById('set_team-number').value;
+            const points = document.getElementById('set_points').value;
+            fetch(`http://localhost:8080/api/set_point/${team}/${points}`)
+        }
+
+        function finish_misson(){
+            const team = document.getElementById('misson_team-number').value;
+            fetch(`http://localhost:8080/api/finish_mission/${team}`)
+        }
     </script>
 </body>
 </html>
