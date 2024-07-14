@@ -11,10 +11,10 @@
     </style>
 </head>
 <body>
-    <h1>Admin</h1>
-    Hello {{ current_user }}
-    <h3>加分</h2>
-    <table class="input-table">
+    <h1>Hello Admin : {{ current_user }}</h1>
+    <h2>分數</h2>
+    <h3>加分</h3>
+    <table>
         <tr>
             <td class="label"><label for="team-number">小隊:</label></td>
             <td><input type="text" id="add_team-number" class="input-field"></td>
@@ -23,8 +23,8 @@
             <td><button type="submit" class="submit-button" onclick="add_point()">確認</button></td>
         </tr>
     </table>
-    <h3>設定分數</h2>
-    <table class="input-table">
+    <h3>設定分數</h3>
+    <table>
         <tr>
             <td class="label"><label for="team-number">小隊:</label></td>
             <td><input type="text" id="set_team-number" class="input-field"></td>
@@ -34,14 +34,41 @@
         </tr>
     </table>
 
-    <h3>任務完成</h2>
-        <table class="input-table">
+    <h3>任務完成</h3>
+        <table>
             <tr>
                 <td class="label"><label for="team-number">小隊:</label></td>
                 <td><input type="text" id="misson_team-number" class="input-field"></td>
                 <td><button type="submit" class="submit-button" onclick="finish_misson()">確認</button></td>
             </tr>
         </table>
+    
+    <h2>隊伍</h2>
+    <h3>創建隊伍</h3>
+        <table class="input-table">
+            <tr>
+                <td class="label"><label for="team-number">幾小:</label></td>
+                <td><input type="text" id="create_team-number" class="input-field"></td>
+                <td class="label"><label for="points">初始站名:</label></td>
+                <td><input type="text" id="create_team_position" class="input-field"></td>
+                <td><button type="submit" class="submit-button" onclick="create_team()">確認</button></td>
+            </tr>
+        </table>
+
+    <h3>分配隊伍</h3>
+        <table class="input-table">
+            <tr>
+                <td class="label"><label for="team-number">小隊:</label></td>
+                <td><input type="text" id="join_team-number" class="input-field"></td>
+                <td class="label"><label for="points">小隊員名稱:</label></td>
+                <td><input type="text" id="join_team_name" class="input-field"></td>
+                <td><input type="join_team-checkbox"></td>
+                <td class="label"><label>隊隨</label></td>
+                <td><button type="submit" class="submit-button" onclick="join_team()">確認</button></td>
+            </tr>
+        </table>
+
+    
 
     <script>
         function add_point(){
@@ -60,6 +87,20 @@
             const team = document.getElementById('misson_team-number').value;
             fetch(`http://localhost:8080/api/finish_mission/${team}`)
         }
+
+        function create_team(){
+            const team = document.getElementById('create_team-number').value;
+            const position = document.getElementById('create_team_position').value;
+            fetch(`http://localhost:8080/api/create_team/${team}/${position}`)
+        }
+
+        function join_team(){
+            const team = document.getElementById('join_team-number').value;
+            const player_name = document.getElementById('join_team_name').value;
+            const admin = document.getElementById('join_team-checkbox').checked
+            fetch(`http://localhost:8080/api/join_team/${team}/${player_name}/${admin}`)
+        }
+
     </script>
 </body>
 </html>
