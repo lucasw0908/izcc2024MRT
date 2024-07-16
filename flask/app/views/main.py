@@ -60,12 +60,12 @@ def combo():
     team = core.check_player(current_user.username)
     return render_template("combo.html", current_user=current_user.username, team=team, graph=core.metro.graph)
 
-@main.route("/team_leader")
+@main.route("/team_admin")
 def team_leader():
     bearer_client = APIClient(session.get("token"), bearer=True)
     current_user = bearer_client.users.get_current_user()
     team = core.check_player(current_user.username)
-    return render_template("team_leader.html", current_user=current_user.username, team=team, graph=core.metro.graph)
+    return render_template("team_admin.html", current_user=current_user.username, team=team, graph=core.metro.graph)
 
 @main.route("/card")
 def card():
