@@ -39,12 +39,15 @@ def station(name: str):
 
 @api.route("/collapse_status")
 def collapse_status():
-    return jsonify(core.collapse_status)
+    return jsonify({
+        "status":core.collapse.status,
+        "warning":core.collapse.warning
+    })
 
 
 @api.route("/next_collapse_time")
 def next_collapse_time():
-    return jsonify("haha")
+    return jsonify(core.collapse.next_time)
 
 
 @api.route("/teams")
