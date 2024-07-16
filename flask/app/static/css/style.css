@@ -151,3 +151,8 @@ h1{
     flex: 1;
     text-align: right;
 }
+
+
+.swal2-popup{
+    font-size: 200%;
+}

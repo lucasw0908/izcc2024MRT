@@ -232,11 +232,10 @@
         Swal.fire({
              title: `${station_name} 站點資訊`,
             html: `
-                <p>佔領的小隊: ${stationInfo["team"]}</p>
-                <p>特殊站: ${stationInfo["is_special"]}</p>
-                <p>任務: ${stationInfo["mission"]}</p>
-                <p>任務出口: ${stationInfo["exit"]}</p>
-                <p>任務難度: ${stationInfo["difficult"]}</p>
+                <p>佔領的小隊 : ${stationInfo["team"]}</p>
+                <p>特殊站 : ${stationInfo["is_special"]}</p>
+                <p>任務 : ${stationInfo["mission"]}</p>
+                <p>出口/難度: ${stationInfo["exit"]} / ${stationInfo["difficult"]}</p>
             `,
             confirmButtonText: "關閉",
             });

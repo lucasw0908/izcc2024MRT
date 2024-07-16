@@ -37,13 +37,13 @@ def admin():
     #     team, is_admin = core.check_player(current_user.username)
     
     #     if is_admin:
-    #         return render_template("admin.html", current_user=current_user.username, team=team, graph=core.metro.graph)
+    #         return render_template("admin.html", current_user=current_user.username, team=team)
     # return redirect("/")
     
     bearer_client = APIClient(session.get("token"), bearer=True)
     current_user = bearer_client.users.get_current_user()
     team, is_admin = core.check_player(current_user.username)
-    return render_template("/admin.html" , current_user=current_user.username, team=team, graph=core.metro.graph)
+    return render_template("/admin.html" , current_user=current_user.username, team=team)
 
 @main.route("/download_graph")
 def download_graph():
@@ -57,27 +57,27 @@ def download_graph():
 def combo():
     bearer_client = APIClient(session.get("token"), bearer=True)
     current_user = bearer_client.users.get_current_user()
-    team = core.check_player(current_user.username)
-    return render_template("combo.html", current_user=current_user.username, team=team, graph=core.metro.graph)
+    team, is_admin = core.check_player(current_user.username)
+    return render_template("combo.html", current_user=current_user.username, team=team)
 
 @main.route("/team_admin")
 def team_leader():
     bearer_client = APIClient(session.get("token"), bearer=True)
     current_user = bearer_client.users.get_current_user()
-    team = core.check_player(current_user.username)
-    return render_template("team_admin.html", current_user=current_user.username, team=team, graph=core.metro.graph)
+    team, is_admin = core.check_player(current_user.username)
+    return render_template("team_admin.html", current_user=current_user.username, team=team)
 
 @main.route("/card")
 def card():
     bearer_client = APIClient(session.get("token"), bearer=True)
     current_user = bearer_client.users.get_current_user()
-    team = core.check_player(current_user.username)
-    return render_template("card.html", current_user=current_user.username, team=team, graph=core.metro.graph)
+    team, is_admin = core.check_player(current_user.username)
+    return render_template("card.html", current_user=current_user.username, team=team)
 
 
 @main.route("/dice")
 def dice():
     bearer_client = APIClient(session.get("token"), bearer=True)
     current_user = bearer_client.users.get_current_user()
-    team = core.check_player(current_user.username)
-    return render_template("dice.html", current_user=current_user.username, team=team, graph=core.metro.graph)
+    team, is_admin = core.check_player(current_user.username)
+    return render_template("dice.html", current_user=current_user.username, team=team)
