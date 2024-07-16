@@ -76,7 +76,7 @@ body{
     .nav { overflow: auto; }
   }
 
-#MRT_map_img {
+.MRT_map_img {
     min-width: 10%;
     min-height: 10%;
     max-height: 100%;
