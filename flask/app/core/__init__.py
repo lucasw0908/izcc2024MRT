@@ -3,10 +3,11 @@ import logging
 from apscheduler.schedulers.blocking import BlockingScheduler
 from flask_socketio import SocketIO
 
-from ..game_config import CARD, COLLAPSE, DELETE_STATIONS
+from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_LIST, DELETE_STATIONS, END_STATION
 from ..data import load_data
 from .metro import MetroSystem, Station
 from .team import Team
+from .collapse import Collapse
 
 
 log = logging.getLogger(__name__)
@@ -18,7 +19,9 @@ class Core:
         self.metro = MetroSystem()
         self.socketio = None
         self.teams: dict[str, Team] = {}
-        self.collapse_status = 0
+        self.collapse = Collapse()
+        
+        self.create_team("admins", admins=ADMINS)
         
         for collapse in COLLAPSE:
             hour, minute = collapse["time"].split(":")
@@ -26,19 +29,33 @@ class Core:
     
     
     def _collapse(self) -> None:
-        for collapse in COLLAPSE:
+        for index, collapse in enumerate(COLLAPSE):
             if collapse["status"] == self.collapse_status:
+                if collapse["final"]:
+                    for station in self.metro.graph.keys():
+                        if station == END_STATION:
+                            continue
+                        COLLAPSE_LIST.append(station)
+                    self.collapse_status = 0
+                    return None
+                
                 for station in collapse["stations"]:
-                    DELETE_STATIONS.append(station)
-                    self.metro.delete_stations()
-                self.collapse_status += 1
+                    COLLAPSE_LIST.append(station)
+                    
+                self.collapse.status += 1
+                self.collapse.next_time = COLLAPSE[index + 1]["time"]
+                
+                
+    def _collapse_warning(self) -> None:
+        self.collapse.warning = True
+        self.socketio.emit("collapse_warning", self.collapse.next_time)
                 
                 
     def init_socketio(self, socketio: SocketIO) -> None:
         self.socketio = socketio
 
     
-    def create_team(self, name: str, players: list[str], admins: list[str], location: str=None) -> None:
+    def create_team(self, name: str, players: list[str]=[], admins: list[str]=[], location: str=None) -> None:
         """
         Create a new team.
         

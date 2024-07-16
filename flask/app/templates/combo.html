@@ -37,6 +37,18 @@
     </div>
 
     <div class="container">
+        {% for combo in combos %}
+        <div class="item">
+            <span>{{combo.name}}：</span>
+            <span style="color: rgb(174, 174, 174);">
+                {% for station in combo.stations %}
+                {{station}} &nbsp;
+                {% endfor %}
+            </span>
+            <span style="color: rgb(255, 137, 235);">+{{combo.point}}分</span>
+        </div>
+        {% endfor %}
+        <!--
         <div class="item"><span>機捷霸權：</span>新北產業園區、三重、北門，+6分</div>
         <div class="item"><span>高鐵霸權：</span>南港、板橋、台北車站，+6分。</div>
         <div class="item"><span>首長Collection：</span>板橋(新北)、市政府(台北)、小南門(總統府)，+6分</div>
@@ -46,6 +58,7 @@
         <div class="item"><span>Bridge：</span>秀朗橋、台北橋、板橋，+7分</div>
         <div class="item"><span>百年好合：</span>雙連、幸福，+3分</div>
         <div class="item"><span>台北城：</span>東門(會被關監獄一次)、西門、北門、小南門，+9分</div>
+        -->
     </div>
     <script>
     </script>

@@ -42,6 +42,11 @@ def collapse_status():
     return jsonify(core.collapse_status)
 
 
+@api.route("/next_collapse_time")
+def next_collapse_time():
+    return jsonify("haha")
+
+
 @api.route("/teams")
 def teams():
     return jsonify([team.__dict__ for team in core.teams.values()])

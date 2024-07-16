@@ -1,12 +1,15 @@
 {
+    "admins": ["lucasw0", "a.uuu"],
     "card": 26,
     "start_station": "中正紀念堂",
+    "end_station": "秀朗橋",
     "delete_stations": ["迴龍", "新埔", "永寧"],
     "is_special": 0.3,
     "collapse": [
         {
             "status": 0,
             "time": "15:00",
+            "final": false,
             "stations": [
                 "明德","芝山","士林",
                 "南港展覽館","南港","昆陽","後山埤",
@@ -17,6 +20,7 @@
         {
             "status": 1,
             "time": "16:00",
+            "final": false,
             "stations": [
                 "劍潭","圓山","民權西路",
                 "永春","市政府",
@@ -29,8 +33,8 @@
         {
             "status": 2,
             "time": "17:00",
+            "final": true,
             "stations": []
-            
         }
     ]
 }
