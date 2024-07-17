@@ -50,6 +50,11 @@ def next_collapse_time():
     return jsonify(core.collapse.next_time)
 
 
+@api.route("/combo")
+def combo():
+    return jsonify(load_data("combo"))
+
+
 @api.route("/teams")
 def teams():
     return jsonify([team.__dict__ for team in core.teams.values()])
@@ -150,8 +155,8 @@ def set_point(name: str, point: int):
 @api.route("/finish_mission/<name>")
 def finish_mission(name: str):
     
-    # if not is_admin():
-    #     abort(403)
+    if not is_admin():
+        abort(403)
     
     if name not in core.teams:
         return "Team does not exist."
@@ -160,8 +165,3 @@ def finish_mission(name: str):
     if card is None:
         return "Mission finished."
     return card
-
-
-@api.route("/combo")
-def combo():
-    return jsonify(load_data("combo"))
