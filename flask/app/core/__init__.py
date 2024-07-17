@@ -90,7 +90,7 @@ class Core:
         Parameters
         ----------
         player: :type:`str`
-            The discord id of the player.
+            The discord username of the player.
             
         Returns
         -------

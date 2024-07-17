@@ -8,7 +8,7 @@ def is_admin() -> bool:
     if "token" in session:
         bearer_client = APIClient(session.get("token"), bearer=True)
         current_user = bearer_client.users.get_current_user()
-        _, output = core.check_player(current_user.id)
+        _, output = core.check_player(current_user.username)
         return output
     else:
         return False

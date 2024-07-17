@@ -99,8 +99,8 @@ def join_team(name: str, player_name: str, is_admin: bool):
 @api.route("/move/<name>")
 def move(name: str):
     
-    # if not is_player():
-    #     abort(403)
+    if not is_player():
+        abort(403)
         
     step = core.dice()
     
@@ -116,7 +116,7 @@ def move(name: str):
 @api.route("/move_to_location/<name>/<location>")
 def move_to_location(name: str, location: str):
     
-    if not is_player():
+    if not is_admin():
         abort(403)
         
     if location not in core.teams[name].choice:
