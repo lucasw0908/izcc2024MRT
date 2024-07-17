@@ -2,11 +2,12 @@
 <html>
     <head>
         <link href="../static/css/style.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+        
         <title>捷運大富翁-主頁</title>
     </head>
     <body>
@@ -218,7 +219,8 @@
     <script>
         //area locate
         function resizeMap() {
-            const img = document.getElementById('MRT_map_img');
+            const img = document.querySelector('.MRT_map img[style*="display: block"]');
+            if (!img) return;  // No visible image
             const map = document.querySelector('map[name="image-map"]');
             const areas = map.getElementsByTagName('area');
             const imgWidth = img.naturalWidth;
@@ -315,7 +317,8 @@
         setInterval(showmap, 10000);
 
         document.addEventListener("DOMContentLoaded", () => {
-            showmap()
+            showmap();
+            resizeMap(); 
         });
 
     </script>

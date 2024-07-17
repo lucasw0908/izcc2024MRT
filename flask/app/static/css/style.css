@@ -1,5 +1,5 @@
 body{
-    font-family: "IBM Plex Sans JP", sans-serif;
+    font-family: "Noto Sans TC", sans-serif;
 }
 
 .top{
@@ -76,13 +76,19 @@ body{
     .nav { overflow: auto; }
   }
 
-.MRT_map_img {
+.MRT_map{
     min-width: 10%;
     min-height: 10%;
     max-height: 100%;
     max-width: 100%;
     display: block;
     margin: 0 auto;
+}
+
+.MRT_map img {
+    max-width: 100%;
+    max-height: 100%;
+    display: none;
 }
 
 .station_info_text{
