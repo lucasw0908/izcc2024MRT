@@ -71,6 +71,16 @@
             </tr>
         </table>
 
+    <h3>隊伍移動</h3>
+        <table>
+            <tr>
+                <td class="label"><label for="team-number">小隊:</label></td>
+                <td><input type="text" id="move_team-number" class="input-field"></td>
+                <td class="label"><label for="points">站名:</label></td>
+                <td><input type="text" id="move_location" class="input-field"></td>
+                <td><button type="submit" class="submit-button" onclick="move_to_location()">確認</button></td>
+            </tr>
+        </table>
     
 
     <script>
@@ -104,6 +114,11 @@
             fetch(`http://localhost:8080/api/join_team/${team}/${player_name}/${admin}`)
         }
 
+        function move_to_location(){
+            const team = document.getElementById('move_team-number').value;
+            const location = document.getElementById('move_location').value;
+            fetch(`http://localhost:8080/api/move_to_location/${team}/${location}`)
+        }
     </script>
 </body>
 </html>
