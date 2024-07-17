@@ -2,7 +2,9 @@
 <html lang="zh-Hant">
 <head>
     <link href="../static/css/style.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
     <style>
         .container {
             margin: 20px auto;
@@ -45,7 +47,7 @@
                 {{station}} &nbsp;
                 {% endfor %}
             </span>
-            <span style="color: rgb(255, 137, 235);">+{{combo.point}}分</span>
+            <span style="color: rgb(174, 174, 174);">+{{combo.point}}分</span>
         </div>
         {% endfor %}
         <!--

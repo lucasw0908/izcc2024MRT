@@ -163,60 +163,72 @@
             <!-- <area onclick=station_info(this.title) alt="動物園" title="動物園"  coords="1183,1465,1296,1503" shape="rect" data-original-coords="1183,1465,1296,1503"> -->
         </map>
 
-
-        <h1>各小隊位置</h1>
+        <div class="loacate_collapseTime_container">
+            <h1>各小隊位置</h1> 
+            <h2 id="next_collapse_time_label"></h2>
+        </div>
         <div class="team_locate">
-            <p>零小: </p>
-            <p>一小: </p>
-            <p>二小: </p>
-            <p>三小: </p>
-            <p>四小: </p>
+            <p>零小:</p><p id="team0_location"></p>
+            <p>一小:</p><p id="team1_location"></p>
+            <p>二小:</p><p id="team2_location"></p>
+            <p>三小:</p><p id="team3_location"></p>
         </div>
 
-
+        
         <h1>各小隊分數</h1>
         <div class="team_point">
             <div class="scoreboard">
-                <div class="team" data-score="80">
+                <div class="team" id="team0" data-score="0">
                     <span class="team-name">零小</span>
                     <div class="progress-bar">
                         <div class="progress" id="teamA-progress"></div>
                     </div>
-                    <span class="score">80 分</span>
+                    <span class="score">0 分</span>
                 </div>
-                <div class="team" data-score="65">
+                <div class="team" id="team1" data-score="0">
                     <span class="team-name">一小</span>
                     <div class="progress-bar">
                         <div class="progress" id="teamB-progress"></div>
                     </div>
-                    <span class="score">65 分</span>
+                    <span class="score">0 分</span>
                 </div>
-                <div class="team" data-score="90">
+                <div class="team" id="team2" data-score="0">
                     <span class="team-name">二小</span>
                     <div class="progress-bar">
                         <div class="progress" id="teamC-progress"></div>
                     </div>
-                    <span class="score">90 分</span>
+                    <span class="score">0 分</span>
                 </div>
-                <div class="team" data-score="75">
+                <div class="team" id="team3" data-score="0">
                     <span class="team-name">三小</span>
                     <div class="progress-bar">
                         <div class="progress" id="teamD-progress"></div>
                     </div>
-                    <span class="score">75 分</span>
-                </div>
-                <div class="team" data-score="60">
-                    <span class="team-name">四小</span>
-                    <div class="progress-bar">
-                        <div class="progress" id="teamE-progress"></div>
-                    </div>
-                    <span class="score">60 分</span>
+                    <span class="score">0 分</span>
                 </div>
             </div>
         </div>
     </body>
 
     <script>
+
+        // ready
+        document.addEventListener("DOMContentLoaded", () => {
+            resizeMap();
+            showmap();
+            showCollapse_time();
+            showPoint();
+            showlocate();
+        });
+
+
+        // repeat
+        setInterval(showmap, 10000);
+        setInterval(showCollapse_time,10000);
+        setInterval(showPoint, 10000);
+        setInterval(showlocate, 10000);
+        
+
         //area locate
         function resizeMap() {
             const img = document.querySelector('.MRT_map img[style*="display: block"]');
@@ -236,21 +248,21 @@
                 areas[i].setAttribute('coords', newCoords.join(','));
             }
         }
-        
         window.addEventListener('resize', resizeMap);
         window.addEventListener('load', resizeMap);
     
+
         function station_info(station_name) {
         fetch(`http://localhost:8080/api/station/${station_name}`).then(response => response.json())
         .then(data => {
         const stationInfo = data;
         Swal.fire({
-             title: `${station_name} 站點資訊`,
+            title: `${station_name} 站點資訊`,
             html: `
                 <p>佔領的小隊 : ${stationInfo["team"]}</p>
                 <p>特殊站 : ${stationInfo["is_special"]}</p>
-                <p>任務 : ${stationInfo["mission"]}</p>
-                <p>出口/難度: ${stationInfo["exit"]} / ${stationInfo["difficult"]}</p>
+                <p>任務/出口 : ${stationInfo["mission"]} / ${stationInfo["exit"]}</p>
+                <p>任務難度: ${stationInfo["difficult"]}</p>
             `,
             confirmButtonText: "關閉",
             });
@@ -265,24 +277,53 @@
                 });
             });
         }
-        //point 
-        
-        document.addEventListener("DOMContentLoaded", function() {
-        const teams = document.querySelectorAll(".team");
-        const maxScore = 3000; // 設置進度條的上限為 3000
-
-        teams.forEach(team => {
-        const score = team.getAttribute("data-score");
-        const progressBar = team.querySelector(".progress");
-
-        // 計算進度條的寬度百分比
-        const widthPercent = (score / maxScore) * 100;
-        progressBar.style.width = widthPercent + "%";
-    });
-}); 
 
 
-        // map
+        function showPoint(){
+            fetch(`http://localhost:8080/api/teams`)
+            .then(response => response.json())
+            .then(data => {
+                    const teams = document.querySelectorAll(".team");
+                    const maxScore = 3000; // 設置進度條的上限為 3000
+
+                    teams.forEach((teamElement, index) => {
+                        if (data[index] && data[index].name != "admins" ) {
+                            const teamData = data[index];
+                            const score = teamData.point;
+                            const progressBar = teamElement.querySelector(".progress");
+                            const scoreElement = teamElement.querySelector(".score");
+
+                            // 更新 data-score 屬性
+                            teamElement.setAttribute("data-score", score);
+
+                            // 計算進度條的寬度百分比
+                            const widthPercent = (score / maxScore) * 100;
+                            progressBar.style.width = widthPercent + "%";
+
+                            // 更新顯示的分數
+                            scoreElement.textContent = `${score} 分`;
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+
+        function showlocate() {
+            fetch('http://localhost:8080/api/teams')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach((team, index) => {
+                        const locationElement = document.getElementById(`team${index}_location`);
+                        if (locationElement && team.name != "admins") {
+                            locationElement.textContent = `${team.location}`;
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+
         let lastStatus = null;
         let lastWarning = null;
         function showmap(){
@@ -314,12 +355,16 @@
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
-        setInterval(showmap, 10000);
 
-        document.addEventListener("DOMContentLoaded", () => {
-            showmap();
-            resizeMap(); 
-        });
+
+        function  showCollapse_time(){
+            fetch('http://localhost:8080/api/next_collapse_time')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('next_collapse_time_label').textContent = `下次崩塌時間 : ${data}`;
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
 
     </script>
     

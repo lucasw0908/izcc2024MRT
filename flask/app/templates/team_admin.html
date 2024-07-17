@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
-    <link href="../static/css/style.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <link href="../static/css/style.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     <style>
         .button {
   --bezier: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -119,6 +121,11 @@
   font-weight: bold;
 }
 
+#mission_label{
+    font-size: 300%;
+    margin-left: 5% ;
+}
+
     </style>
 
 
@@ -135,9 +142,12 @@
             </div>
         </div>
 
+
+        <h2 id="mission_label"></h2>
+
         <div class="link">
             <a href="/dice">
-                <button class="button">
+                <button class="button" onclick="mission_label()">
                     骰子<i class="bi bi-dice-6-fill"></i>
                 </button>
             </a>
@@ -148,7 +158,7 @@
                 </button>
             </a>
 
-            <button class="button" onclick="finish_misson()">
+            <button class="button" onclick="finish_misson(),mission_label()">
                   任務完成<i class="bi bi-check-lg"></i>
             </button>
 
@@ -156,8 +166,52 @@
           
     </body>
     <script>
+
+        //ready
+        document.addEventListener("DOMContentLoaded", () => {
+            mission_label();
+        });
+
+        function mission_label(){
+            fetch(`http://localhost:8080/api/team/{{team}}`)
+            .then(response => response.json())
+            .then(data => {
+            now_status = data.current_mission_finished
+            if(now_status){
+                document.getElementById('mission_label').textContent = "目前狀態 : 任務已完成 請按骰子";
+            }
+            else{
+                document.getElementById('mission_label').textContent = "目前狀態 : 請完成任務 並按下完成按鈕";
+            }
+            })
+        }
+
+
+
         function finish_misson(){
-            fetch(`http://localhost:8080/api/finish_mission/{{ team }}`)
+            fetch(`http://localhost:8080/api/finish_mission/{{team}}`)
+            .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok ' + response.statusText);
+                    }
+                    return response.text();  // Assuming the server returns a plain text response
+                })
+                .then(data => {
+                    Swal.fire({
+                        title: 'Success',
+                        text: data,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Error: ' + error.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
         }
     </script>
 </html>

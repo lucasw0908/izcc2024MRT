@@ -24,7 +24,7 @@ body{
     border-radius: 20px;
     box-shadow: 0 10px 50px rgba(159, 162, 177, .8);
     font-size: 200%;
-    margin-right: 10vw;
+    margin-right: 20vw;
   }
   
   .nav-item {
@@ -158,7 +158,16 @@ h1{
     text-align: right;
 }
 
-
 .swal2-popup{
     font-size: 200%;
+}
+
+.loacate_collapseTime_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+#next_collapse_time_label {
+    margin-left: auto;
+    margin-right: 2%;
 }
