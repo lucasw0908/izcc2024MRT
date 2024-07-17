@@ -147,14 +147,16 @@ def set_point(name: str, point: int):
 @api.route("/finish_mission/<name>")
 def finish_mission(name: str):
     
-    if not is_admin():
-        abort(403)
+    # if not is_admin():
+    #     abort(403)
     
     if name not in core.teams:
         return "Team does not exist."
     
-    core.finish_mission(name=name)
-    return "Mission finished."
+    card = core.finish_mission(name=name)
+    if card is None:
+        return "Mission finished."
+    return card
 
 
 @api.route("/combo")
