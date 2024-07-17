@@ -226,6 +226,8 @@ class Core:
         self.teams[name].current_mission_finished = True
         
         if station.is_special:
+            card = f"card{self.dice(CARD)}"
+            self.teams[name].current_card = card
             return f"card{self.dice(CARD)}"
             
         
