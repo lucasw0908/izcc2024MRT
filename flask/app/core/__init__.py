@@ -226,9 +226,10 @@ class Core:
         self.teams[name].current_mission_finished = True
         
         if station.is_special:
-            card = f"card{self.dice(CARD)}"
-            self.teams[name].current_card = card
-            return f"card{self.dice(CARD)}"
+            if self.teams[name].current_card == None:
+                card = f"card{self.dice(CARD)}"
+                self.teams[name].current_card = card
+            return self.teams[name].current_card
             
         
     def dice(self, faces: int=6) -> int:
