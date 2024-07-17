@@ -21,8 +21,8 @@
                 <p>{{ team }} - {{current_user}}</p>
             </div>
         </div>
-        <div class="MRT_map'">
-            <img id="Map0" src="../static/img/map/MRT_map0.png" usemap="#image-map" style="display: block;">
+        <div class="MRT_map">
+            <img id="Map0" src="../static/img/map/MRT_map0.png" usemap="#image-map" style="display: none;">
             <img id="Map1" src="../static/img/map/MRT_map1.png"  usemap="#image-map" style="display: none;">
             <img id="Map2" src="../static/img/map/MRT_map2.png" usemap="#image-map" style="display: none;">
             <img id="Map3" src="../static/img/map/MRT_map3.png" usemap="#image-map" style="display: none;">
@@ -290,7 +290,6 @@
                     if (data.status !== lastStatus || data.warning !== lastWarning) {
                         lastStatus = data.status;
                         lastWarning = data.warning;
-                        
                         let images = document.querySelectorAll('.MRT_map img');
                         images.forEach(img => img.style.display = 'none');
 
@@ -314,6 +313,11 @@
                 .catch(error => console.error('Error fetching data:', error));
         }
         setInterval(showmap, 10000);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            showmap()
+        });
+
     </script>
     
     
