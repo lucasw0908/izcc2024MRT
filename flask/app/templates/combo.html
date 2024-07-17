@@ -40,16 +40,17 @@
 
     <div class="container">
         {% for combo in combos %}
-        <div class="item">
-            <span>{{combo.name}}：</span>
-            <span style="color: rgb(174, 174, 174);">
+        <div class="item" data-stations="{{ combo.stations | join(',') }}">
+            <span>{{ combo.name }}：</span>
+            <span class="stations">
                 {% for station in combo.stations %}
-                {{station}} &nbsp;
+                {{ station }} &nbsp;
                 {% endfor %}
             </span>
-            <span style="color: rgb(174, 174, 174);">+{{combo.point}}分</span>
+            <span class="points">+{{ combo.point }}分</span>
         </div>
         {% endfor %}
+    </div>
         <!--
         <div class="item"><span>機捷霸權：</span>新北產業園區、三重、北門，+6分</div>
         <div class="item"><span>高鐵霸權：</span>南港、板橋、台北車站，+6分。</div>
@@ -63,6 +64,31 @@
         -->
     </div>
     <script>
+        function changeColor() {
+            fetch("http://localhost:8080/api/team/{{ team }}")
+                .then(response => response.json())
+                .then(data => {
+                    const items = document.querySelectorAll('.item');
+                    items.forEach(item => {
+                        const stationSpans = item.querySelector('.stations');
+                        const pointSpan = item.querySelector('.points');
+                        const stations = item.getAttribute('data-stations').split(',');
+                        const isInStations = stations.some(station => data.stations.includes(station.trim()));
+
+                        if (isInStations) {
+                            stationSpans.style.color = 'rgba(0, 128, 0, 0.5)'; 
+                            pointSpan.style.color = 'rgba(0, 128, 0, 0.5)'; 
+                        } else {
+                            stationSpans.style.color = 'rgba(255, 0, 0, 0.5)'; 
+                            pointSpan.style.color = 'rgba(255, 0, 0, 0.5)'; 
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', changeColor);
+    </script>
     </script>
 </body>
 </html>
