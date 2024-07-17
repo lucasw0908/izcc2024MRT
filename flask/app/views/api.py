@@ -103,6 +103,9 @@ def move(name: str):
     #     abort(403)
         
     step = core.dice()
+    
+    if name not in core.teams:
+        return "Team does not exist."
         
     return jsonify({
         "step": step,

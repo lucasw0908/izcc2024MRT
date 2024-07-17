@@ -79,7 +79,7 @@ def create_app() -> Flask:
     app: :class:`Flask`
         A flask app.
     """
-    init_logger()
+    init_logger(debug=True)
     app = Flask(__name__)
     app.config.from_object(DevConfig)
     csrf = CSRFProtect(app)

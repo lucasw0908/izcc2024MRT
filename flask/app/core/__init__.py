@@ -135,8 +135,9 @@ class Core:
         choice = []
         current_station = self.teams[name].location
         for index in range(step):
+            log.debug(self.metro.move(current_station))
             for station in self.metro.move(current_station):
-                if index == step:
+                if index + 1 == step:
                     choice.append(station)
                 else:
                     current_station = station
