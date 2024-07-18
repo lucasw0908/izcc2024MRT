@@ -189,6 +189,7 @@ class Core:
             self.teams[station.team].point += station.point
         
         self.teams[name].current_mission_finished = False
+        self.teams[name].current_card = None
         
         return combos, point
         
@@ -226,7 +227,7 @@ class Core:
         self.teams[name].current_mission_finished = True
         
         if station.is_special:
-            if self.teams[name].current_card == None:
+            if self.teams[name].current_card is None:
                 card = f"card{self.dice(CARD)}"
                 self.teams[name].current_card = card
             return self.teams[name].current_card

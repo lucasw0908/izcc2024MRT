@@ -107,8 +107,12 @@ h1{
 }
 
 .team_locate p {
-    margin-right: 5%; /* 調整段落元素之間的間距 */
+    margin-right: 2%;
     font-size: 200%
+}
+
+#team0_location,#team1_location,#team2_location,#team3_location{
+    margin-right: 5%; /* 調整段落元素之間的間距 */
 }
 
 .team_point{
