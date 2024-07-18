@@ -84,7 +84,7 @@
             border-radius: 5px;
         }
         .element-card .front-facing {
-            background-image: url(../static/img/cards/card1.jpg); /* 使用遊戲王卡圖片 */
+            background-image: url(../static/img/cards/card0.jpg); /* 使用遊戲王卡圖片 */
             background-size: cover;
             background-position: center;
         }
@@ -176,6 +176,11 @@
             var elementCard = document.querySelector('.element-card');
             var arrow = document.querySelector('.arrow');
             var startY, endY;
+            card = get("card")
+            if (card == Null) {
+                card = "card0"
+            }
+            document.getElementById("front-facing").style.backgroundImage = url(`../static/img/cards/${card}.jpg`);
 
             document.addEventListener('touchstart', function(e) {
                 startY = e.touches[0].clientY;
