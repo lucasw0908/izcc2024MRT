@@ -189,6 +189,7 @@ class Core:
             self.teams[station.team].point += station.point
         
         self.teams[name].current_mission_finished = False
+        self.teams[name].current_card = None
         
         return combos, point
         
