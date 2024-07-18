@@ -138,7 +138,7 @@ def add_point(name: str, point: int):
     if not is_admin():
         abort(403)
         
-    core.teams[name].point += point
+    core.teams[name].point += int(point)
     return "Point added."
 
 
