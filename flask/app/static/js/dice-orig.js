@@ -419,3 +419,22 @@ function createControls() {
         .name("throw!")
     throwBtn = btnControl.domElement.querySelector("button > .name");
 }
+
+function connectAPI() {
+    var name = document.getElementById("team").innerHTML;
+    var targetUrl = "https://" + window.location.host + "/move/" + name;
+    $.ajax({
+        url: targetUrl,
+        method: "GET",
+        dataType: "json",
+        success: (response) => {
+            console.log("success");
+            params.desiredResult = Number(response["step"]);
+        },
+        error: () => {
+            console.log("error");
+        }
+    })
+}
+
+document.addEventListener("DOMContentLoaded", connectAPI());
