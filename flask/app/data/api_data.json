@@ -889,7 +889,7 @@
                 "Sequence": 2,
                 "StationID": "R03",
                 "StationName": {
-                    "Zh_tw": "台北101/世貿",
+                    "Zh_tw": "台北101_世貿",
                     "En": "Taipei 101/World Trade Center"
                 },
                 "CumulativeDistance": 0.74

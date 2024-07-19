@@ -59,7 +59,7 @@
             <area onclick=station_info(this.title) title="大安森林公園"  coords="754,1114,830,1206" shape="rect" data-original-coords="754,1114,830,1206">
             <area onclick=station_info(this.title) title="大安"  coords="914,1210,843,1125" shape="rect" data-original-coords="914,1210,843,1125">
             <area onclick=station_info(this.title) title="信義安和"  coords="942,1117,997,1203" shape="rect" data-original-coords="942,1117,997,1203">
-            <area onclick=station_info(this.title) title="台北101/世貿"  coords="1002,1111,1060,1206" shape="rect" data-original-coords="1002,1111,1060,1206">
+            <area onclick=station_info(this.title) title="台北101_世貿"  coords="1002,1111,1060,1206" shape="rect" data-original-coords="1002,1111,1060,1206">
             <area onclick=station_info(this.title) title="象山"  coords="1067,1120,1115,1212" shape="rect" data-original-coords="1067,1120,1115,1212">
             <!-- 藍 -->
             <area onclick=station_info(this.title) title="南港展覽館"  coords="1182,812,1323,857" shape="rect" data-original-coords="1182,812,1323,857">
@@ -256,15 +256,14 @@
         .catch(() => false);
 }
         function station_info(station_name) {
+            
             console.log(station_name);
             Promise.all([
                 fetch(`http://localhost:8080/api/station/${station_name}`).then(response => response.json()),
                 fetch(`http://localhost:8080/api/team/{{team}}`).then(response => response.json())
             ])
             .then(([data,team_data]) => {
-                if (station_name === "台北101/世貿"){station_name = "台北101世貿";}
                 let imageUrl = `../static/img/stations/${station_name}.jpg`;
-                if (station_name === "台北101世貿"){station_name = "台北101/世貿";}
                 checkImageExists(imageUrl).then(exists => {
                 let imageHtml = exists ? `<img src="${imageUrl}" alt="${station_name} 圖片" style="width:60%; height:auto;">` : '';
                 let lebel_is_special = (data.is_special) ? "是" : "否";
