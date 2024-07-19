@@ -7,7 +7,6 @@
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
-        
         <title>捷運大富翁-主頁</title>
     </head>
     <body>
@@ -251,48 +250,46 @@
         window.addEventListener('resize', resizeMap);
         window.addEventListener('load', resizeMap);
     
-
+        function checkImageExists(imageUrl) {
+        return fetch(imageUrl, { method: 'HEAD' })
+        .then(response => response.ok)
+        .catch(() => false);
+}
         function station_info(station_name) {
-        Promise.all([
-            fetch(`http://localhost:8080/api/station/${station_name}`).then(response => response.json()),
-            fetch(`http://localhost:8080/api/team/{{team}}`).then(response => response.json())
-        ])
-        .then(([data,team_data]) => {
-            if (data.is_special !== true || station_name === team_data.location){
+            console.log(station_name);
+            Promise.all([
+                fetch(`http://localhost:8080/api/station/${station_name}`).then(response => response.json()),
+                fetch(`http://localhost:8080/api/team/{{team}}`).then(response => response.json())
+            ])
+            .then(([data,team_data]) => {
+                if (station_name === "台北101/世貿"){station_name = "台北101世貿";}
+                let imageUrl = `../static/img/stations/${station_name}.jpg`;
+                if (station_name === "台北101世貿"){station_name = "台北101/世貿";}
+                checkImageExists(imageUrl).then(exists => {
+                let imageHtml = exists ? `<img src="${imageUrl}" alt="${station_name} 圖片" style="width:60%; height:auto;">` : '';
+                let lebel_is_special = (data.is_special) ? "是" : "否";
+                let label_team = (data.team) ? data.team : "無人佔領";
+                let label_depiction = (data.is_special === false || station_name === team_data.location) ? data.mission: "隱藏";
+                let label_exit = (data.is_special === false || station_name === team_data.location) ? data.exit : "隱藏";
+                let lebel_difficult = null;
+                if (data.difficult == 1){lebel_difficult="簡單";}
+                else if (data.difficult == 2){lebel_difficult="普通";}
+                else if (data.difficult == 3){lebel_difficult="困難";}
+                    
                 Swal.fire({
                     title: `${station_name} 站點資訊`,
                     html: `
-                        <p>佔領的小隊 : ${data.team}</p>
-                        <p>特殊站 : ${data.is_special}</p>
-                        <p>任務/出口 : ${data.mission} / ${data.exit}</p>
-                        <p>任務難度: ${data.difficult}</p>
+                        <p>特殊站 : ${lebel_is_special}</p>
+                        <p>佔領的小隊 : ${label_team}</p>
+                        <p>任務敘述 : ${label_depiction}</p>
+                        <p>任務出口 : ${label_exit}</p>
+                        <p>任務難度: ${lebel_difficult}</p>
+                        ${imageHtml}
                     `,
                     confirmButtonText: "關閉",
-                });
-            }
-            else{
-                Swal.fire({
-                    title: `${station_name} 站點資訊`,
-                    html: `
-                        <p>佔領的小隊 : ${data.team}</p>
-                        <p>特殊站 : ${data.is_special}</p>
-                        <p>任務/出口 : 隱藏</p>
-                        <p>任務難度: ${data.difficult}</p>
-                    `,
-                    confirmButtonText: "關閉",
-                });
-            }
-        
-        })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                Swal.fire({
-                    title: "Error",
-                    text: "Failed to fetch station information.",
-                    icon: "error",
-                    confirmButtonText: "OK",
                 });
             });
+        })
         }
 
 
