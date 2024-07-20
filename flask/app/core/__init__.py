@@ -28,10 +28,10 @@ class Core:
         
         for collapse in COLLAPSE:
             hour, minute = map(int, collapse["time"].split(":"))
-            self.collapse_scheduler.add_job(self._collapse, "date", run_data=datetime.now().replace(hour=hour, minute=minute))
+            self.collapse_scheduler.add_job(self._collapse, "date", run_date=datetime.now().replace(hour=hour, minute=minute))
             if minute >= 5: minute -= 5
             else: hour -= 1; minute += 55
-            self.collapse_scheduler.add_job(self._collapse_warning, "date", run_data=datetime.now().replace(hour=hour, minute=minute))
+            self.collapse_scheduler.add_job(self._collapse_warning, "date", run_date=datetime.now().replace(hour=hour, minute=minute))
             self.collapse_scheduler.start()
     
     
