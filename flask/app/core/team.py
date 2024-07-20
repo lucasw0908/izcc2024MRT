@@ -9,6 +9,7 @@ class Team:
         self.point = 10
         self.current_mission_finished = True
         self.current_card = None
+        self.is_imprisoned = False
         self.stations = []
         self.combos = []
         self.choice = []

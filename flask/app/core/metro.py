@@ -46,8 +46,14 @@ class Station:
     mission: :type:`str`
         The mission description of the station.
         
+    tips: :type:`str`
+        The tips of the mission.
+        
     is_special: :type:`bool`
         If the station is a special station.
+        
+    is_prison: :type:`bool`
+        If the station is a prison station.
         
     team: :type:`str`
         which team owns the station.
@@ -64,6 +70,7 @@ class Station:
         self.distance: float
         self.point: int
         self.is_special: bool
+        self.is_prison: bool
         
         self.team: str = None
         
@@ -76,7 +83,9 @@ class Station:
             "difficult": int(station["Difficult"]),
             "exit": str(station["Exit"]),
             "mission": str(station["Mission"]),
+            "tips": str(station["Tips"]),
             "is_special": random.random() <= IS_SPECIAL,
+            "is_prison": station["Mission"] == "監獄",
             "point": {1: 20, 2: 35, 3: 50}.get(station["Difficult"], 0)
         })
     

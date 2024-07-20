@@ -1,17 +1,18 @@
-import random
 import logging
-from apscheduler.schedulers.blocking import BlockingScheduler
+import random
+import timedelta
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime
 from flask_socketio import SocketIO
 
-from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_LIST, DELETE_STATIONS, END_STATION
+from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_LIST, END_STATION
 from ..data import load_data
-from .metro import MetroSystem, Station
+from .metro import MetroSystem
 from .team import Team
 from .collapse import Collapse
 
 
 log = logging.getLogger(__name__)
-scheduler = BlockingScheduler()
 
 
 class Core:
@@ -20,15 +21,22 @@ class Core:
         self.socketio = None
         self.teams: dict[str, Team] = {}
         self.collapse = Collapse()
+        self.collapse_scheduler = BackgroundScheduler()
+        self.prison_scheduler = BackgroundScheduler()
         
         self.create_team("admins", admins=ADMINS)
         
         for collapse in COLLAPSE:
-            hour, minute = collapse["time"].split(":")
-            scheduler.add_job(self._collapse, "cron", hour=hour, minute=minute)
+            hour, minute = map(int, collapse["time"].split(":"))
+            self.collapse_scheduler.add_job(self._collapse, "date", run_data=datetime.now().replace(hour=hour, minute=minute))
+            if minute >= 5: minute -= 5
+            else: hour -= 1; minute += 55
+            self.collapse_scheduler.add_job(self._collapse_warning, "date", run_data=datetime.now().replace(hour=hour, minute=minute))
+            self.collapse_scheduler.start()
     
     
     def _collapse(self) -> None:
+        self.collapse.warning = False
         for index, collapse in enumerate(COLLAPSE):
             if collapse["status"] == self.collapse_status:
                 if collapse["final"]:
@@ -49,6 +57,10 @@ class Core:
     def _collapse_warning(self) -> None:
         self.collapse.warning = True
         self.socketio.emit("collapse_warning", self.collapse.next_time)
+        
+        
+    def _release(self, name: str) -> None:
+        self.teams[name].is_imprisoned = False
                 
                 
     def init_socketio(self, socketio: SocketIO) -> None:
@@ -187,8 +199,14 @@ class Core:
         if station.team != name:
             self.teams[name].point -= station.point
             self.teams[station.team].point += station.point
-        
-        self.teams[name].current_mission_finished = False
+            
+        if station.is_prison:
+            self.teams[name].is_imprisoned = True
+            self.prison_scheduler.add_job(self._release, "date", run_date=datetime.now()+timedelta(minutes=5), args=[name])
+            self.prison_scheduler.start()
+        else:
+            self.teams[name].current_mission_finished = False
+            
         self.teams[name].current_card = None
         
         return combos, point

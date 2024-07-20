@@ -161,6 +161,9 @@ def finish_mission(name: str):
     if name not in core.teams:
         return "Team does not exist."
     
+    if core.teams[name].current_mission_finished:
+        return "Mission already finished."
+    
     card = core.finish_mission(name=name)
     if card is None:
         return "Mission finished."
