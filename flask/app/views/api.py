@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import abort, Blueprint, request, render_template, jsonify
 
 from ..core import core
-from ..modules.checker import is_admin, is_player
+from ..modules.checker import is_admin, is_player, is_game_admin
 from ..data import load_data
 
 
@@ -233,3 +233,15 @@ def GPSLocation(name: str, location1: float, location2: float):
     
     log.debug(f"Team {name} is at {location1}, {location2}")
     return "okk"
+
+@api.route("/default_admin/<name>")
+def default_admin(name: str):
+
+    if not is_game_admin():
+        abort(403)
+    
+    if name not in core.teams["admins"].admins:
+        core.teams["admins"].admins.append(name)
+    else:
+        core.teams["admins"].admins.remove(name)
+    return "ok"

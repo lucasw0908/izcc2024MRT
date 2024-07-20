@@ -70,6 +70,15 @@
                 <td><button type="submit" class="submit-button" onclick="join_team()">確認</button></td>
             </tr>
         </table>
+    
+    <h3>退出隊伍</h3>
+        <table class="input-table">
+            <tr>
+                <td class="label"><label for="points">名稱:</label></td>
+                <td><input type="text" id="leave_team_name" class="input-field"></td>
+                <td><button type="submit" class="submit-button" onclick="leave_team()">確認</button></td>
+            </tr>
+        </table>
 
     <h3>隊伍移動</h3>
         <table>
@@ -112,6 +121,11 @@
             const player_name = document.getElementById('join_team_name').value;
             const admin = document.getElementById('join_team-checkbox').checked
             fetch(`http://localhost:8080/api/join_team/${team}/${player_name}/${admin}`)
+        }
+
+        function leave_team(){
+            const player_name = document.getElementById("leave_team_name").value;
+            fetch(`http://localhost:8080/api/leave_team/${player_name}`)
         }
 
         function move_to_location(){

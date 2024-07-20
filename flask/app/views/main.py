@@ -32,19 +32,19 @@ def index():
 
 @main.route("/admin")
 def admin():
-    # if "token" in session:
-    #     bearer_client = APIClient(session.get("token"), bearer=True)
-    #     current_user = bearer_client.users.get_current_user()
-    #     team, is_admin = core.check_player(current_user.username)
+    if "token" in session:
+        bearer_client = APIClient(session.get("token"), bearer=True)
+        current_user = bearer_client.users.get_current_user()
+        team, is_admin = core.check_player(current_user.username)
     
-    #     if is_admin:
-    #         return render_template("admin.html", current_user=current_user.username, team=team)
-    # return redirect("/")
+        if is_admin:
+            return render_template("admin.html", current_user=current_user.username, team=team)
+    return redirect("/")
     
-    bearer_client = APIClient(session.get("token"), bearer=True)
-    current_user = bearer_client.users.get_current_user()
-    team, _ = core.check_player(current_user.username)
-    return render_template("/admin.html" , current_user=current_user.username, team=team)
+    # bearer_client = APIClient(session.get("token"), bearer=True)
+    # current_user = bearer_client.users.get_current_user()
+    # team, _ = core.check_player(current_user.username)
+    # return render_template("/admin.html" , current_user=current_user.username, team=team)
 
 
 @main.route("/download_graph")
