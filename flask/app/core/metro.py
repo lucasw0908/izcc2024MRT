@@ -151,7 +151,7 @@ class MetroSystem:
                 if current_station_name in self.station_info:
                     station.update(self.station_info[current_station_name])
                 else:
-                    station.update({"Mission": "無", "Exit": "不限", "Difficult": 0})
+                    station.update({"Mission": "無", "Exit": "不限", "Difficult": 0, "Tips": "無"})
                 
                 setattr(self, station["StationName"]["Zh_tw"], Station(station))
                 
