@@ -111,6 +111,23 @@ def join_team(name: str, player_name: str, is_admin: bool):
         core.teams[name].players.append(player_name)
         
     return "Player joined team."
+
+
+@api.route("/leave_team/<player_name>")
+def leave_team(player_name: str):
+    
+    if not is_player():
+        abort(403)
+        
+    for team in core.teams.values():
+        if player_name in team.players:
+            team.players.remove(player_name)
+            return "Player left team."
+        if player_name in team.admins:
+            team.admins.remove(player_name)
+            return "Player left team."
+            
+    return "Player not in any team."
     
     
 @api.route("/move/<name>")
@@ -201,8 +218,9 @@ def finish_mission(name: str):
         return "Mission finished."
     return card
 
-@api.route("/GPSLocation/<name>/<location>")
-def GPSLocation(name: str, location: tuple):
+
+@api.route("/GPSLocation/<name>/<location1>/<location2>")
+def GPSLocation(name: str, location1: float, location2: float):
     
     if not is_admin():
         abort(403)
@@ -213,5 +231,5 @@ def GPSLocation(name: str, location: tuple):
     if core.teams[name].is_imprisoned:
         return "Team is imprisoned."
     
-    log.log(logging.INFO, f"Team {name} is at {location}")
+    log.debug(f"Team {name} is at {location1}, {location2}")
     return "okk"
