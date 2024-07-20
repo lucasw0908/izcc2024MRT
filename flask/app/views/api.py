@@ -82,6 +82,9 @@ def create_team(name: str, location: str):
     if not is_admin():
         abort(403)
         
+    if core.metro.find_station(location) is None:
+        return "Location does not exist."
+        
     core.create_team(name=name, location=location)
     return "Team created."
     
