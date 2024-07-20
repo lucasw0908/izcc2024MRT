@@ -23,6 +23,9 @@ def stations():
     for station_name in graph.keys():
         station = core.metro.find_station(station_name)
         data.append(station.__dict__)
+        if station.hidden:
+            data[-1]["mission"] = "已隱藏"
+            data[-1]["tips"] = "已隱藏"
     
     return jsonify(data)
 
@@ -34,7 +37,12 @@ def station(name: str):
     if station is None:
         return jsonify({})
     
-    return jsonify(station.__dict__)
+    data = station.__dict__
+    if station.hidden:
+        data["mission"] = "已隱藏"
+        data["tips"] = "已隱藏"
+        
+    return jsonify(data)
 
 
 @api.route("/collapse_status")

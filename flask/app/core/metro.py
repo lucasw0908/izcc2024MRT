@@ -71,6 +71,7 @@ class Station:
         self.point: int
         self.is_special: bool
         self.is_prison: bool
+        self.hidden: bool
         
         self.team: str = None
         
@@ -88,6 +89,8 @@ class Station:
             "is_prison": station["Mission"] == "監獄",
             "point": {1: 20, 2: 35, 3: 50}.get(station["Difficult"], 0)
         })
+        
+        self.hidden = self.is_special or self.is_prison
     
     
     def __str__(self) -> str:

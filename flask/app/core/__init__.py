@@ -208,6 +208,7 @@ class Core:
             self.teams[name].current_mission_finished = False
             
         self.teams[name].current_card = None
+        self.metro.find_station(location).hidden = False
         
         return combos, point
         
