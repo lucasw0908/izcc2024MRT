@@ -51,6 +51,7 @@ const params = {
     times : 0,
     desiredResult: 5,
     throw: throwMe,
+    result: ChoiceAPI,
 };
 
 function throwMe() {
@@ -440,10 +441,12 @@ function throwDice() {
 
 function createControls() {
     const gui = new GUI();
-    const btnControl = gui
-        .add(params, "throw")
-        .name("throw!")
+
+    const btnControl = gui.add(params, "throw").name("throw!")
     throwBtn = btnControl.domElement.querySelector("button > .name");
+
+    const resultBtnControl = gui.add(params, "result").name("result");
+    const resultBtn = resultBtnControl.domElement.querySelector("button > .name");
 }
 
 function connectAPI() {
@@ -467,43 +470,83 @@ function connectAPI() {
 document.addEventListener("DOMContentLoaded", connectAPI());
 
 function ChoiceAPI() {
-    fetch("http://localhost:8080/api/move/{{team}}")
-    .then(response => response.json())
+    fetch("http://localhost:8080/api/move/{{team}}").then(response => response.json())
     .then(data => {
         const choices = data.choice;
         let choiceHtml = ''; // 初始化 choiceHtml 變量
-
-        // Generate HTML for each choice
-        choices.forEach(choice => {
-            choiceHtml += `<button class="choice-button">${choice}</button>`;
+        const colors = ["red", "green", "blue", "yellow"]; // 定義四種顏色
+        // 生成每個選項的 HTML
+        choices.forEach((choice, index) => {
+            const colorClass = colors[index % colors.length]; // 按順序分配顏色
+            choiceHtml += `<button class="choice-button ${colorClass}">${choice}</button>`;
         });
-
-        // If there are less than 4 choices, add placeholders for the remaining buttons
+        // 如果選項少於 4 個，為剩餘的按鈕添加佔位符
         for (let i = choices.length; i < 4; i++) {
-            choiceHtml += `<button class="choice-button disabled">X</button>`;
+            const colorClass = colors[i % colors.length]; 
+            choiceHtml += `<button class="choice-button disabled ${colorClass}">X</button>`;
         }
 
         Swal.fire({
             title: '選擇下一站',
-            html: choiceHtml, // 將生成的 HTML 填入 Swal 的 html 屬性中
+            html: choiceHtml, 
             confirmButtonText: "關閉",
         });
 
-        // Optionally, add event listeners for the choice buttons
         document.querySelectorAll('.choice-button:not(.disabled)').forEach(button => {
             button.addEventListener('click', (event) => {
-                console.log('Button clicked:', event.target.textContent);
-                // Handle button click event
+                let location = event.target.textContent;
+                fetch(`http://localhost:8080/api/move_to_location/{{team}}/${location}`)
             });
         });
     })
-    .catch(error => {
-        console.error('Error fetching data:', error);
-        // Handle errors
-    });
+    .catch(error => {console.error(error);});
 }
 
-
     </script>
+    <style>
+        .choice-button {
+    padding: 12px 20px;
+    margin: 5px;
+    border: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.choice-button.red {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+}
+
+.choice-button.green {
+    background: linear-gradient(135deg, #00b09b, #96c93d);
+}
+
+.choice-button.blue {
+    background: linear-gradient(135deg, #2193b0, #6dd5ed);
+}
+
+.choice-button.yellow {
+    background: linear-gradient(135deg, #fceabb, #f8b500);
+}
+
+.choice-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.choice-button.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.choice-button:not(.disabled):active {
+    transform: scale(0.95);
+}
+    </style>
 </body>
 </html>
