@@ -195,7 +195,7 @@ class Core:
                 self.teams[name].combos.append(combo["name"])
                 combos.append(combo["name"])
         
-        if station.team != name:
+        if station.team is not None and station.team != name:
             self.teams[name].point -= station.point
             self.teams[station.team].point += station.point
             
