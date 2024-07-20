@@ -22,3 +22,16 @@ def is_player() -> bool:
         return output is not None
     else:
         return False
+    
+
+def is_game_admin() -> bool:
+    if "token" in session:
+        bearer_client = APIClient(session.get("token"), bearer=True)
+        current_user = bearer_client.users.get_current_user()
+        from ..game_config import ADMINS
+        if current_user.username in ADMINS:
+            return True
+        else:
+            return False
+    else:
+        return False
