@@ -175,6 +175,7 @@
 
         
         <h1>各小隊分數</h1>
+        <h2 id="is_imprisoned_label"></h2>
         <div class="team_point">
             <div class="scoreboard">
                 <div class="team" id="team0" data-score="0">
@@ -218,6 +219,7 @@
             showCollapse_time();
             showPoint();
             showlocate();
+            showImprisoned();
         });
 
 
@@ -226,6 +228,7 @@
         setInterval(showCollapse_time,10000);
         setInterval(showPoint, 10000);
         setInterval(showlocate, 10000);
+        setInterval(showImprisoned, 10000);
         
 
         //area locate
@@ -378,8 +381,16 @@
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
-        
+
+        function showImprisoned(){
+            fetch('http://localhost:8080/api/team/{{team}}')
+                .then(response => response.json())
+                .then(data => {
+                    if(data.is_imprisoned){
+                        document.getElementById('is_imprisoned_label').textContent = `監獄停留時間 : ${data.imprisoned_time}`;
+                    }
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
     </script>
-    
-    
 </html>
