@@ -22,7 +22,6 @@ class Core:
         self.teams: dict[str, Team] = {}
         self.collapse = Collapse()
         self.collapse_scheduler = BackgroundScheduler()
-        self.prison_scheduler = BackgroundScheduler()
         
         self.create_team("admins", admins=ADMINS)
         
@@ -38,13 +37,13 @@ class Core:
     def _collapse(self) -> None:
         self.collapse.warning = False
         for index, collapse in enumerate(COLLAPSE):
-            if collapse["status"] == self.collapse_status:
+            if collapse["status"] == self.collapse.status:
                 if collapse["final"]:
                     for station in self.metro.graph.keys():
                         if station == END_STATION:
                             continue
                         COLLAPSE_LIST.append(station)
-                    self.collapse_status = 0
+                    self.collapse.status = 0
                     return None
                 
                 for station in collapse["stations"]:
@@ -202,8 +201,7 @@ class Core:
             
         if station.is_prison:
             self.teams[name].is_imprisoned = True
-            self.prison_scheduler.add_job(self._release, "date", run_date=datetime.now()+timedelta(minutes=5), args=[name])
-            self.prison_scheduler.start()
+            self.teams[name].release_time = datetime.now() + timedelta(minutes=3)
         else:
             self.teams[name].current_mission_finished = False
             
