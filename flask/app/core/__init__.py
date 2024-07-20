@@ -32,7 +32,7 @@ class Core:
             if minute >= 5: minute -= 5
             else: hour -= 1; minute += 55
             self.collapse_scheduler.add_job(self._collapse_warning, "date", run_date=datetime.now().replace(hour=hour, minute=minute))
-            self.collapse_scheduler.start()
+        self.collapse_scheduler.start()
     
     
     def _collapse(self) -> None:
