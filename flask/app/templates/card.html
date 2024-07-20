@@ -84,7 +84,7 @@
             border-radius: 5px;
         }
         .element-card .front-facing {
-            background-image: url(../static/img/cards/card0.jpg); /* 使用遊戲王卡圖片 */
+            background-image: url('../static/img/cards/card0.jpg'); /* 使用遊戲王卡圖片 */
             background-size: cover;
             background-position: center;
         }
@@ -96,15 +96,15 @@
         }
 
         .arrow {
-    position: absolute;
-    bottom: 20px;
-    left: 35vw;
-    transform: translateX(-50%);
-    font-size: 100px; /* 調整箭頭字體大小 */
-    line-height: 1; /* 調整行高 */
-    color: rgb(255, 255, 255);
-    animation: bounce 2s infinite;
-}
+            position: absolute;
+            bottom: 20px;
+            left: 35vw;
+            transform: translateX(-50%);
+            font-size: 100px; /* 調整箭頭字體大小 */
+            line-height: 1; /* 調整行高 */
+            color: rgb(255, 255, 255);
+            animation: bounce 2s infinite;
+        }
         @keyframes bounce {
             0%, 100% {
                 transform: translateY(0);
@@ -145,8 +145,8 @@
             transform: translateY(-2px);
         }
 
-        a{
-            text-decoration:none;
+        a {
+            text-decoration: none;
         }
     </style>
 </head>
@@ -161,7 +161,7 @@
     </a>
     <div class="container">
         <div class="element-card">
-            <div class="front-facing"></div>
+            <div class="front-facing" id="front-facing"></div>
             <div class="back-facing"></div>
         </div>
     </div>
@@ -176,11 +176,18 @@
             var elementCard = document.querySelector('.element-card');
             var arrow = document.querySelector('.arrow');
             var startY, endY;
-            card = get("card")
-            if (card == Null) {
-                card = "card0"
+
+            // 示例獲取卡片名稱的函數，你需要根據實際情況修改此處
+            function getCardName() {
+                // 在這裡替換為獲取卡片名稱的實際邏輯
+                return "card0";
             }
-            document.getElementById("front-facing").style.backgroundImage = url(`../static/img/cards/${card}.jpg`);
+
+            var card = getCardName();
+            if (card === null) {
+                card = "card0";
+            }
+            document.getElementById("front-facing").style.backgroundImage = `url('../static/img/cards/${card}.jpg')`;
 
             document.addEventListener('touchstart', function(e) {
                 startY = e.touches[0].clientY;

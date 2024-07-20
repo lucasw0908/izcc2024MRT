@@ -187,13 +187,23 @@
         function finish_misson(){
             fetch(`http://localhost:8080/api/finish_mission/{{team}}`).then(response => response.text())
             .then(response => {
-                console.log(response);
                 if(response==="Mission already finished." || response === "Mission finished."){
                     Swal.fire({
                         title: '回傳訊息',
                         icon: "success",
                         text: response,
                         confirmButtonText: 'OK'
+                    });
+                }
+                else if(response.includes('card')){
+                    Swal.fire({
+                        title: '抽卡時間',
+                        icon: "info",
+                        text: "你已完成特殊站任務，請去抽卡",
+                        confirmButtonText: '前往',
+                        willClose: () => {
+                            window.location.href = '/card';
+                        }
                     });
                 }
                 else{
