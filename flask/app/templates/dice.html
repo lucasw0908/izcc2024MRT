@@ -47,13 +47,19 @@ const params = {
     friction: .1,
 
     // ux
-    desiredResult: 7,
+    times : 0,
+    desiredResult: 5,
     throw: throwMe,
-    result: ChoiceAPI,
 };
 
 function throwMe() {
     simulationOn = true;
+    if(params.times == 0) {
+        for(var i = 0; i < 1; i++) {
+            addDiceEvents(diceArray[i], i);
+        }
+    }
+    params.times += 1;
     throwDice();
 }
 
@@ -70,12 +76,11 @@ createFloor();
 diceMesh = createDiceMesh();
 for (let i = 0; i < 1; i++) {
     diceArray.push(createDice());
-    addDiceEvents(diceArray[i], i);
 }
 
 createControls();
 
-throwMe();
+// throwMe();
 render();
 
 window.addEventListener("resize", updateSceneSize);
@@ -357,13 +362,12 @@ function addDiceEvents(dice, diceIdx) {
                 const thisDiceRes = currentResult[diceIdx];
                 const anotherDiceRes = currentResult[diceIdx ? 0 : 1];
                 const currentSum = currentResult.reduce((a, v) => a + v, 0);
-                console.log('diceIdx = ', diceIdx, 'currentResult =', currentResult[0], currentResult[1], ', currentSum =', currentSum);
 
-                if (false) {
-                if (anotherDiceRes === 0 && thisDiceRes >= params.desiredResult) {
-                    // throw again as the first one is already landed bad
-                    throwDice();
-                } else if (anotherDiceRes !== 0) {
+                // if (anotherDiceRes === 0 && thisDiceRes >= params.desiredResult) {
+                //     // throw again as the first one is already landed bad
+                //     throwDice();
+                // } else if (anotherDiceRes !== 0) {
+                    console.log(currentSum);
                     if (params.desiredResult !== currentSum) {
                         // throw again until having a match
                         throwDice();
@@ -373,12 +377,9 @@ function addDiceEvents(dice, diceIdx) {
                         throwBtn.innerHTML = "throw!";
                         throwDice();
                     }
-                }
-                }
-                simulationOn = false;
-                throwBtn.innerHTML = "throw!";
-                throwDice();
+                // }
             }
+
         });
 
     })
@@ -438,17 +439,16 @@ function throwDice() {
 
 function createControls() {
     const gui = new GUI();
-
-    const btnControl = gui.add(params, "throw").name("throw!")
+    const btnControl = gui
+        .add(params, "throw")
+        .name("throw!")
     throwBtn = btnControl.domElement.querySelector("button > .name");
-
-    const resultBtnControl = gui.add(params, "result").name("result");
-    const resultBtn = resultBtnControl.domElement.querySelector("button > .name");
 }
 
 function connectAPI() {
+    console.log("connect");
     var name = document.getElementById("team").innerHTML;
-    var targetUrl = "https://" + window.location.host + "/move/" + name;
+    var targetUrl = "http://" + window.location.host + "/move/" + name;
     $.ajax({
         url: targetUrl,
         method: "GET",
@@ -462,6 +462,8 @@ function connectAPI() {
         }
     })
 }
+
+document.addEventListener("DOMContentLoaded", connectAPI());
 
 function ChoiceAPI() {
     fetch("http://localhost:8080/api/move/{{team}}")
