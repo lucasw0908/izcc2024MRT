@@ -122,6 +122,9 @@ def move(name: str):
     if core.teams[name].is_imprisoned:
         return "Team is imprisoned."
     
+    if not core.teams[name].current_mission_finished:
+        return "Mission not finished."
+    
     if core.teams[name].step == 0:
         core.teams[name].step = core.dice()
         
@@ -142,6 +145,9 @@ def move_to_location(name: str, location: str):
         
     if core.teams[name].is_imprisoned:
         return "Team is imprisoned."
+    
+    if not core.teams[name].current_mission_finished:
+        return "Mission not finished."
         
     if location not in core.teams[name].choice:
         return "Invalid location."
@@ -191,22 +197,3 @@ def finish_mission(name: str):
     if card is None:
         return "Mission finished."
     return card
-
-
-@api.route("/release/<name>")
-def release(name: str):
-    
-    if not is_admin():
-        abort(403)
-    
-    if name not in core.teams:
-        return "Team does not exist."
-    
-    if not core.teams[name].is_imprisoned:
-        return "Team is not imprisoned."
-    
-    if core.teams[name].is_imprisoned < datetime.now():
-        return "Team is still imprisoned."
-    
-    core.teams[name].is_imprisoned = False
-    return "Team released."

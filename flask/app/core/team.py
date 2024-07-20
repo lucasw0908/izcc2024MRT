@@ -1,3 +1,6 @@
+import timedelta
+from datetime import datetime
+
 from ..game_config import START_STATION
 
 class Team:
@@ -6,13 +9,14 @@ class Team:
         self.location = location if location is not None else START_STATION
         self.players = players
         self.admins = admins
-        self.point = 10
-        self.step = 0
+        
+        self.point: int = 10
+        self.step: int = 0
         
         self.current_mission_finished = True
-        self.current_card = None
+        self.current_card: str | None = None
         
-        self.release_time = 0
+        self.imprisoned_time: datetime = timedelta(minutes=0)
         self.is_imprisoned = False
         
         self.stations = []

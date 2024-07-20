@@ -22,6 +22,7 @@ class Core:
         self.teams: dict[str, Team] = {}
         self.collapse = Collapse()
         self.collapse_scheduler = BackgroundScheduler()
+        self.prison_scheduler = BackgroundScheduler()
         
         self.create_team("admins", admins=ADMINS)
         
@@ -32,6 +33,8 @@ class Core:
             else: hour -= 1; minute += 55
             self.collapse_scheduler.add_job(self._collapse_warning, "date", run_date=datetime.now().replace(hour=hour, minute=minute))
         self.collapse_scheduler.start()
+        
+        self.prison_scheduler.add_job(self._release, "interval", seconds=10)
     
     
     def _collapse(self) -> None:
@@ -58,8 +61,15 @@ class Core:
         self.socketio.emit("collapse_warning", self.collapse.next_time)
         
         
-    def _release(self, name: str) -> None:
-        self.teams[name].is_imprisoned = False
+    def _release(self) -> None:
+        for team in self.teams.values():
+            if not team.is_imprisoned:
+                continue
+            team.imprisoned_time -= timedelta(seconds=10)
+            if team.imprisoned_time <= 0:
+                team.is_imprisoned = False
+                team.imprisoned_time = timedelta(minutes=0)
+                self.socketio.emit("release", team.name)
                 
                 
     def init_socketio(self, socketio: SocketIO) -> None:
