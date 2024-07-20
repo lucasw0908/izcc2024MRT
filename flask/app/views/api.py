@@ -115,10 +115,13 @@ def move(name: str):
     if not is_player():
         abort(403)
         
-    step = core.dice()
-    
     if name not in core.teams:
         return "Team does not exist."
+        
+    if core.teams[name].is_imprisoned:
+        return "Team is imprisoned."
+        
+    step = core.dice()
         
     return jsonify({
         "step": step,
@@ -131,6 +134,12 @@ def move_to_location(name: str, location: str):
     
     if not is_admin():
         abort(403)
+        
+    if name not in core.teams:
+        return "Team does not exist."
+        
+    if core.teams[name].is_imprisoned:
+        return "Team is imprisoned."
         
     if location not in core.teams[name].choice:
         return "Invalid location."
@@ -168,6 +177,9 @@ def finish_mission(name: str):
     
     if name not in core.teams:
         return "Team does not exist."
+    
+    if core.teams[name].is_imprisoned:
+        return "Team is imprisoned."
     
     if core.teams[name].current_mission_finished:
         return "Mission already finished."
