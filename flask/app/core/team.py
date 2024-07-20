@@ -4,6 +4,7 @@ class Team:
     def __init__(self, name: str, players: list[str]=[], admins: list[str]=[], location: str | None=None) -> None:
         self.name = name
         self.location = location if location is not None else START_STATION
+        self.target_location = None
         self.players = players
         self.admins = admins
         

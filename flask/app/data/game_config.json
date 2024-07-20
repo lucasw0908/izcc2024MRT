@@ -9,6 +9,7 @@
                             "動物園"
                         ],
     "is_special": 0.3,
+    "distance": 100,
     "collapse": [
         {
             "status": 0,

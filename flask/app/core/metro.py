@@ -3,9 +3,10 @@ import random
 import requests
 import logging
 import os
+from typing import Any
 
 from ..config import BASEDIR
-from ..game_config import DELETE_STATIONS, IS_SPECIAL, API_URL_TP, API_URL_NTP
+from ..game_config import DELETE_STATIONS, IS_SPECIAL, API_URL_TP, API_URL_NTP, LOCATION_API_URL_TP, LOCATION_API_URL_NTP
 from ..data import load_data
 
 
@@ -55,6 +56,9 @@ class Station:
     is_prison: :type:`bool`
         If the station is a prison station.
         
+    geohash: :type:`str`
+        The geohash of the station.
+        
     team: :type:`str`
         which team owns the station.
               
@@ -68,9 +72,14 @@ class Station:
         self.name: str
         self.english_name: str
         self.distance: float
-        self.point: int
+        self.difficult: int
+        self.exit: str
+        self.mission: str
+        self.tips: str
         self.is_special: bool
         self.is_prison: bool
+        self.point: int
+        self.geohash: str
         self.hidden: bool
         
         self.team: str = None
@@ -87,7 +96,8 @@ class Station:
             "tips": str(station["Tips"]),
             "is_special": random.random() <= IS_SPECIAL,
             "is_prison": station["Mission"] == "監獄",
-            "point": {1: 20, 2: 35, 3: 50}.get(station["Difficult"], 0)
+            "point": {1: 20, 2: 35, 3: 50}.get(station["Difficult"], 0),
+            "geohash": str(station["geohash"]),
         })
         
         self.hidden = self.is_special or self.is_prison
@@ -111,11 +121,36 @@ class MetroSystem:
     
     def __init__(self) -> None:
         self.graph: dict[str, list] = {}
-        self.station_info = load_data("station_info")
+        self.station_info: dict[str, dict] = load_data("station_info")
+        self.station_location: dict[str, str] = {}
         self.is_loaded: bool = False
+        self._load_location(LOCATION_API_URL_TP)
+        self._load_location(LOCATION_API_URL_NTP)
         self._load(API_URL_TP)
         self._load(API_URL_NTP)
         self.is_loaded = True
+            
+            
+    def _load_location(self, url: str, save: bool=False) -> None:
+        
+        if self.station_location:
+            return None
+        
+        response: list[dict] = requests.get(url, headers=headers).json()
+        
+        if "message" in response:
+            log.error(response["message"])
+            response = load_data("station_location")
+                
+        if save:
+            with open(os.path.join(BASEDIR, "data", "station_location.json"), "r+", encoding="utf-8") as file:
+                data: list = json.load(file)
+                for station in response:
+                    if station not in data:
+                        data.append(station)
+                json.dump(data, file, ensure_ascii=False, indent=4)
+                
+        self.station_location = {sl["StationName"]["Zh_tw"]: sl["StationPosition"]["GeoHash"] for sl in response}
         
         
     def _load(self, url: str, save: bool=False) -> None:
@@ -123,10 +158,7 @@ class MetroSystem:
         if self.is_loaded:
             return None
         
-        response: list[dict] | None = requests.get(url, headers=headers).json()
-        
-        if response is None:
-            raise ConnectionError()
+        response: list[dict] = requests.get(url, headers=headers).json()
         
         if "message" in response:
             log.error(response["message"])
@@ -143,6 +175,7 @@ class MetroSystem:
         
         for line in response:
             for station in line["Stations"]:
+                station: dict[str, Any]
                 
                 current_station_name: str = station["StationName"]["Zh_tw"]
                 current_station_name.replace("_","/")
@@ -152,6 +185,8 @@ class MetroSystem:
                     station.update(self.station_info[current_station_name])
                 else:
                     station.update({"Mission": "無", "Exit": "不限", "Difficult": 0, "Tips": "無"})
+                    
+                station["geohash"] = self.station_location.get(current_station_name, None)
                 
                 setattr(self, station["StationName"]["Zh_tw"], Station(station))
                 

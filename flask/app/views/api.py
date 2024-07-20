@@ -1,6 +1,6 @@
+import pygeohash as pgh
 import logging
-from datetime import datetime
-from flask import abort, Blueprint, request, render_template, jsonify
+from flask import abort, Blueprint, jsonify
 
 from ..core import core
 from ..modules.checker import is_admin, is_player
@@ -213,10 +213,11 @@ def finish_mission(name: str):
     if core.teams[name].current_mission_finished:
         return "Mission already finished."
     
-    card = core.finish_mission(name=name)
-    if card is None:
-        return "Mission finished."
-    return card
+    if core.teams[name].target_location == core.teams[name].location:
+        card = core.finish_mission(name=name)
+        return "Mission finished." if card is None else card
+    
+    return "Location not reached."
 
 
 @api.route("/GPSLocation/<name>/<location1>/<location2>")
@@ -232,4 +233,5 @@ def GPSLocation(name: str, location1: float, location2: float):
         return "Team is imprisoned."
     
     log.debug(f"Team {name} is at {location1}, {location2}")
-    return "okk"
+    
+    return core.check_pos(name, pgh.encode(location1, location2))

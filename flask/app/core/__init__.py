@@ -1,12 +1,13 @@
+import pygeohash as pgh
 import logging
 import random
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
 from flask_socketio import SocketIO
 
-from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_LIST, END_STATION
+from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_LIST, END_STATION, DISTANCE
 from ..data import load_data
-from .metro import MetroSystem
+from .metro import MetroSystem, Station
 from .team import Team
 from .collapse import Collapse
 
@@ -98,7 +99,7 @@ class Core:
         """
         
         if name in self.teams.keys():
-            log.error(f"Team {name} already exists.")
+            log.warning(f"Team {name} already exists.")
             return None
             
         self.teams[name] = Team(name, players, admins, location)
@@ -189,10 +190,14 @@ class Core:
             The point to add.
         """
         
+        if name not in self.teams.keys():
+            log.warning(f"Team {name} does not exist.")
+            return None
+        
         point = 0
         combos = []
         station = self.metro.find_station(location)
-        self.teams[name].location = station.name
+        self.teams[name].target_location = station.name
         self.teams[name].stations.append(station.name)
         
         for combo in load_data("combo"):
@@ -236,6 +241,10 @@ class Core:
             The card to draw.
         """
         
+        if name not in self.teams.keys():
+            log.warning(f"Team {name} does not exist.")
+            return None
+        
         if self.teams[name].current_mission_finished:
             return None
         
@@ -276,6 +285,45 @@ class Core:
         """
         
         return random.randint(1, faces)
+    
+    
+    def check_pos(self, name: str, geohash: str) -> dict[str, str]:
+        """
+        Check the position of the team.
+        
+        Parameters
+        ----------
+        name: :type:`str`
+            The name of the team.
+            
+        geohash: :type:`str`
+            The geohash of the position.
+        """
+        
+        if name not in self.teams.keys():
+            log.warning(f"Team {name} does not exist.")
+            return None
+        
+        if self.teams[name].is_imprisoned:
+            return None
+        
+        data = {
+            "location": None,
+            "chioce": {},
+        }
+        
+        for station_name, station_geohash in self.metro.station_location:
+            dis = pgh.geohash_approximate_distance(geohash, station_geohash)
+            if dis <= DISTANCE:
+                
+                if data["location"] is None or dis < data["distance"]:
+                    data["location"] = station_name
+                    self.teams[name].location = station_name
+                    
+            if station_name in self.teams[name].choice:
+                data[station_name] = station_geohash
+        
+        return data
     
     
 core = Core()
