@@ -200,3 +200,15 @@ def finish_mission(name: str):
     if card is None:
         return "Mission finished."
     return card
+
+@api.route("/GPSLocation/<name>/<location>")
+def GPSLocation(name: str, location: tuple):
+    
+    if name not in core.teams:
+        return "Team does not exist."
+        
+    if core.teams[name].is_imprisoned:
+        return "Team is imprisoned."
+    
+    log.log(logging.INFO, f"Team {name} is at {location}")
+    return "okk"
