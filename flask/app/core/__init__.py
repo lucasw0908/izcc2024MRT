@@ -1,6 +1,5 @@
 import logging
 import random
-from timedelta import Timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
 from flask_socketio import SocketIO
@@ -34,7 +33,7 @@ class Core:
             self.collapse_scheduler.add_job(self._collapse_warning, "date", run_date=datetime.now().replace(hour=hour, minute=minute))
         self.collapse_scheduler.start()
         
-        self.prison_scheduler.add_job(self._release, "interval", seconds=10)
+        self.prison_scheduler.add_job(self._release, "interval", minutes=1)
     
     
     def _collapse(self) -> None:
@@ -65,10 +64,10 @@ class Core:
         for team in self.teams.values():
             if not team.is_imprisoned:
                 continue
-            team.imprisoned_time -= Timedelta(seconds=10)
+            team.imprisoned_time -= 1
             if team.imprisoned_time <= 0:
                 team.is_imprisoned = False
-                team.imprisoned_time = Timedelta(minutes=0)
+                team.imprisoned_time = 0
                 self.socketio.emit("release", team.name)
                 
                 
@@ -211,7 +210,7 @@ class Core:
             
         if station.is_prison:
             self.teams[name].is_imprisoned = True
-            self.teams[name].release_time = datetime.now() + Timedelta(minutes=3)
+            self.teams[name].imprisoned_time = datetime.now().minute + 3
         else:
             self.teams[name].current_mission_finished = False
             
