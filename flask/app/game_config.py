@@ -12,5 +12,7 @@ DELETE_STATIONS = GAME_CONFIG["delete_stations"]
 IS_SPECIAL = GAME_CONFIG["is_special"]
 COLLAPSE = GAME_CONFIG["collapse"]
 COLLAPSE_LIST = []
-API_URL_TP = r"https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/StationOfLine/TRTC?%24top=10000&%24format=JSON"
-API_URL_NTP = r"https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/StationOfLine/NTMC?%24top=10000&%24format=JSON"
+API_URL_TP = r"https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/StationOfLine/TRTC?%24top=10000&%24format=JSON" # 北捷站點資料
+#https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/Station/TRTC?%24top=10000&%24format=JSON 北捷站點位置
+API_URL_NTP = r"https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/StationOfLine/NTMC?%24top=10000&%24format=JSON" # 環狀線站點資料
+#https://tdx.transportdata.tw/api/basic/v2/Rail/Metro/Station/NTMC?%24top=10000&%24format=JSON 環狀線站點位置
