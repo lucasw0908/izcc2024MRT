@@ -7,7 +7,7 @@ class Team:
         self.players = players
         self.admins = admins
         self.point = 10
-        self.steps = 0
+        self.step = 0
         self.current_mission_finished = True
         self.current_card = None
         self.is_imprisoned = False

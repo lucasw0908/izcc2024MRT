@@ -120,12 +120,13 @@ def move(name: str):
         
     if core.teams[name].is_imprisoned:
         return "Team is imprisoned."
-        
-    step = core.dice()
+    
+    if core.teams[name].step == 0:
+        core.teams[name].step = core.dice()
         
     return jsonify({
-        "step": step,
-        "choice": core.move(name=name, step=step)
+        "step": core.teams[name].step,
+        "choice": core.move(name=name, step=core.teams[name].step)
     })
 
 
@@ -145,6 +146,7 @@ def move_to_location(name: str, location: str):
         return "Invalid location."
     
     core.teams[name].choice = []
+    core.teams[name].step = 0
         
     return jsonify(core.move_to_location(name=name, location=location))
 
