@@ -34,7 +34,7 @@ class Core:
         self.collapse_scheduler.start()
         
         self.prison_scheduler.add_job(self._release, "interval", minutes=1)
-self.prison_scheduler.start()
+        self.prison_scheduler.start()
     
     
     def _collapse(self) -> None:
