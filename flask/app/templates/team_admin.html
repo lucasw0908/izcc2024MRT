@@ -158,7 +158,7 @@
                 </button>
             </a>
 
-            <button class="button" onclick="mission_label(),finish_misson();">
+            <button class="button" onclick="mission_label(),finish_misson(); return false;">
                   任務完成<i class="bi bi-check-lg"></i>
             </button>
 
@@ -226,9 +226,9 @@
                 window.location.href = '/dice';
             } else {
                 Swal.fire({
-                        title: '錯誤',
-                        icon: "error",
-                        text: "請先完成任務",
+                        title: '請先完成任務',
+                        icon: "warning",
+                        text: "完成任務後再來按骰子",
                         confirmButtonText: 'Close'
                     });
             }

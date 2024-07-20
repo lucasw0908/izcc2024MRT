@@ -450,11 +450,7 @@ function createControls() {
 
 function connectAPI() {
     fetch("http://localhost:8080/api/move/{{team}}").then(response => response.json())
-    .then(data => {
-    console.log(data);
-    params.desiredResult = data.step;
-    })
-        
+    .then(data => {params.desiredResult = data.step;})
 }
 
 document.addEventListener("DOMContentLoaded", connectAPI());
@@ -480,15 +476,17 @@ function ChoiceAPI() {
 
             document.querySelectorAll('.choice-button:not(.disabled)').forEach(button => {
                 button.addEventListener('click', (event) => {
-                    let location = event.target.textContent;
-                    fetch(`http://localhost:8080/api/move_to_location/{{team}}/${location}`)
-                        .then(response => response.text())
-                        .then(data => {
+                    let newLocation = event.target.textContent;
+                    Promise.all([
+                        fetch(`http://localhost:8080/api/move_to_location/{{team}}/${newLocation}`).then(response => response.text()),
+                        fetch(`http://localhost:8080/api/team/{{team}}`).then(response => response.json())
+                    ])
+                    .then(([data,team_data]) => {
                             if(data){
                                 Swal.fire({
-                                    title: `你們即將前往 ${location}`,
+                                    title: `${team_data.location} ⭢ ${newLocation}`,
                                     icon: 'success',
-                                    text: `分數增減 : ${data}`, 
+                                    text: `分數增減 : ${data[1]}`, 
                                     confirmButtonText: "關閉",
                                     didClose: () => {
                                         window.location.href = '/team_admin';
