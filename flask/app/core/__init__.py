@@ -243,7 +243,7 @@ class Core:
         
         if station.team is None:
             self.teams[name].point += 30
-            self.metro.__dict__[station].team = name
+            self.metro.__dict__[station.name].team = name
             
         elif station.team != name:
             match station.point:
