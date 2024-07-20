@@ -7,6 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     
     <style>
         html, body {
@@ -20,6 +22,11 @@
             font-family: 'helvetica', sans-serif;
             font-size: 16px;
             transform: translate3d(0, 0, 0);
+            overflow: hidden;
+        }
+
+        /* 當 SweetAlert2 彈窗打開時，禁用滾動 */
+        body.modal-open {
             overflow: hidden;
         }
 
@@ -41,8 +48,8 @@
 
         .element-card {
             position: relative;
-            width: 300px; /* 使用百分比調整卡片寬度 */
-            height: 450px; /* 使用百分比調整卡片高度 */
+            width: 300px;
+            height: 450px;
             transform-style: preserve-3d;
             transform: rotateY(0deg) translateX(0px) translateY(1000px);
             transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -84,13 +91,13 @@
             border-radius: 5px;
         }
         .element-card .front-facing {
-            background-image: url('../static/img/cards/card0.jpg'); /* 使用遊戲王卡圖片 */
+            background-image: url(../static/img/cards/card0.jpg);
             background-size: cover;
             background-position: center;
         }
         .element-card .back-facing {
             transform: rotateY(180deg);
-            background-image: url('https://memeprod.sgp1.digitaloceanspaces.com/user-resource/71874e05c6cce6d6effe02a1627829e3.png'); /* 使用遊戲王卡圖片 */
+            background-image: url('https://memeprod.sgp1.digitaloceanspaces.com/user-resource/71874e05c6cce6d6effe02a1627829e3.png');
             background-size: cover;
             background-position: center;
         }
@@ -100,8 +107,8 @@
             bottom: 20px;
             left: 35vw;
             transform: translateX(-50%);
-            font-size: 100px; /* 調整箭頭字體大小 */
-            line-height: 1; /* 調整行高 */
+            font-size: 100px;
+            line-height: 1;
             color: rgb(255, 255, 255);
             animation: bounce 2s infinite;
         }
@@ -148,6 +155,7 @@
         a {
             text-decoration: none;
         }
+
     </style>
 </head>
 <body>
@@ -166,8 +174,8 @@
         </div>
     </div>
     <div class="arrow">
-        <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16"> 
-            <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l4.146 4.147a.5.5 0 0 0 .708-.708l-5-5a.5.5 0 0 0-.708 0l-5 5a.5.5 0 1 0 .708.708L7.5 2.707V14.5A.5.5 0 0 0 8 15z"/>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up" viewBox="0 0 16 16">
+            <path d="M3.204 11h9.592L8 5.519zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659"/>
         </svg>
     </div>
 
@@ -177,17 +185,31 @@
             var arrow = document.querySelector('.arrow');
             var startY, endY;
 
-            // 示例獲取卡片名稱的函數，你需要根據實際情況修改此處
             function getCardName() {
-                // 在這裡替換為獲取卡片名稱的實際邏輯
-                return "card0";
+                return fetch(`http://localhost:8080/api/team/{{team}}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        return data.current_card;
+                    });
             }
 
-            var card = getCardName();
-            if (card === null) {
-                card = "card0";
-            }
-            document.getElementById("front-facing").style.backgroundImage = `url('../static/img/cards/${card}.jpg')`;
+            getCardName().then(card => {
+                if (card === null) {
+                    document.body.classList.add('modal-open');
+                    Swal.fire({
+                        title: `你沒有卡片可以抽`,
+                        icon: 'warning',
+                        text: "回去回去",
+                        confirmButtonText: "關閉",
+                        didClose: () => {
+                            document.body.classList.remove('modal-open');
+                            window.location.href = '/team_admin';
+                        }
+                    });
+                } else {
+                    document.getElementById("front-facing").style.backgroundImage = `url('../static/img/cards/${card}.jpg')`;
+                }
+            });
 
             document.addEventListener('touchstart', function(e) {
                 startY = e.touches[0].clientY;
