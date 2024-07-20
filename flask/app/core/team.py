@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from ..game_config import START_STATION
 
 class Team:
