@@ -146,8 +146,8 @@
         <h2 id="mission_label"></h2>
 
         <div class="link">
-            <a href="/dice">
-                <button class="button" onclick="mission_label()">
+            <a id="dice-link">
+                <button class="button" onclick="mission_label(),missionAPI(); return false;">
                     骰子<i class="bi bi-dice-6-fill"></i>
                 </button>
             </a>
@@ -184,7 +184,6 @@
         }
 
 
-
         function finish_misson(){
             fetch(`http://localhost:8080/api/finish_mission/{{team}}`).then(response => response.text())
             .then(response => {
@@ -202,10 +201,28 @@
                         title: '回傳訊息',
                         icon: "error",
                         text: response,
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'Close'
                     });
                 }
             })
         }
+
+
+        function missionAPI() {
+        fetch('http://localhost:8080/api/team/{{team}}')
+        .then(response => response.json())
+        .then(data => {
+            if (data.current_mission_finished) {
+                window.location.href = '/dice';
+            } else {
+                Swal.fire({
+                        title: '錯誤',
+                        icon: "error",
+                        text: "請先完成任務",
+                        confirmButtonText: 'Close'
+                    });
+            }
+        })
+}
     </script>
 </html>

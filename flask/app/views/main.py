@@ -92,7 +92,5 @@ def dice():
         bearer_client = APIClient(session.get("token"), bearer=True)
         current_user = bearer_client.users.get_current_user()
         team, _ = core.check_player(current_user.username)
-        if not core.teams[team.name].current_mission_finished:
-            return redirect("/team_admin")
         return render_template("dice.html", current_user=current_user.username, team=team, graph=core.metro.graph)
     return redirect("/login")
