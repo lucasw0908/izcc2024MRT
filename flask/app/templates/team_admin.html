@@ -162,11 +162,8 @@
                   任務完成<i class="bi bi-check-lg"></i>
             </button>
 
-       
-          
     </body>
     <script>
-
         //ready
         document.addEventListener("DOMContentLoaded", () => {
             mission_label();
@@ -181,7 +178,7 @@
                 document.getElementById('mission_label').textContent = "目前狀態 : 任務已完成 請按骰子";
             }
             else{
-                document.getElementById('mission_label').textContent = "目前狀態 : 請完成任務 並按下完成按鈕";
+                document.getElementById('mission_label').textContent = "目前狀態 : 任務進行中 請按任務完成";
             }
             })
         }
@@ -189,29 +186,26 @@
 
 
         function finish_misson(){
-            fetch(`http://localhost:8080/api/finish_mission/{{team}}`)
+            fetch(`http://localhost:8080/api/finish_mission/{{team}}`).then(response => response.text())
             .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok ' + response.statusText);
-                    }
-                    return response.text();  // Assuming the server returns a plain text response
-                })
-                .then(data => {
+                console.log(response);
+                if(response==="Mission already finished." || response === "Mission finished."){
                     Swal.fire({
-                        title: 'Success',
-                        text: data,
-                        icon: 'success',
+                        title: '回傳訊息',
+                        icon: "success",
+                        text: response,
                         confirmButtonText: 'OK'
                     });
-                })
-                .catch(error => {
+                }
+                else{
                     Swal.fire({
-                        title: 'Error',
-                        text: 'Error: ' + error.message,
-                        icon: 'error',
+                        title: '回傳訊息',
+                        icon: "error",
+                        text: response,
                         confirmButtonText: 'OK'
                     });
-                });
+                }
+            })
         }
     </script>
 </html>
