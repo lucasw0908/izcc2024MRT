@@ -1,6 +1,6 @@
 import logging
 import random
-import timedelta
+from timedelta import Timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
 from flask_socketio import SocketIO
@@ -65,10 +65,10 @@ class Core:
         for team in self.teams.values():
             if not team.is_imprisoned:
                 continue
-            team.imprisoned_time -= timedelta(seconds=10)
+            team.imprisoned_time -= Timedelta(seconds=10)
             if team.imprisoned_time <= 0:
                 team.is_imprisoned = False
-                team.imprisoned_time = timedelta(minutes=0)
+                team.imprisoned_time = Timedelta(minutes=0)
                 self.socketio.emit("release", team.name)
                 
                 
@@ -211,7 +211,7 @@ class Core:
             
         if station.is_prison:
             self.teams[name].is_imprisoned = True
-            self.teams[name].release_time = datetime.now() + timedelta(minutes=3)
+            self.teams[name].release_time = datetime.now() + Timedelta(minutes=3)
         else:
             self.teams[name].current_mission_finished = False
             

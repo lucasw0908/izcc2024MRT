@@ -1,4 +1,4 @@
-import timedelta
+from timedelta import Timedelta
 from datetime import datetime
 
 from ..game_config import START_STATION
@@ -16,7 +16,7 @@ class Team:
         self.current_mission_finished = True
         self.current_card: str | None = None
         
-        self.imprisoned_time: datetime = timedelta(minutes=0)
+        self.imprisoned_time: datetime = Timedelta(minutes=0)
         self.is_imprisoned = False
         
         self.stations = []
