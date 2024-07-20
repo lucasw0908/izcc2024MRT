@@ -460,57 +460,54 @@ function connectAPI() {
 document.addEventListener("DOMContentLoaded", connectAPI());
 
 function ChoiceAPI() {
-    fetch("http://localhost:8080/api/move/{{team}}").then(response => response.json())
-    .then(data => {
-        const choices = data.choice;
-        let choiceHtml = ''; // 初始化 choiceHtml 變量
-        const colors = ["red", "green", "blue", "yellow"]; // 定義四種顏色
-        // 生成每個選項的 HTML
-        choices.forEach((choice, index) => {
-            const colorClass = colors[index % colors.length]; // 按順序分配顏色
-            choiceHtml += `<button class="choice-button ${colorClass}">${choice}</button>`;
-        });
-        // 如果選項少於 4 個，為剩餘的按鈕添加佔位符
-        for (let i = choices.length; i < 4; i++) {
-            const colorClass = colors[i % colors.length]; 
-            choiceHtml += `<button class="choice-button disabled ${colorClass}">X</button>`;
-        }
+    fetch("http://localhost:8080/api/move/{{team}}")
+        .then(response => response.json())
+        .then(data => {
+            const choices = data.choice;
+            let choiceHtml = ''; 
+            const colors = ["red", "green", "blue", "yellow", "purple", "orange", "pink", "cyan"]; // 添加更多顏色
 
-        Swal.fire({
-            title: '選擇下一站',
-            html: choiceHtml, 
-            confirmButtonText: "關閉",
-        });
+            choices.forEach((choice, index) => {
+                const colorClass = colors[index % colors.length]; 
+                choiceHtml += `<button class="choice-button ${colorClass}">${choice}</button>`;
+            });
 
-        document.querySelectorAll('.choice-button:not(.disabled)').forEach(button => {
-            button.addEventListener('click', (event) => {
-                let location = event.target.textContent;
-                fetch(`http://localhost:8080/api/move_to_location/{{team}}/${location}`).then(response => response.text())
-                .then(data => {
-                    if(data){
-                        Swal.fire({
-                            title: `你們即將前往 ${location}`,
-                            icon: 'success',
-                            text: `分數增減 : ${data[1]}`, 
-                            confirmButtonText: "關閉",
-                            willClose: () => {
-                                window.location.href = '/team_admin';
-                            }
+            Swal.fire({
+                title: '選擇下一站',
+                html: choiceHtml, 
+                confirmButtonText: "關閉",
+            });
+
+            document.querySelectorAll('.choice-button:not(.disabled)').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    let location = event.target.textContent;
+                    fetch(`http://localhost:8080/api/move_to_location/{{team}}/${location}`)
+                        .then(response => response.text())
+                        .then(data => {
+                            if(data){
+                                Swal.fire({
+                                    title: `你們即將前往 ${location}`,
+                                    icon: 'success',
+                                    text: `分數增減 : ${data}`, 
+                                    confirmButtonText: "關閉",
+                                    didClose: () => {
+                                        window.location.href = '/team_admin';
+                                    }
+                                });
+                            }    
+                        })
+                        .catch(error => {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Error: ' + error.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
                         });
-                    }    
-                })
-                .catch(error => {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Error: ' + error.message,
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
                 });
             });
-        });
-    })
-    .catch(error => {console.error(error);});
+        })
+        .catch(error => {console.error(error);});
 }
 
     </script>
