@@ -204,6 +204,9 @@ def finish_mission(name: str):
 @api.route("/GPSLocation/<name>/<location>")
 def GPSLocation(name: str, location: tuple):
     
+    if not (is_admin()):
+        abort(403)
+
     if name not in core.teams:
         return "Team does not exist."
         
