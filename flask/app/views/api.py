@@ -236,6 +236,7 @@ def GPSLocation(name: str, location1: float, location2: float):
     
     return core.check_pos(name, pgh.encode(location1, location2))
 
+
 @api.route("/default_admin/<name>")
 def default_admin(name: str):
 
