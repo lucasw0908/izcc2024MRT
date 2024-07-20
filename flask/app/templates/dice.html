@@ -485,14 +485,17 @@ function ChoiceAPI() {
         document.querySelectorAll('.choice-button:not(.disabled)').forEach(button => {
             button.addEventListener('click', (event) => {
                 let location = event.target.textContent;
-                fetch(`http://localhost:8080/api/move_to_location/{{team}}/${location}`)
+                fetch(`http://localhost:8080/api/move_to_location/{{team}}/${location}`).then(response => response.text())
                 .then(data => {
                     if(data){
                         Swal.fire({
-                        title: `你們即將前往 ${location}`,
-                        icon: 'success',
-                        text: `分數增減 : ${data[1]}`, 
-                        confirmButtonText: "關閉",
+                            title: `你們即將前往 ${location}`,
+                            icon: 'success',
+                            text: `分數增減 : ${data[1]}`, 
+                            confirmButtonText: "關閉",
+                            willClose: () => {
+                                window.location.href = '/team_admin';
+                            }
                         });
                     }    
                 })
