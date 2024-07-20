@@ -64,28 +64,40 @@
         -->
     </div>
     <script>
-        function changeColor() {
-            fetch("http://localhost:8080/api/team/{{ team }}")
-                .then(response => response.json())
-                .then(data => {
-                    const items = document.querySelectorAll('.item');
-                    items.forEach(item => {
-                        const stationSpans = item.querySelector('.stations');
-                        const pointSpan = item.querySelector('.points');
-                        const stations = item.getAttribute('data-stations').split(',');
-                        const isInStations = stations.some(station => data.stations.includes(station.trim()));
+       function changeColor() {
+    fetch("http://localhost:8080/api/team/{{ team }}")
+        .then(response => response.json())
+        .then(data => {
+            const items = document.querySelectorAll('.item');
+            items.forEach(item => {
+                const stationSpans = item.querySelector('.stations');
+                const pointSpan = item.querySelector('.points');
+                const stations = item.getAttribute('data-stations').split(',');
+                const isInStations = stations.map(station => data.stations.includes(station.trim()));
+                
+                // 定義顏色映射，可以根據需要調整顏色
+                const colors = {
+                    true: 'rgba(0, 128, 0, 0.5)', // 綠色
+                    false: 'rgba(255, 0, 0, 0.5)' // 紅色
+                };
 
-                        if (isInStations) {
-                            stationSpans.style.color = 'rgba(0, 128, 0, 0.5)'; 
-                        } else {
-                            stationSpans.style.color = 'rgba(255, 0, 0, 0.5)'; 
-                        }
-                    });
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
+                stationSpans.innerHTML = ''; // 清空內部的 HTML
 
-        document.addEventListener('DOMContentLoaded', changeColor);
+                stations.forEach((station, index) => {
+                    const span = document.createElement('span');
+                    span.textContent = station;
+                    span.style.color = colors[isInStations[index]]; // 根據狀態設置顏色
+                    stationSpans.appendChild(span);
+                    if (index < stations.length - 1) {
+                        stationSpans.appendChild(document.createTextNode(', ')); // 添加逗號分隔
+                    }
+                });
+            });
+        })
+        .catch(error => console.error('Error fetching data:', error));
+}
+
+document.addEventListener('DOMContentLoaded', changeColor);
     </script>
     </script>
 </body>
