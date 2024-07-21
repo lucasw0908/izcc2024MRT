@@ -25,8 +25,9 @@ def stations():
         station = core.metro.find_station(station_name)
         data.append(station.__dict__)
         if station.hidden:
-            data[-1]["mission"] = "已隱藏"
-            data[-1]["tips"] = "已隱藏"
+            data[-1]["mission"] = "隱藏"
+            data[-1]["tips"] = "隱藏"
+            data[-1]["exit"] = "隱藏"
     
     return jsonify(data)
 
@@ -40,8 +41,9 @@ def station(name: str):
     
     data = station.__dict__
     if station.hidden:
-        data["mission"] = "已隱藏"
-        data["tips"] = "已隱藏"
+        data["mission"] = "隱藏"
+        data["tips"] = "隱藏"
+        data["exit"] = "隱藏"
         
     return jsonify(data)
 
