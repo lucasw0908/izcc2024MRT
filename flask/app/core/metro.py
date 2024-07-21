@@ -178,7 +178,7 @@ class MetroSystem:
                 station: dict[str, Any]
                 
                 current_station_name: str = station["StationName"]["Zh_tw"]
-                current_station_name.replace("_","/")
+                current_station_name.replace("/","_")
                 
                 
                 if current_station_name in self.station_info:
