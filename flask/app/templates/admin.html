@@ -47,7 +47,7 @@
             </tr>
         </table>
     
-    <h2>隊伍</h2>
+    <h2>隊伍 （例: 零小）</h2>
     <h3>創建隊伍</h3>
         <table class="input-table">
             <tr>
@@ -128,7 +128,6 @@
 
         function delete_team(){
             const team = document.getElementById('delete_team_team-name').value;
-            const position = document.getElementById('delete_team_team-position').value;
             fetch(`http://localhost:8080/api/delete_team/${team}`)
         }
 
