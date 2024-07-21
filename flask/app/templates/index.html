@@ -172,7 +172,7 @@
             <p>一小:</p><p id="team1_location"></p>
             <p>二小:</p><p id="team2_location"></p>
             <p>三小:</p><p id="team3_location"></p>
-            <p>四小:</p><p id="team3_location"></p>
+            <p>四小:</p><p id="team4_location"></p>
         </div>
 
         <div class="loacate_collapseTime_container">
@@ -209,7 +209,7 @@
                     </div>
                     <span class="score">0 分</span>
                 </div>
-                <div class="team" id="team3" data-score="0">
+                <div class="team" id="team4" data-score="0">
                     <span class="team-name">四小</span>
                     <div class="progress-bar">
                         <div class="progress" id="teamD-progress"></div>
@@ -225,20 +225,20 @@
         // ready
         document.addEventListener("DOMContentLoaded", () => {
             resizeMap();
-            showmap();
+            showMap();
             showCollapse_time();
             showPoint();
-            showlocate();
+            showLocate();
             showImprisoned();
             getCurrentLocation();
         });
 
 
         // repeat
-        setInterval(showmap, 10000);
+        setInterval(showMap, 10000);
         setInterval(showCollapse_time,10000);
         setInterval(showPoint, 10000);
-        setInterval(showlocate, 10000);
+        setInterval(showLocate, 10000);
         setInterval(showImprisoned, 10000);
         
 
@@ -264,11 +264,13 @@
         window.addEventListener('resize', resizeMap);
         window.addEventListener('load', resizeMap);
     
+
+
         function checkImageExists(imageUrl) {
-        return fetch(imageUrl, { method: 'HEAD' })
-        .then(response => response.ok)
-        .catch(() => false);
-}
+            return fetch(imageUrl, { method: 'HEAD' })
+            .then(response => response.ok)
+            .catch(() => false);
+        }
         function station_info(station_name) {
             station_name = station_name.replace("/","_")
             Promise.all([
@@ -318,18 +320,41 @@
         }
 
 
+        const chineseNumerals = {'零': 0, '一': 1,'二': 2, '三': 3,'四': 4,};
+
+        function showLocate() {
+            fetch('http://localhost:8080/api/teams')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(team => {
+                    // 提取隊名中的數字部分，例如 "零小" -> "0"
+                    const chineseNumeral = team.name.charAt(0); // 假設隊名的第一個字符是中文數字
+                    const teamNumber = chineseNumerals[chineseNumeral];
+            
+                    if (teamNumber !== undefined) {
+                        const locationElement = document.getElementById(`team${teamNumber}_location`);
+                        if (locationElement) {
+                            locationElement.textContent = `${team.location}`;
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+        }
+
         function showPoint() {
-            fetch(`http://localhost:8080/api/teams`)
+            fetch('http://localhost:8080/api/teams')
             .then(response => response.json())
             .then(data => {
                 const teams = document.querySelectorAll(".team");
                 const maxScore = 3000; 
 
-                const filteredData = data.filter(teamData => teamData.name !== "admins");
+                data.forEach(teamData => {
+                    const chineseNumeral = teamData.name.charAt(0); // 假設隊名的第一個字符是中文數字
+                    const teamNumber = chineseNumerals[chineseNumeral];
 
-                filteredData.forEach((teamData, index) => {
-                    if (teams[index]) {
-                        const teamElement = teams[index];
+                    if (teamNumber !== undefined && teams[teamNumber]) {
+                        const teamElement = teams[teamNumber];
                         const score = teamData.point;
                         const progressBar = teamElement.querySelector(".progress");
                         const scoreElement = teamElement.querySelector(".score");
@@ -347,25 +372,10 @@
         }
 
 
-        function showlocate() {
-            fetch('http://localhost:8080/api/teams')
-            .then(response => response.json())
-            .then(data => {
-                const filteredData = data.filter(team => team.name !== "admins");
-                filteredData.forEach((team, index) => {
-                    const locationElement = document.getElementById(`team${index}_location`);
-                    if (locationElement) {
-                        locationElement.textContent = `${team.location}`;
-                    }
-                });
-            })
-            .catch(error => console.error('Error fetching data:', error));
-}
-
 
         let lastStatus = null;
         let lastWarning = null;
-        function showmap(){
+        function showMap(){
             fetch('http://localhost:8080/api/collapse_status')
                 .then(response => response.json())
                 .then(data => {
