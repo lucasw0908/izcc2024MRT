@@ -292,6 +292,17 @@
                         ${lebel_image}
                     `,
                     confirmButtonText: "關閉",
+                    showCancelButton: true,
+                    cancelButtonText: "提示",
+                    customClass: {cancelButton: 'swal-button-yellow'},
+                }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.cancel) {
+                    Swal.fire({
+                        title: '提示',
+                        text: `${data.tips}`,
+                        confirmButtonText: "關閉",
+                        });
+                    }
                 });
             });
         })
