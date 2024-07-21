@@ -5,6 +5,7 @@ from flask import abort, Blueprint, jsonify
 from ..core import core
 from ..modules.checker import is_admin, is_player, is_game_admin
 from ..data import load_data
+from ..models import db
 
 
 log = logging.getLogger(__name__)
@@ -68,6 +69,8 @@ def combo():
 
 @api.route("/teams")
 def teams():
+    db.create_all()
+    core.save_data()
     return jsonify([team.__dict__ for team in core.teams.values()])
 
 

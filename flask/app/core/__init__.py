@@ -7,6 +7,8 @@ from flask_socketio import SocketIO
 
 from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_LIST, END_STATION, DISTANCE
 from ..data import load_data
+from ..models import db
+from ..models.teams import Teams
 from .metro import MetroSystem, Station
 from .team import Team
 from .collapse import Collapse
@@ -27,6 +29,9 @@ class Core:
         self.prison_scheduler = BackgroundScheduler()
         
         self.create_team("admins", admins=ADMINS)
+        for team in Teams.query.all():
+            team: Teams
+            self.create_team(team.name, team.players, team.admins)
         
         for collapse in COLLAPSE:
             hour, minute = map(int, collapse["time"].split(":"))
@@ -77,6 +82,17 @@ class Core:
                 
     def init_socketio(self, socketio: SocketIO) -> None:
         self.socketio = socketio
+        
+        
+    def save_data(self) -> None:
+        for team in self.teams.values():
+            if team.name == "admins":
+                continue
+            if team.name not in Teams.query.all():
+                db.session.add(Teams(team.name, team.players, team.admins, team.point))
+            else:
+                Teams.query.filter_by(name=team.name).update({"players": team.players, "admins": team.admins, "point": team.point})
+        db.session.commit()
 
     
     def create_team(self, name: str, players: list[str]=[], admins: list[str]=[], location: str=None) -> None:
