@@ -20,9 +20,9 @@
     <h3>加分</h3>
     <table>
         <tr>
-            <td class="label"><label for="team-number">小隊:</label></td>
-            <td><input type="text" id="add_team-number" class="input-field"></td>
-            <td class="label"><label for="points">分數:</label></td>
+            <td class="label"><label for="add_point_team_name">小隊:</label></td>
+            <td><input type="text" id="add_point_team_name" class="input-field"></td>
+            <td class="label"><label for="add_points">分數:</label></td>
             <td><input type="text" id="add_points" class="input-field"></td>
             <td><button type="submit" class="submit-button" onclick="add_point()">確認</button></td>
         </tr>
@@ -30,8 +30,8 @@
     <h3>設定分數</h3>
     <table>
         <tr>
-            <td class="label"><label for="team-number">小隊:</label></td>
-            <td><input type="text" id="set_team-number" class="input-field"></td>
+            <td class="label"><label for="set_point_team-name">小隊:</label></td>
+            <td><input type="text" id="set_point_team-name" class="input-field"></td>
             <td class="label"><label for="points">分數:</label></td>
             <td><input type="text" id="set_points" class="input-field"></td>
             <td><button type="submit" class="submit-button" onclick="set_point()">確認</button></td>
@@ -41,32 +41,41 @@
     <h3>任務完成</h3>
         <table>
             <tr>
-                <td class="label"><label for="team-number">小隊:</label></td>
-                <td><input type="text" id="misson_team-number" class="input-field"></td>
+                <td class="label"><label for="finish_misson_team-name">小隊:</label></td>
+                <td><input type="text" id="finish_misson_team-name" class="input-field"></td>
                 <td><button type="submit" class="submit-button" onclick="finish_misson()">確認</button></td>
             </tr>
         </table>
     
     <h2>隊伍</h2>
-    <h3>創建隊伍 (請從零小開始依順序創)</h3>
+    <h3>創建隊伍</h3>
         <table class="input-table">
             <tr>
-                <td class="label"><label for="team-number">幾小:</label></td>
-                <td><input type="text" id="create_team-number" class="input-field"></td>
-                <td class="label"><label for="points">初始站名:</label></td>
-                <td><input type="text" id="create_team_position" class="input-field"></td>
+                <td class="label"><label for="create_team_team-name">幾小:</label></td>
+                <td><input type="text" id="create_team_team-name" class="input-field"></td>
+                <td class="label"><label for="create_team_team-position">初始站名:</label></td>
+                <td><input type="text" id="create_team_team-position" class="input-field"></td>
                 <td><button type="submit" class="submit-button" onclick="create_team()">確認</button></td>
+            </tr>
+        </table>
+
+        <h3>刪除隊伍</h3>
+        <table class="input-table">
+            <tr>
+                <td class="label"><label for="delete_team_team-name">幾小:</label></td>
+                <td><input type="text" id="delete_team_team-name" class="input-field"></td>
+                <td><button type="submit" class="submit-button" onclick="delete_team()">確認</button></td>
             </tr>
         </table>
 
     <h3>分配隊伍</h3>
         <table class="input-table">
             <tr>
-                <td class="label"><label for="team-number">小隊:</label></td>
-                <td><input type="text" id="join_team-number" class="input-field"></td>
-                <td class="label"><label for="points">名稱:</label></td>
-                <td><input type="text" id="join_team_name" class="input-field"></td>
-                <td><input type="checkbox" id="join_team-checkbox"></td>
+                <td class="label"><label for="join_team_team-name">小隊:</label></td>
+                <td><input type="text" id="join_team_team-name" class="input-field"></td>
+                <td class="label"><label for="join_team_user-name">名稱:</label></td>
+                <td><input type="text" id="join_team_user-name" class="input-field"></td>
+                <td><input type="checkbox" id="join_team_team-admin"></td>
                 <td class="label"><label>隊隨</label></td>
                 <td><button type="submit" class="submit-button" onclick="join_team()">確認</button></td>
             </tr>
@@ -76,7 +85,7 @@
         <table class="input-table">
             <tr>
                 <td class="label"><label for="points">名稱:</label></td>
-                <td><input type="text" id="leave_team_name" class="input-field"></td>
+                <td><input type="text" id="leave_team_user-name" class="input-field"></td>
                 <td><button type="submit" class="submit-button" onclick="leave_team()">確認</button></td>
             </tr>
         </table>
@@ -84,9 +93,9 @@
     <h3>隊伍移動</h3>
         <table>
             <tr>
-                <td class="label"><label for="team-number">小隊:</label></td>
-                <td><input type="text" id="move_team-number" class="input-field"></td>
-                <td class="label"><label for="points">站名:</label></td>
+                <td class="label"><label for="move_team_team-name">小隊:</label></td>
+                <td><input type="text" id="move_team_team-name" class="input-field"></td>
+                <td class="label"><label for="move_location">站名:</label></td>
                 <td><input type="text" id="move_location" class="input-field"></td>
                 <td><button type="submit" class="submit-button" onclick="move_to_location()">確認</button></td>
             </tr>
@@ -95,42 +104,48 @@
 
     <script>
         function add_point(){
-            const team = document.getElementById('add_team-number').value;
+            const team = document.getElementById('add_point_team_name').value;
             const points = document.getElementById('add_points').value;
             fetch(`http://localhost:8080/api/add_point/${team}/${points}`)
         }
 
         function set_point(){
-            const team = document.getElementById('set_team-number').value;
+            const team = document.getElementById('set_point_team-name').value;
             const points = document.getElementById('set_points').value;
             fetch(`http://localhost:8080/api/set_point/${team}/${points}`)
         }
 
         function finish_misson(){
-            const team = document.getElementById('misson_team-number').value;
+            const team = document.getElementById('finish_misson_team-name').value;
             fetch(`http://localhost:8080/api/finish_mission/${team}`)
         }
 
         function create_team(){
-            const team = document.getElementById('create_team-number').value;
-            const position = document.getElementById('create_team_position').value;
+            const team = document.getElementById('create_team_team-name').value;
+            const position = document.getElementById('create_team_team-position').value;
             fetch(`http://localhost:8080/api/create_team/${team}/${position}`)
         }
 
+        function delete_team(){
+            const team = document.getElementById('delete_team_team-name').value;
+            const position = document.getElementById('delete_team_team-position').value;
+            fetch(`http://localhost:8080/api/delete_team/${team}`)
+        }
+
         function join_team(){
-            const team = document.getElementById('join_team-number').value;
-            const player_name = document.getElementById('join_team_name').value;
-            const admin = document.getElementById('join_team-checkbox').checked
+            const team = document.getElementById('join_team_team-name').value;
+            const player_name = document.getElementById('join_team_user-name').value;
+            const admin = document.getElementById('join_team_team-admin').checked
             fetch(`http://localhost:8080/api/join_team/${team}/${player_name}/${admin}`)
         }
 
         function leave_team(){
-            const player_name = document.getElementById("leave_team_name").value;
+            const player_name = document.getElementById("leave_team_user-name").value;
             fetch(`http://localhost:8080/api/leave_team/${player_name}`)
         }
 
         function move_to_location(){
-            const team = document.getElementById('move_team-number').value;
+            const team = document.getElementById('move_team_team-name').value;
             const location = document.getElementById('move_location').value;
             fetch(`http://localhost:8080/api/move_to_location/${team}/${location}`)
         }
