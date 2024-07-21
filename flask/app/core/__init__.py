@@ -318,7 +318,7 @@ class Core:
             "chioce": {},
         }
         
-        for station_name, station_geohash in self.metro.station_location:
+        for station_name, station_geohash in self.metro.station_location.items():
             dis = pgh.geohash_approximate_distance(geohash, station_geohash)
             if dis <= DISTANCE:
                 
@@ -328,6 +328,8 @@ class Core:
                     
             if station_name in self.teams[name].choice:
                 data[station_name] = station_geohash
+                
+        log.debug(data)
         
         return data
     
