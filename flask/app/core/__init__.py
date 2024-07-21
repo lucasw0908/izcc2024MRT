@@ -29,9 +29,6 @@ class Core:
         self.prison_scheduler = BackgroundScheduler()
         
         self.create_team("admins", admins=ADMINS)
-        for team in Teams.query.all():
-            team: Teams
-            self.create_team(team.name, team.players, team.admins)
         
         for collapse in COLLAPSE:
             hour, minute = map(int, collapse["time"].split(":"))
@@ -83,6 +80,12 @@ class Core:
     def init_socketio(self, socketio: SocketIO) -> None:
         self.socketio = socketio
         
+    
+    def load_data(self) -> None:
+        for team in Teams.query.all():
+            team: Teams
+            self.create_team(team.name, team.players, team.admins)
+            
         
     def save_data(self) -> None:
         for team in self.teams.values():
