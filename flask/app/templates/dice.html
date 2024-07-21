@@ -462,11 +462,8 @@ function ChoiceAPI() {
         .then(data => {
             const choices = data.choice;
             let choiceHtml = ''; 
-            const colors = [
-                "red", "green", "blue", "yellow", "purple", "orange", "pink", "cyan", 
-                "magenta", "lime", "teal", "violet", "gold", "silver", "brown", "olive", 
-                "navy", "coral", "turquoise", "indigo", "maroon", "aqua", "chocolate", "crimson"
-            ]; 
+            const colors = ["red", "green", "blue", "yellow", "purple", "orange", "pink", "cyan"]; // 添加更多顏色
+
             choices.forEach((choice, index) => {
                 const colorClass = colors[index % colors.length]; 
                 choiceHtml += `<button class="choice-button ${colorClass}">${choice}</button>`;
@@ -512,6 +509,20 @@ function ChoiceAPI() {
         .catch(error => {console.error(error);});
 }
 
+
+window.addEventListener('devicemotion', shakeHandler, false);
+function shakeHandler(event) {
+    // 获取设备在 X、Y、Z 三轴上的加速度
+    var acceleration = event.accelerationIncludingGravity;
+
+    // 计算摇动幅度
+    var shake = Math.abs(acceleration.x) + Math.abs(acceleration.y) + Math.abs(acceleration.z);
+
+    // 判断摇动幅度是否达到阈值
+    if (shake > 15) {
+        throwMe();
+    }
+}
     </script>
     <style>
         .choice-button {
@@ -557,6 +568,15 @@ function ChoiceAPI() {
 .choice-button:not(.disabled):active {
     transform: scale(0.95);
 }
+
+.red { background-color: red; }
+.green { background-color: green; }
+.blue { background-color: blue; }
+.yellow { background-color: yellow; }
+.purple { background-color: purple; }
+.orange { background-color: orange; }
+.pink { background-color: pink; }
+.cyan { background-color: cyan; }
     </style>
 </body>
 </html>
