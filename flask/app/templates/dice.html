@@ -461,8 +461,11 @@ function ChoiceAPI() {
         .then(data => {
             const choices = data.choice;
             let choiceHtml = ''; 
-            const colors = ["red", "green", "blue", "yellow", "purple", "orange", "pink", "cyan"]; // 添加更多顏色
-
+            const colors = [
+                "red", "green", "blue", "yellow", "purple", "orange", "pink", "cyan", 
+                "magenta", "lime", "teal", "violet", "gold", "silver", "brown", "olive", 
+                "navy", "coral", "turquoise", "indigo", "maroon", "aqua", "chocolate", "crimson"
+            ]; 
             choices.forEach((choice, index) => {
                 const colorClass = colors[index % colors.length]; 
                 choiceHtml += `<button class="choice-button ${colorClass}">${choice}</button>`;
