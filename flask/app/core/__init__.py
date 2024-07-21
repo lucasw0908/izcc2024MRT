@@ -136,16 +136,22 @@ class Core:
     
     def _move(self, current_station: str, target_deep: int, deep: int=1) -> list[str]:
         choice = []
+        
         if deep > target_deep or current_station in self.visited:
             return choice
+        
         self.visited.append(current_station)
+        
         for station in self.metro.move(current_station):
             if station not in self.visited: choice.append(station)
             choice.extend(self._move(station, target_deep, deep + 1))
+            
         log.debug(f"Deep: {deep}, Station: {current_station}, Choice: {choice}")
+        
         for s in choice:
             if s not in self.choice[deep]:
                 self.choice[deep].append(s)
+                
         return choice
     
     
@@ -171,6 +177,7 @@ class Core:
             log.warning(f"Team {name} does not exist.")
             return None
         
+        self.choice = {i: [] for i in range(1, 7)}
         self.visited = []
         current_station = self.teams[name].location
         self._move(current_station, step)
@@ -272,7 +279,7 @@ class Core:
                 case 50: self.teams[name].point += 20
                 
         self.teams[name].current_mission_finished = True
-        self.teams[name].location = station.name
+        self.teams[name].location = self.teams[name].target_location
         
         if station.is_special:
             if self.teams[name].current_card is None:
