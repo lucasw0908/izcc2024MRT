@@ -8,10 +8,7 @@ from .api import core
 
 log = logging.getLogger(__name__)
 account_sys = Blueprint("account_sys", __name__)
-if TOKEN is not None: 
-    client = APIClient(TOKEN, client_secret=CLIENT_SECRET, validate_token=False)
-else:
-    log.error("No token provided.")
+client = APIClient(TOKEN, client_secret=CLIENT_SECRET, validate_token=False)
 
 
 @account_sys.route("/oauth/callback")
@@ -24,7 +21,9 @@ def callback():
         log.debug(f"{current_user.username} logged in")
         session["token"] = access_token
         session.permanent = True
-        team, is_admin = core.check_player(current_user.id)
+        _, is_admin = core.check_player(current_user.id)
+        
+        log.info(f"User {current_user.username} is logged in")
         
         if is_admin:
             return redirect("/admin")
