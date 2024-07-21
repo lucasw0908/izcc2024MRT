@@ -87,8 +87,8 @@ class Station:
         self.__dict__.update({
             "sequence": int(station["Sequence"]),
             "id": str(station["StationID"]),
-            "name": str(station["StationName"]["Zh_tw"]).replace("/", "_"),
-            "english_name": str(station["StationName"]["En"]).replace("/", "_"),
+            "name": str(station["StationName"]["Zh_tw"]),
+            "english_name": str(station["StationName"]["En"]),
             "distance": float(station["CumulativeDistance"]),
             "difficult": int(station["Difficult"]),
             "exit": str(station["Exit"]),

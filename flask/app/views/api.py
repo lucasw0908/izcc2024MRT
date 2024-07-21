@@ -34,7 +34,7 @@ def stations():
 
 @api.route("/station/<name>")
 def station(name: str):
-    station = core.metro.find_station(name)
+    station = core.metro.find_station(name.replace("_", "/"))
     
     if station is None:
         return jsonify({})
