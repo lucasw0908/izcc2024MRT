@@ -3,14 +3,19 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta charset="utf-8"/>
+    <link href="../static/css/team_admin.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="../static/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/dice.css')}}"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
     <div class="container">
         <canvas id="canvas"></canvas>
+        <button class="button" id="throwbtn">
+            擲骰子<i class="bi bi-dice-6-fill"></i>
+        </button>
     </div>
     <p id="team" style="display: none;">{{ team }}</p>
     <script type="importmap">
@@ -52,7 +57,6 @@ const params = {
     times : 0,
     desiredResult: 5,
     throw: throwMe,
-    result: ChoiceAPI,
 };
 
 function throwMe() {
@@ -64,12 +68,13 @@ function throwMe() {
     }
     params.times += 1;
     throwDice();
+    ChoiceAPI();
 }
 
 
 const diceArray = [];
 const floorPlanesArray = [];
-let throwBtn;
+
 
 initPhysics();
 initScene();
@@ -81,7 +86,6 @@ for (let i = 0; i < 1; i++) {
     diceArray.push(createDice());
 }
 
-createControls();
 
 // throwMe();
 render();
@@ -376,7 +380,6 @@ function addDiceEvents(dice, diceIdx) {
                     } else {
                         // match found => render using current startPos
                         simulationOn = false;
-                        throwBtn.innerHTML = "throw!";
                         throwDice();
                     }
                 // }
@@ -414,7 +417,7 @@ function throwDice() {
     const quaternion = new THREE.Quaternion();
 
     if (simulationOn) {
-        throwBtn.innerHTML = "calculating a throw...";
+
         currentResult = [0, 0];
         diceArray.forEach(d => {
             d.startPos = [Math.random(), Math.random(), Math.random()];
@@ -437,16 +440,11 @@ function throwDice() {
         b.allowSleep = true;
     });
 
+
 }
 
 function createControls() {
     const gui = new GUI();
-
-    const btnControl = gui.add(params, "throw").name("throw!")
-    throwBtn = btnControl.domElement.querySelector("button > .name");
-
-    const resultBtnControl = gui.add(params, "result").name("result");
-    const resultBtn = resultBtnControl.domElement.querySelector("button > .name");
 }
 
 function connectAPI() {
@@ -470,7 +468,7 @@ function ChoiceAPI() {
             });
 
             Swal.fire({
-                title: '選擇下一站',
+                title: '你投到了 '+params.desiredResult+' 請選擇下一站',
                 html: choiceHtml, 
                 confirmButtonText: "關閉",
             });
@@ -523,6 +521,10 @@ function shakeHandler(event) {
         throwMe();
     }
 }
+
+var button = document.getElementById('throwbtn');
+
+button.onclick = throwMe;
     </script>
     <style>
         .choice-button {
@@ -578,5 +580,6 @@ function shakeHandler(event) {
 .pink { background-color: pink; }
 .cyan { background-color: cyan; }
     </style>
+
 </body>
 </html>
