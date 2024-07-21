@@ -6,7 +6,6 @@ from zenora import APIClient
 
 from ..core import core
 from ..data import load_data
-from ..models import db
 
 
 log = logging.getLogger(__name__)
