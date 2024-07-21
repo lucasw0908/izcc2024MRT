@@ -269,6 +269,7 @@
                 let imageUrl = `../static/img/stations/${station_name}.jpg`;
                 checkImageExists(imageUrl).then(exists => {
                 let imageHtml = exists ? `<img src="${imageUrl}" alt="${station_name} 圖片" style="width:60%; height:auto;">` : '';
+                let lebel_image = (data.is_special === false || station_name === team_data.location) ? imageHtml: "";
                 let lebel_is_special = (data.is_special) ? "是" : "否";
                 let label_team = (data.team) ? data.team : "無人佔領";
                 let label_depiction = (data.is_special === false || station_name === team_data.location) ? data.mission: "隱藏";
@@ -287,7 +288,7 @@
                         <p>任務敘述 : ${label_depiction}</p>
                         <p>任務出口 : ${label_exit}</p>
                         <p>任務難度: ${lebel_difficult}</p>
-                        ${imageHtml}
+                        ${lebel_image}
                     `,
                     confirmButtonText: "關閉",
                 });
