@@ -3,9 +3,8 @@ import logging
 from flask import abort, Blueprint, jsonify
 
 from ..core import core
-from ..modules.checker import is_admin, is_player, is_game_admin
+from ..modules.checker import is_admin, is_player
 from ..data import load_data
-from ..models import db
 
 
 log = logging.getLogger(__name__)

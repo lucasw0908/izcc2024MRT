@@ -129,6 +129,8 @@ class MetroSystem:
         self._load(API_URL_TP)
         self._load(API_URL_NTP)
         self.is_loaded = True
+        
+        log.info("Metro system loaded.")
             
             
     def _load_location(self, url: str, save: bool=False) -> None:

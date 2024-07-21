@@ -1,5 +1,5 @@
 import logging
-from flask import Blueprint, request, redirect, url_for, session
+from flask import Blueprint, request, redirect, session
 from zenora import APIClient
 
 from  ..config import OAUTH_URL, REDIRECT_URI, CLIENT_SECRET, TOKEN

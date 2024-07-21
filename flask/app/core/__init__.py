@@ -9,7 +9,7 @@ from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_TIME, COLLAPSE_DAMAGE
 from ..data import load_data
 from ..models import db
 from ..models.teams import Teams
-from .metro import MetroSystem, Station
+from .metro import MetroSystem
 from .team import Team
 from .collapse import Collapse
 
@@ -61,6 +61,8 @@ class Core:
                 self.collapse.status += 1
                 self.collapse.next_time = COLLAPSE[index + 1]["time"]
                 
+                log.info(f"Station {collapse['stations']} collapsed.")
+                
                 
     def _collapse_damage(self) -> None:
         for team in self.teams.values():
@@ -72,6 +74,8 @@ class Core:
     def _collapse_warning(self) -> None:
         self.collapse.warning = True
         self.socketio.emit("collapse_warning", self.collapse.next_time)
+        
+        log.info(f"Station will collapse in 5 minutes.")
         
         
     def _release(self) -> None:
@@ -365,6 +369,8 @@ class Core:
                 if data["location"] is None or dis < data["distance"]:
                     data["location"] = station_name
                     self.teams[name].location = station_name
+                    
+                    log.info(f"Team {name} moved to {station_name}.")
                     
             if station_name == self.teams[name].target_location:
                 data["distance"] = dis
