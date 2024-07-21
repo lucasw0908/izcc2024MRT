@@ -254,7 +254,7 @@ class Core:
         if self.teams[name].current_mission_finished:
             return None
         
-        station = self.metro.find_station(self.teams[name].location)
+        station = self.metro.find_station(self.teams[name].target_location)
         
         if station.team is None:
             self.teams[name].point += 30
@@ -267,6 +267,7 @@ class Core:
                 case 50: self.teams[name].point += 20
                 
         self.teams[name].current_mission_finished = True
+        self.teams[name].location = station.name
         
         if station.is_special:
             if self.teams[name].current_card is None:
@@ -318,7 +319,7 @@ class Core:
             "chioce": {},
         }
         
-        for station_name, station_geohash in self.metro.station_location:
+        for station_name, station_geohash in self.metro.station_location.items():
             dis = pgh.geohash_approximate_distance(geohash, station_geohash)
             if dis <= DISTANCE:
                 
@@ -327,7 +328,9 @@ class Core:
                     self.teams[name].location = station_name
                     
             if station_name in self.teams[name].choice:
-                data[station_name] = station_geohash
+                data["chioce"][station_name] = station_geohash
+                
+        log.debug(data)
         
         return data
     

@@ -34,7 +34,7 @@ def stations():
 
 @api.route("/station/<name>")
 def station(name: str):
-    station = core.metro.find_station(name)
+    station = core.metro.find_station(name.replace("_", "/"))
     
     if station is None:
         return jsonify({})
@@ -236,7 +236,7 @@ def GPSLocation(name: str, location1: float, location2: float):
     
     log.debug(f"Team {name} is at {location1}, {location2}")
     
-    return core.check_pos(name, pgh.encode(location1, location2))
+    return core.check_pos(name, pgh.encode(float(location1), float(location2)))
 
 
 @api.route("/default_admin/<name>")
