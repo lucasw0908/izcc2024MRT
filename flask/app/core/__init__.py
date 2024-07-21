@@ -20,6 +20,8 @@ class Core:
         self.metro = MetroSystem()
         self.socketio = None
         self.teams: dict[str, Team] = {}
+        self.visited = []
+        self.choice: dict[int, list[str]] = {i: [] for i in range(1, 7)}
         self.collapse = Collapse()
         self.collapse_scheduler = BackgroundScheduler()
         self.prison_scheduler = BackgroundScheduler()
@@ -132,6 +134,21 @@ class Core:
         return None, False
     
     
+    def _move(self, current_station: str, target_deep: int, deep: int=1) -> list[str]:
+        choice = []
+        if deep > target_deep or current_station in self.visited:
+            return choice
+        self.visited.append(current_station)
+        for station in self.metro.move(current_station):
+            if station not in self.visited: choice.append(station)
+            choice.extend(self._move(station, target_deep, deep + 1))
+        log.debug(f"Deep: {deep}, Station: {current_station}, Choice: {choice}")
+        for s in choice:
+            if s not in self.choice[deep]:
+                self.choice[deep].append(s)
+        return choice
+    
+    
     def move(self, name: str, step: int) -> list[str] | None:
         """
         Calculate the possible stations to move.
@@ -154,25 +171,13 @@ class Core:
             log.warning(f"Team {name} does not exist.")
             return None
         
-        choice = []
-        visited = []
+        self.visited = []
         current_station = self.teams[name].location
-        for index in range(step):
-            log.debug(self.metro.move(current_station))
-            for station in self.metro.move(current_station):
-                
-                if station in visited: 
-                    continue
-                visited.append(station)
-                
-                if index + 1 == step:
-                    choice.append(station)
-                else:
-                    current_station = station
+        self._move(current_station, step)
                     
-        self.teams[name].choice = choice
+        self.teams[name].choice = self.choice[step]
         
-        return choice
+        return self.choice[step]
     
     
     def move_to_location(self, name: str, location: str) -> tuple[list[str], int]:
@@ -316,7 +321,7 @@ class Core:
         
         data = {
             "location": None,
-            "chioce": {},
+            "distance": None,
         }
         
         for station_name, station_geohash in self.metro.station_location.items():
@@ -327,8 +332,8 @@ class Core:
                     data["location"] = station_name
                     self.teams[name].location = station_name
                     
-            if station_name in self.teams[name].choice:
-                data["chioce"][station_name] = station_geohash
+            if station_name == self.teams[name].target_location:
+                data["distance"] = dis
                 
         log.debug(data)
         
