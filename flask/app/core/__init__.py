@@ -5,7 +5,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
 from flask_socketio import SocketIO
 
-from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_LIST, END_STATION, DISTANCE, IMPRISONED_TIME
+from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_TIME, COLLAPSE_DAMAGE, COLLAPSE_LIST, END_STATION, DISTANCE, IMPRISONED_TIME
 from ..data import load_data
 from ..models import db
 from ..models.teams import Teams
@@ -32,6 +32,7 @@ class Core:
         
         for collapse in COLLAPSE:
             hour, minute = map(int, collapse["time"].split(":"))
+            self.collapse_scheduler.add_job(self._collapse, "cron", minutes=COLLAPSE_TIME)
             self.collapse_scheduler.add_job(self._collapse, "date", run_date=datetime.now().replace(hour=hour, minute=minute))
             if minute >= 5: minute -= 5
             else: hour -= 1; minute += 55
@@ -59,6 +60,13 @@ class Core:
                     
                 self.collapse.status += 1
                 self.collapse.next_time = COLLAPSE[index + 1]["time"]
+                
+                
+    def _collapse_damage(self) -> None:
+        for team in self.teams.values():
+            if team.location in COLLAPSE_LIST:
+                team.point -= COLLAPSE_DAMAGE
+                self.socketio.emit("collapse_damage", team.name)
                 
                 
     def _collapse_warning(self) -> None:

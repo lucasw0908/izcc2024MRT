@@ -223,8 +223,8 @@ def finish_mission(name: str):
     return "Location not reached."
 
 
-@api.route("/GPSLocation/<name>/<location1>/<location2>")
-def GPSLocation(name: str, location1: float, location2: float):
+@api.route("/gps_location/<name>/<location1>/<location2>")
+def gps_location(name: str, location1: float, location2: float):
     
     if not is_admin():
         abort(403)

@@ -420,7 +420,7 @@
                 // 使用者允許抓目前位置，回傳經緯度
                 function success(position) {
                     console.log(position.coords.latitude, position.coords.longitude);
-                    fetch(`http://localhost:8080/api/GPSLocation/{{team}}/${position.coords.latitude}/${position.coords.longitude}`)
+                    fetch(`http://localhost:8080/api/gps_location/{{team}}/${position.coords.latitude}/${position.coords.longitude}`)
                 }
 
                 // 跟使用者拿所在位置的權限
