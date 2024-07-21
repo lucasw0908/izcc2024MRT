@@ -189,8 +189,24 @@
             .then(response => {
                 if(response==="Mission already finished." || response === "Mission finished."){
                     Swal.fire({
-                        title: '回傳訊息',
+                        title: '任務完成',
                         icon: "success",
+                        text: response,
+                        confirmButtonText: 'OK'
+                    });
+                }
+                else if(response==="Location not reached"){
+                    Swal.fire({
+                        title: '還沒抵達',
+                        icon: "warning",
+                        text: response,
+                        confirmButtonText: 'OK'
+                    });
+                }
+                else if(response==="Team is imprisoned"){
+                    Swal.fire({
+                        title: '監獄時間',
+                        icon: "warning",
                         text: response,
                         confirmButtonText: 'OK'
                     });
@@ -199,7 +215,7 @@
                     Swal.fire({
                         title: '抽卡時間',
                         icon: "info",
-                        text: "你已完成特殊站任務，請去抽卡",
+                        text: "Card time!",
                         confirmButtonText: '前往',
                         willClose: () => {
                             window.location.href = '/card';
@@ -208,7 +224,7 @@
                 }
                 else{
                     Swal.fire({
-                        title: '回傳訊息',
+                        title: '錯誤',
                         icon: "error",
                         text: response,
                         confirmButtonText: 'Close'
@@ -228,7 +244,7 @@
                 Swal.fire({
                         title: '請先完成任務',
                         icon: "warning",
-                        text: "完成任務後再來按骰子",
+                        text: "Please finish mission first.",
                         confirmButtonText: 'Close'
                     });
             }
