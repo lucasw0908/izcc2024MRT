@@ -9,7 +9,11 @@
                             "動物園"
                         ],
     "is_special": 0.3,
-    "distance": 100,
+    "distance": 500,
+    "imprisoned_time": {
+        "min": 3,
+        "max": 10
+    },
     "collapse": [
         {
             "status": 0,

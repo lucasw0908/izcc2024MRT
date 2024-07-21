@@ -69,8 +69,6 @@ def combo():
 
 @api.route("/teams")
 def teams():
-    db.create_all()
-    core.save_data()
     return jsonify([team.__dict__ for team in core.teams.values()])
 
 

@@ -1,5 +1,3 @@
-import json
-
 from .data import load_data
 
 
@@ -10,6 +8,7 @@ START_STATION = GAME_CONFIG["start_station"]
 END_STATION = GAME_CONFIG["end_station"]
 DELETE_STATIONS = GAME_CONFIG["delete_stations"]
 IS_SPECIAL = GAME_CONFIG["is_special"]
+IMPRISONED_TIME = GAME_CONFIG["imprisoned_time"]
 COLLAPSE = GAME_CONFIG["collapse"]
 COLLAPSE_LIST = []
 DISTANCE = GAME_CONFIG["distance"]

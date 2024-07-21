@@ -5,7 +5,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
 from flask_socketio import SocketIO
 
-from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_LIST, END_STATION, DISTANCE
+from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_LIST, END_STATION, DISTANCE, IMPRISONED_TIME
 from ..data import load_data
 from ..models import db
 from ..models.teams import Teams
@@ -253,7 +253,7 @@ class Core:
             
         if station.is_prison:
             self.teams[name].is_imprisoned = True
-            self.teams[name].imprisoned_time = 3
+            self.teams[name].imprisoned_time = random.randint(IMPRISONED_TIME["min"], IMPRISONED_TIME["max"])
         else:
             self.teams[name].current_mission_finished = False
             
