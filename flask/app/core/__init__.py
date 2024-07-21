@@ -9,6 +9,7 @@ from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_TIME, COLLAPSE_DAMAGE
 from ..data import load_data
 from ..models import db
 from ..models.teams import Teams
+from ..modules.socketio import socketio
 from .metro import MetroSystem, Station
 from .team import Team
 from .collapse import Collapse
@@ -20,7 +21,7 @@ log = logging.getLogger(__name__)
 class Core:
     def __init__(self) -> None:
         self.metro = MetroSystem()
-        self.socketio = None
+        self.socketio = socketio
         self.teams: dict[str, Team] = {}
         self.visited = []
         self.choice: dict[int, list[str]] = {i: [] for i in range(1, 7)}
@@ -83,10 +84,6 @@ class Core:
                 team.is_imprisoned = False
                 team.imprisoned_time = 0
                 self.socketio.emit("release", team.name)
-                
-                
-    def init_socketio(self, socketio: SocketIO) -> None:
-        self.socketio = socketio
         
     
     def load_data(self) -> None:
