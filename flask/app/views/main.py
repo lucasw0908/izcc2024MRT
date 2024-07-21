@@ -6,7 +6,6 @@ from zenora import APIClient
 
 from ..core import core
 from ..data import load_data
-from ..models import db
 
 
 log = logging.getLogger(__name__)
@@ -28,6 +27,7 @@ def index():
         current_user = bearer_client.users.get_current_user()
         team, _ = core.check_player(current_user.username)
         return render_template("index.html", current_user=current_user.username, team=team, graph=core.metro.graph)
+    
     return redirect("/login")
 
 
@@ -40,6 +40,7 @@ def admin():
     
         if is_admin:
             return render_template("admin.html", current_user=current_user.username, team=team)
+        
     return redirect("/")
     
     # bearer_client = APIClient(session.get("token"), bearer=True)
@@ -64,7 +65,8 @@ def combo():
         current_user = bearer_client.users.get_current_user()
         team, _ = core.check_player(current_user.username)
         return render_template("combo.html", current_user=current_user.username, team=team, graph=core.metro.graph, combos=load_data("combo"))
-    return redirect("/login")
+    
+    return redirect("/")
 
 
 @main.route("/team_admin")
@@ -72,9 +74,12 @@ def team_admin():
     if "token" in session:
         bearer_client = APIClient(session.get("token"), bearer=True)
         current_user = bearer_client.users.get_current_user()
-        team, _ = core.check_player(current_user.username)
-        return render_template("team_admin.html", current_user=current_user.username, team=team, graph=core.metro.graph)
-    return redirect("/login")
+        team, is_admin = core.check_player(current_user.username)
+        
+        if is_admin:
+            return render_template("team_admin.html", current_user=current_user.username, team=team, graph=core.metro.graph)
+        
+    return redirect("/")
 
 
 @main.route("/card")
@@ -82,9 +87,12 @@ def card():
     if "token" in session:
         bearer_client = APIClient(session.get("token"), bearer=True)
         current_user = bearer_client.users.get_current_user()
-        team, _ = core.check_player(current_user.username)
-        return render_template("card.html", current_user=current_user.username, team=team, graph=core.metro.graph)
-    return redirect("/login")
+        team, is_admin = core.check_player(current_user.username)
+        
+        if is_admin:
+            return render_template("card.html", current_user=current_user.username, team=team, graph=core.metro.graph)
+        
+    return redirect("/")
 
 
 @main.route("/dice")
@@ -92,6 +100,9 @@ def dice():
     if "token" in session:
         bearer_client = APIClient(session.get("token"), bearer=True)
         current_user = bearer_client.users.get_current_user()
-        team, _ = core.check_player(current_user.username)
-        return render_template("dice.html", current_user=current_user.username, team=team, graph=core.metro.graph)
-    return redirect("/login")
+        team, is_admin = core.check_player(current_user.username)
+        
+        if is_admin:
+            return render_template("dice.html", current_user=current_user.username, team=team, graph=core.metro.graph)
+
+    return redirect("/")

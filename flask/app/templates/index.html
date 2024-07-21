@@ -172,6 +172,7 @@
             <p>一小:</p><p id="team1_location"></p>
             <p>二小:</p><p id="team2_location"></p>
             <p>三小:</p><p id="team3_location"></p>
+            <p>四小:</p><p id="team3_location"></p>
         </div>
 
         <div class="loacate_collapseTime_container">
@@ -203,6 +204,13 @@
                 </div>
                 <div class="team" id="team3" data-score="0">
                     <span class="team-name">三小</span>
+                    <div class="progress-bar">
+                        <div class="progress" id="teamD-progress"></div>
+                    </div>
+                    <span class="score">0 分</span>
+                </div>
+                <div class="team" id="team3" data-score="0">
+                    <span class="team-name">四小</span>
                     <div class="progress-bar">
                         <div class="progress" id="teamD-progress"></div>
                     </div>
@@ -420,7 +428,7 @@
                 // 使用者允許抓目前位置，回傳經緯度
                 function success(position) {
                     console.log(position.coords.latitude, position.coords.longitude);
-                    fetch(`http://localhost:8080/api/GPSLocation/{{team}}/${position.coords.latitude}/${position.coords.longitude}`)
+                    fetch(`http://localhost:8080/api/gps_location/{{team}}/${position.coords.latitude}/${position.coords.longitude}`)
                 }
 
                 // 跟使用者拿所在位置的權限

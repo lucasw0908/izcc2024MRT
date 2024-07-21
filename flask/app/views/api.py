@@ -3,9 +3,8 @@ import logging
 from flask import abort, Blueprint, jsonify
 
 from ..core import core
-from ..modules.checker import is_admin, is_player, is_game_admin
+from ..modules.checker import is_admin, is_player
 from ..data import load_data
-from ..models import db
 
 
 log = logging.getLogger(__name__)
@@ -14,11 +13,19 @@ api = Blueprint("api", __name__, url_prefix="/api")
 
 @api.route("/graph")
 def graph():
+    
+    if not is_player():
+        abort(403)
+    
     return jsonify(core.metro.graph)
 
 
 @api.route("/stations")
 def stations():
+    
+    if not is_player():
+        abort(403)
+    
     data = []
     graph = core.metro.graph
     
@@ -35,6 +42,10 @@ def stations():
 
 @api.route("/station/<name>")
 def station(name: str):
+    
+    if not is_player():
+        abort(403)
+    
     station = core.metro.find_station(name.replace("_", "/"))
     
     if station is None:
@@ -51,6 +62,10 @@ def station(name: str):
 
 @api.route("/collapse_status")
 def collapse_status():
+    
+    if not is_player():
+        abort(403)
+    
     return jsonify({
         "status":core.collapse.status,
         "warning":core.collapse.warning
@@ -59,21 +74,37 @@ def collapse_status():
 
 @api.route("/next_collapse_time")
 def next_collapse_time():
+    
+    if not is_player():
+        abort(403)
+    
     return jsonify(core.collapse.next_time)
 
 
 @api.route("/combo")
 def combo():
+    
+    if not is_player():
+        abort(403)
+    
     return jsonify(load_data("combo"))
 
 
 @api.route("/teams")
 def teams():
+    
+    if not is_player():
+        abort(403)
+        
     return jsonify([team.__dict__ for team in core.teams.values()])
 
 
 @api.route("/team/<name>")
 def team(name: str):
+    
+    if not is_player():
+        abort(403)
+    
     if name in core.teams:
         return jsonify(core.teams[name].__dict__)
     return jsonify({})
@@ -102,13 +133,13 @@ def delete_team(name: str):
     return "Team deleted."
 
 
-@api.route("/join_team/<name>/<player_name>/<is_admin>")
-def join_team(name: str, player_name: str, is_admin: bool):
+@api.route("/join_team/<name>/<player_name>/<admin>")
+def join_team(name: str, player_name: str, admin: bool):
     
-    if not is_player():
+    if not is_admin():
         abort(403)
         
-    if is_admin:
+    if admin:
         core.teams[name].admins.append(player_name)
     else:
         core.teams[name].players.append(player_name)
@@ -119,7 +150,7 @@ def join_team(name: str, player_name: str, is_admin: bool):
 @api.route("/leave_team/<player_name>")
 def leave_team(player_name: str):
     
-    if not is_player():
+    if not is_admin():
         abort(403)
         
     for team in core.teams.values():
@@ -136,7 +167,7 @@ def leave_team(player_name: str):
 @api.route("/move/<name>")
 def move(name: str):
     
-    if not is_player():
+    if not is_admin():
         abort(403)
         
     if name not in core.teams:
@@ -223,8 +254,8 @@ def finish_mission(name: str):
     return "Location not reached."
 
 
-@api.route("/GPSLocation/<name>/<location1>/<location2>")
-def GPSLocation(name: str, location1: float, location2: float):
+@api.route("/gps_location/<name>/<location1>/<location2>")
+def gps_location(name: str, location1: float, location2: float):
     
     if not is_admin():
         abort(403)
@@ -238,16 +269,3 @@ def GPSLocation(name: str, location1: float, location2: float):
     log.debug(f"Team {name} is at {location1}, {location2}")
     
     return core.check_pos(name, pgh.encode(float(location1), float(location2)))
-
-
-@api.route("/default_admin/<name>")
-def default_admin(name: str):
-
-    if not is_game_admin():
-        abort(403)
-    
-    if name not in core.teams["admins"].admins:
-        core.teams["admins"].admins.append(name)
-    else:
-        core.teams["admins"].admins.remove(name)
-    return "ok"

@@ -6,5 +6,6 @@ Flask-SocketIO==5.3.6
 Flask-SQLAlchemy==3.1.1
 Flask-Login==0.6.3
 Flask-WTF==1.2.1
+pygeohash==1.2.0
 python-dotenv==1.0.0
 Zenora==0.0.3.post1
