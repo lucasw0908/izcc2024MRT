@@ -87,8 +87,8 @@ class Station:
         self.__dict__.update({
             "sequence": int(station["Sequence"]),
             "id": str(station["StationID"]),
-            "name": str(station["StationName"]["Zh_tw"]),
-            "english_name": str(station["StationName"]["En"]),
+            "name": str(station["StationName"]["Zh_tw"]).replace("/", "_"),
+            "english_name": str(station["StationName"]["En"]).replace("/", "_"),
             "distance": float(station["CumulativeDistance"]),
             "difficult": int(station["Difficult"]),
             "exit": str(station["Exit"]),
@@ -178,8 +178,6 @@ class MetroSystem:
                 station: dict[str, Any]
                 
                 current_station_name: str = station["StationName"]["Zh_tw"]
-                current_station_name.replace("/","_")
-                
                 
                 if current_station_name in self.station_info:
                     station.update(self.station_info[current_station_name])
