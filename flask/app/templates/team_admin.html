@@ -195,6 +195,22 @@
                         confirmButtonText: 'OK'
                     });
                 }
+                else if(response==="Location not reached"){
+                    Swal.fire({
+                        title: '還沒抵達',
+                        icon: "warning",
+                        text: response,
+                        confirmButtonText: 'OK'
+                    });
+                }
+                else if(response==="Team is imprisoned"){
+                    Swal.fire({
+                        title: '監獄時間',
+                        icon: "warning",
+                        text: response,
+                        confirmButtonText: 'OK'
+                    });
+                }
                 else if(response.includes('card')){
                     Swal.fire({
                         title: '抽卡時間',
