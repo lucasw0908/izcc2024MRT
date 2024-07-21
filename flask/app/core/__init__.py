@@ -227,7 +227,7 @@ class Core:
             
         if station.is_prison:
             self.teams[name].is_imprisoned = True
-            self.teams[name].imprisoned_time = datetime.now().minute + 3
+            self.teams[name].imprisoned_time = 3
         else:
             self.teams[name].current_mission_finished = False
             
