@@ -81,8 +81,9 @@ body{
     min-height: 10%;
     max-height: 100%;
     max-width: 100%;
-    display: block;
-    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .MRT_map img {
