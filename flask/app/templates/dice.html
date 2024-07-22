@@ -3,11 +3,14 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta charset="utf-8"/>
+
     <link href="../static/css/team_admin.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="../static/img/favicon.png">
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/dice.css')}}"/>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
@@ -27,11 +30,11 @@
     }
     </script>
     <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+
     <script type="module">
 import * as CANNON from "https://cdn.skypack.dev/cannon-es";
 import * as THREE from "three";
 import * as BufferGeometryUtils from "three/addons/utils/BufferGeometryUtils.js";
-import GUI from "https://cdn.jsdelivr.net/npm/lil-gui@0.18.2/+esm"
 
 const containerEl = document.querySelector(".container");
 const canvasEl = document.querySelector("#canvas");
@@ -443,10 +446,6 @@ function throwDice() {
 
 }
 
-function createControls() {
-    const gui = new GUI();
-}
-
 function connectAPI() {
     fetch("http://localhost:8080/api/move/{{team}}").then(response => response.json())
     .then(data => {params.desiredResult = data.step;})
@@ -460,7 +459,7 @@ function ChoiceAPI() {
         .then(data => {
             const choices = data.choice;
             let choiceHtml = ''; 
-            const colors = ["red", "green", "blue", "yellow", "purple", "orange", "pink", "cyan"]; // 添加更多顏色
+            const colors = ["red", "green", "blue", "yellow", "orange", "pink", "cyan"]; // 添加更多顏色
 
             choices.forEach((choice, index) => {
                 const colorClass = colors[index % colors.length]; 
@@ -468,7 +467,7 @@ function ChoiceAPI() {
             });
 
             Swal.fire({
-                title: '你投到了 '+params.desiredResult+' 請選擇下一站',
+                title: '你投到 '+params.desiredResult+' 請選擇下一站',
                 html: choiceHtml, 
                 confirmButtonText: "關閉",
             });
@@ -481,53 +480,46 @@ function ChoiceAPI() {
                         fetch(`http://localhost:8080/api/team/{{team}}`).then(response => response.json())
                     ])
                     .then(([data,team_data]) => {
-                            if(data){
-                                Swal.fire({
-                                    title: `${team_data.location} ⭢ ${newLocation}`,
-                                    icon: 'success',
-                                    text: ``, 
-                                    confirmButtonText: "關閉",
-                                    didClose: () => {
-                                        window.location.href = '/team_admin';
-                                    }
-                                });
-                            }    
-                        })
-                        .catch(error => {
+                        if(data){
                             Swal.fire({
-                                title: 'Error',
-                                text: 'Error: ' + error.message,
-                                icon: 'error',
-                                confirmButtonText: 'OK'
+                                title: `${team_data.location} ⭢ ${newLocation}`,
+                                icon: 'success',
+                                text: ``, 
+                                confirmButtonText: "關閉",
+                                willClose: () => {window.location.href = '/team_admin';}
                             });
-                        });
+                        }    
+                    })
                 });
-            });
+            });3
         })
-        .catch(error => {console.error(error);});
+    .catch(error => {console.error(error);});
 }
 
 
-window.addEventListener('devicemotion', shakeHandler, false);
-function shakeHandler(event) {
-    // 获取设备在 X、Y、Z 三轴上的加速度
-    var acceleration = event.accelerationIncludingGravity;
+window.addEventListener('deviceorientation', rotationHandler, false);
+let lastTriggerTime = 0; 
+const triggerInterval = 1000; // 設置觸發間隔為1000毫秒（1秒）
 
-    // 计算摇动幅度
-    var shake = Math.abs(acceleration.x) + Math.abs(acceleration.y) + Math.abs(acceleration.z);
-
-    // 判断摇动幅度是否达到阈值
-    if (shake > 15) {
-        throwMe();
+function rotationHandler(event) {
+    var alpha = event.alpha; 
+    var beta = event.beta; 
+    var gamma = event.gamma; 
+    const currentTime = Date.now();
+    if (currentTime - lastTriggerTime > triggerInterval) {
+        if (Math.abs(beta) > 90 || Math.abs(gamma) > 90) {
+            lastTriggerTime = currentTime; 
+            throwMe();
+        }
     }
 }
 
 var button = document.getElementById('throwbtn');
-
 button.onclick = throwMe;
     </script>
+
     <style>
-        .choice-button {
+.choice-button {
     padding: 12px 20px;
     margin: 5px;
     border: none;
@@ -575,7 +567,6 @@ button.onclick = throwMe;
 .green { background-color: green; }
 .blue { background-color: blue; }
 .yellow { background-color: yellow; }
-.purple { background-color: purple; }
 .orange { background-color: orange; }
 .pink { background-color: pink; }
 .cyan { background-color: cyan; }
