@@ -5,9 +5,11 @@
         <link href="../static/css/team_admin.css" rel="stylesheet">
         <link rel="icon" type="image/png" href="../static/img/favicon.png">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
     </head>
@@ -25,12 +27,11 @@
             </div>
         </div>
 
-
-        <h2 id="mission_label"></h2>
+        <h2 id="mission_label">目前狀態 :</h2>
 
         <div class="link">
             <a id="dice-link">
-                <button class="button" onclick="mission_label(),missionAPI(); return false;">
+                <button class="button" onclick="missionAPI();">
                     骰子<i class="bi bi-dice-6-fill"></i>
                 </button>
             </a>
@@ -41,7 +42,7 @@
                 </button>
             </a>
 
-            <button class="button" onclick="mission_label(),finish_misson(); return false;">
+            <button class="button" onclick="finish_misson();">
                   任務完成<i class="bi bi-check-lg"></i>
             </button>
 
@@ -50,6 +51,7 @@
         //ready
         document.addEventListener("DOMContentLoaded", () => {
             mission_label();
+            getCurrentLocation();
         });
 
         function mission_label(){
@@ -75,7 +77,10 @@
                         title: '任務完成',
                         icon: "success",
                         text: response,
-                        confirmButtonText: 'OK'
+                        confirmButtonText: 'OK',
+                        willClose: () => {
+                            mission_label();
+                        }
                     });
                 }
                 else if(response==="Mission already finished." ){
@@ -139,15 +144,38 @@
         .then(data => {
             if (data.current_mission_finished) {
                 window.location.href = '/dice';
-            } else {
+            } 
+            else{
                 Swal.fire({
                         title: '請先完成任務',
                         icon: "warning",
                         text: "Please finish mission first.",
                         confirmButtonText: 'Close'
                     });
+                }
+            })
+        }
+
+        function getCurrentLocation(){
+            // 先確認使用者裝置能不能抓地點
+            if(navigator.geolocation) {
+
+                // 使用者不提供權限，或是發生其它錯誤
+                function error() {
+                    alert('無法取得你的位置');
+                }
+
+                // 使用者允許抓目前位置，回傳經緯度
+                function success(position) {
+                    fetch(`http://localhost:8080/api/gps_location/{{team}}/${position.coords.latitude}/${position.coords.longitude}`)
+                }
+
+                // 跟使用者拿所在位置的權限
+                navigator.geolocation.getCurrentPosition(success, error);
+
+            } else {
+                alert('Sorry, 你的裝置不支援地理位置功能。')
             }
-        })
-}
+        }    
     </script>
 </html>

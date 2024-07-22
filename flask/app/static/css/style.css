@@ -167,7 +167,7 @@ h1{
     font-size: 175%;
 }
 
-.loacate_collapseTime_container {
+.loacate_collapseTime_container, .point_is_imprisoned_container {
     display: flex;
     justify-content: space-between;
     align-items: center;

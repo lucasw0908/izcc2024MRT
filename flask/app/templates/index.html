@@ -3,9 +3,11 @@
     <head>
         <link href="../static/css/style.css" rel="stylesheet">
         <link rel="icon" type="image/png" href="../static/img/favicon.png">
+
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
         <title>捷運大富翁-主頁</title>
@@ -22,6 +24,7 @@
                 <p>{{ team }} - {{current_user}}</p>
             </div>
         </div>
+
         <div class="MRT_map">
             <img id="Map0" src="../static/img/map/MRT_map0.png" usemap="#image-map" style="display: none;">
             <img id="Map1" src="../static/img/map/MRT_map1.png"  usemap="#image-map" style="display: none;">
@@ -167,6 +170,7 @@
             <h1>各小隊位置</h1> 
             <h2 id="next_collapse_time_label"></h2>
         </div>
+
         <div class="team_locate">
             <p>零小:</p><p id="team0_location"></p>
             <p>一小:</p><p id="team1_location"></p>
@@ -175,10 +179,11 @@
             <p>四小:</p><p id="team4_location"></p>
         </div>
 
-        <div class="loacate_collapseTime_container">
+        <div class="point_is_imprisoned_container">
             <h1>各小隊分數</h1>
             <h2 id="is_imprisoned_label"></h2>
         </div>
+        1
         <div class="team_point">
             <div class="scoreboard">
                 <div class="team" id="team0" data-score="0">
@@ -242,7 +247,6 @@
         setInterval(showImprisoned, 10000);
         
 
-        //area locate
         function resizeMap() {
             const img = document.querySelector('.MRT_map img[style*="display: block"]');
             if (!img) return;  // No visible image
@@ -264,7 +268,6 @@
         window.addEventListener('resize', resizeMap);
         window.addEventListener('load', resizeMap);
     
-
 
         function checkImageExists(imageUrl) {
             return fetch(imageUrl, { method: 'HEAD' })
@@ -321,7 +324,6 @@
 
 
         const chineseNumerals = {'零': 0, '一': 1,'二': 2, '三': 3,'四': 4,};
-
         function showLocate() {
             fetch('http://localhost:8080/api/teams')
             .then(response => response.json())
@@ -372,7 +374,6 @@
         }
 
 
-
         let lastStatus = null;
         let lastWarning = null;
         function showMap(){
@@ -406,7 +407,7 @@
         }
 
 
-        function  showCollapse_time(){
+        function showCollapse_time(){
             fetch('http://localhost:8080/api/next_collapse_time')
                 .then(response => response.json())
                 .then(data => {
@@ -414,6 +415,7 @@
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
+
 
         function showImprisoned(){
             fetch('http://localhost:8080/api/team/{{team}}')
@@ -426,6 +428,7 @@
                 .catch(error => console.error('Error fetching data:', error));
         }
 
+
         function getCurrentLocation(){
             // 先確認使用者裝置能不能抓地點
             if(navigator.geolocation) {
@@ -437,7 +440,6 @@
 
                 // 使用者允許抓目前位置，回傳經緯度
                 function success(position) {
-                    console.log(position.coords.latitude, position.coords.longitude);
                     fetch(`http://localhost:8080/api/gps_location/{{team}}/${position.coords.latitude}/${position.coords.longitude}`)
                 }
 
@@ -447,8 +449,6 @@
             } else {
                 alert('Sorry, 你的裝置不支援地理位置功能。')
             }
-        }
-
-        
+        }    
     </script>
 </html>
