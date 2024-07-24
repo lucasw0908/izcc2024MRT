@@ -5,7 +5,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
 from flask_socketio import SocketIO
 
-from ..game_config import ADMINS, CARD, COLLAPSE, COLLAPSE_TIME, COLLAPSE_DAMAGE, COLLAPSE_LIST, END_STATION, DISTANCE, IMPRISONED_TIME
+from ..game_config import ADMINS, CARD_COUNT, COLLAPSE, COLLAPSE_DAMAGE_INTERVAL, COLLAPSE_DAMAGE, COLLAPSE_LIST, END_STATION, DISTANCE, IMPRISONED_TIME
 from ..data import load_data
 from ..models import db
 from ..models.teams import Teams
@@ -32,7 +32,7 @@ class Core:
         
         for collapse in COLLAPSE:
             hour, minute = map(int, collapse["time"].split(":"))
-            self.collapse_scheduler.add_job(self._collapse, "interval", minutes=COLLAPSE_TIME)
+            self.collapse_scheduler.add_job(self._collapse_damage, "interval", minutes=COLLAPSE_DAMAGE_INTERVAL)
             self.collapse_scheduler.add_job(self._collapse, "date", run_date=datetime.now().replace(hour=hour, minute=minute))
             if minute >= 5: minute -= 5
             else: hour -= 1; minute += 55
@@ -68,12 +68,10 @@ class Core:
         for team in self.teams.values():
             if team.location in COLLAPSE_LIST:
                 team.point -= COLLAPSE_DAMAGE
-                self.socketio.emit("collapse_damage", team.name)
                 
                 
     def _collapse_warning(self) -> None:
         self.collapse.warning = True
-        self.socketio.emit("collapse_warning", self.collapse.next_time)
         
         log.info(f"Station will collapse in 5 minutes.")
         
@@ -110,7 +108,7 @@ class Core:
         db.session.commit()
 
     
-    def create_team(self, name: str, players: list[str]=[], admins: list[str]=[], location: str=None) -> None:
+    def create_team(self, name: str, players: list[str]=[], admins: list[str]=[], station: str=None) -> None:
         """
         Create a new team.
         
@@ -119,7 +117,7 @@ class Core:
         name: :type:`str`
             The name of the team.
             
-        location: :type:`str`
+        station: :type:`str`
             The name of the station.
             
         players: :type:`list[str]`
@@ -135,7 +133,7 @@ class Core:
             log.warning(f"Team {name} already exists.")
             return None
             
-        self.teams[name] = Team(name, players, admins, location)
+        self.teams[name] = Team(name, players, admins, station)
         
         
     def check_player(self, player: str) -> tuple[Team | None, bool]:
@@ -314,7 +312,7 @@ class Core:
         
         if station.is_special:
             if self.teams[name].current_card is None:
-                card = f"card{self.dice(CARD)}"
+                card = f"card{self.dice(CARD_COUNT)}"
                 self.teams[name].current_card = card
             return self.teams[name].current_card
             

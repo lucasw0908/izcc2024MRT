@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="icon" type="image/png" href="{{url_for('static', filename='img/favicon.png')}}">
+        <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/error.css')}}">
+    </head>
+
+    <body>
+        <div class="zoom-area">
+            {% for msg in error %}
+            <span>{{msg}}</span>
+            <br>
+            {% endfor %}
+        </div>
+        <section class="error-container">
+            {% for e in error_code %}
+            <span>{{e}}</span>
+            {% endfor %}
+        </section>
+    </body>
+</html>

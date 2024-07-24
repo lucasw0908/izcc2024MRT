@@ -8,15 +8,15 @@ error_handler = Blueprint("error_handler", __name__)
 
 @error_handler.app_errorhandler(403)
 def error403(error):
-    return render_template("error/403.html", error=error), 403
+    return render_template("error.html", error=str(error).split(".")[:-1], error_code="403"), 403
 
 
 @error_handler.app_errorhandler(404)
 def error404(error):
-    return render_template("error/404.html", error=error), 404
+    return render_template("error.html", error=str(error).split(".")[:-1], error_code="404"), 404
 
 
 @error_handler.app_errorhandler(500)
 def error500(error):
     log.error(error)
-    return render_template("error/500.html", error=error), 500
+    return render_template("error.html", error=str(error).split(".")[:-1], error_code="500"), 500

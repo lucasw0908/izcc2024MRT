@@ -1,14 +1,26 @@
 import pygeohash as pgh
 import logging
+import re
 from flask import abort, Blueprint, jsonify
 
 from ..core import core
 from ..modules.checker import is_admin, is_player
 from ..data import load_data
+from ..status_codes import STATUS_CODES
 
 
 log = logging.getLogger(__name__)
 api = Blueprint("api", __name__, url_prefix="/api")
+
+
+@api.route("/status_codes/<language>")
+def status_codes(language: str):
+    try: 
+        data = STATUS_CODES.localization(language=language, is_return=True)
+        return jsonify(data)
+    
+    except Exception as e:
+        abort(404)
 
 
 @api.route("/graph")
@@ -107,20 +119,27 @@ def team(name: str):
     
     if name in core.teams:
         return jsonify(core.teams[name].__dict__)
+    
     return jsonify({})
 
 
-@api.route("/create_team/<name>/<location>")
-def create_team(name: str, location: str):
+@api.route("/create_team/<name>/<station>")
+def create_team(name: str, station: str):
            
     if not is_admin():
         abort(403)
         
-    if core.metro.find_station(location) is None:
-        return "Location does not exist."
+    if re.match(r"^[A-Za-z0-9_]+$", name) is None:
+        return STATUS_CODES.S00002
         
-    core.create_team(name=name, location=location)
-    return "Team created."
+    if name in core.teams:
+        return STATUS_CODES.S20003
+        
+    if core.metro.find_station(station) is None:
+        return STATUS_CODES.S00003
+        
+    core.create_team(name=name, station=station)
+    return STATUS_CODES.S00000
     
     
 @api.route("/delete_team/<name>")
@@ -129,8 +148,11 @@ def delete_team(name: str):
     if not is_admin():
         abort(403)
         
-    core.teams.pop(name, None)
-    return "Team deleted."
+    team = core.teams.pop(name, None)
+    if team is None:
+        return STATUS_CODES.S00004
+    
+    return STATUS_CODES.S00000
 
 
 @api.route("/join_team/<name>/<player_name>/<admin>")
@@ -139,12 +161,15 @@ def join_team(name: str, player_name: str, admin: bool):
     if not is_admin():
         abort(403)
         
+    if name not in core.teams:
+        return STATUS_CODES.S00004
+        
     if admin:
         core.teams[name].admins.append(player_name)
     else:
         core.teams[name].players.append(player_name)
         
-    return "Player joined team."
+    return STATUS_CODES.S00000
 
 
 @api.route("/leave_team/<player_name>")
@@ -156,12 +181,13 @@ def leave_team(player_name: str):
     for team in core.teams.values():
         if player_name in team.players:
             team.players.remove(player_name)
-            return "Player left team."
+            return STATUS_CODES.S00000
+        
         if player_name in team.admins:
             team.admins.remove(player_name)
-            return "Player left team."
+            return STATUS_CODES.S00000
             
-    return "Player not in any team."
+    return STATUS_CODES.S30002
     
     
 @api.route("/move/<name>")
@@ -171,13 +197,13 @@ def move(name: str):
         abort(403)
         
     if name not in core.teams:
-        return "Team does not exist."
+        return STATUS_CODES.S00004
         
     if core.teams[name].is_imprisoned:
-        return "Team is imprisoned."
+        return STATUS_CODES.S20002
     
     if not core.teams[name].current_mission_finished:
-        return "Mission not finished."
+        return STATUS_CODES.S50002
     
     if core.teams[name].step == 0:
         core.teams[name].step = core.dice()
@@ -195,16 +221,16 @@ def move_to_location(name: str, location: str):
         abort(403)
         
     if name not in core.teams:
-        return "Team does not exist."
+        return STATUS_CODES.S00004
         
     if core.teams[name].is_imprisoned:
-        return "Team is imprisoned."
+        return STATUS_CODES.S20002
     
     if not core.teams[name].current_mission_finished:
-        return "Mission not finished."
+        return STATUS_CODES.S50002
         
     if location not in core.teams[name].choice:
-        return "Invalid location."
+        return STATUS_CODES.S00006
     
     core.teams[name].choice = []
     core.teams[name].step = 0
@@ -219,7 +245,7 @@ def add_point(name: str, point: int):
         abort(403)
         
     core.teams[name].point += int(point)
-    return "Point added."
+    return STATUS_CODES.S00000
 
 
 @api.route("/set_point/<name>/<point>")
@@ -229,7 +255,7 @@ def set_point(name: str, point: int):
         abort(403)
         
     core.teams[name].point = point
-    return "Point set."
+    return STATUS_CODES.S00000
 
 
 @api.route("/finish_mission/<name>")
@@ -239,33 +265,39 @@ def finish_mission(name: str):
         abort(403)
     
     if name not in core.teams:
-        return "Team does not exist."
+        return STATUS_CODES.S00004
     
     if core.teams[name].is_imprisoned:
-        return "Team is imprisoned."
+        return STATUS_CODES.S20002
     
     if core.teams[name].current_mission_finished:
-        return "Mission already finished."
+        return STATUS_CODES.S50003
     
-    if core.teams[name].target_location == core.teams[name].location:
-        card = core.finish_mission(name=name)
-        return "Mission finished." if card is None else card
+    if core.teams[name].target_location != core.teams[name].location:
+        return STATUS_CODES.S40002
     
-    return "Location not reached."
+    card = core.finish_mission(name=name)
+    return STATUS_CODES.S00000 if card is None else card
 
 
-@api.route("/gps_location/<name>/<location1>/<location2>")
-def gps_location(name: str, location1: float, location2: float):
+@api.route("/gps_location/<name>/<latitude>/<longitude>")
+def gps_location(name: str, latitude: float, longitude: float):
     
     if not is_admin():
         abort(403)
+        
+    latitude = float(latitude)
+    longitude = float(longitude)
 
     if name not in core.teams:
-        return "Team does not exist."
+        return STATUS_CODES.S00004
         
     if core.teams[name].is_imprisoned:
-        return "Team is imprisoned."
+        return STATUS_CODES.S20002
     
-    log.debug(f"Team {name} is at {location1}, {location2}")
+    if longitude > 180 or longitude < -180 or latitude > 90 or latitude < -90:
+        return STATUS_CODES.S00006
     
-    return core.check_pos(name, pgh.encode(float(location1), float(location2)))
+    log.debug(f"Team {name} is at {longitude}, {latitude}")
+    
+    return jsonify(core.check_pos(name, pgh.encode(latitude, longitude)))
