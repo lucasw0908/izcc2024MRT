@@ -24,7 +24,7 @@ function finish_misson() {
     const team = document.querySelector("#team").innerHTML;
     fetch(`http://localhost:8080/api/finish_mission/${team}`).then(response => response.text())
         .then(response => {
-            if (response === "Success.") {
+            if (response === "Success") {
                 Swal.fire({
                     title: "任務完成",
                     icon: "success",
