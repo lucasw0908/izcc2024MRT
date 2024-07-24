@@ -42,11 +42,6 @@ def admin():
             return render_template("admin.html", current_user=current_user.username, team=team)
         
     return redirect("/")
-    
-    # bearer_client = APIClient(session.get("token"), bearer=True)
-    # current_user = bearer_client.users.get_current_user()
-    # team, _ = core.check_player(current_user.username)
-    # return render_template("/admin.html" , current_user=current_user.username, team=team)
 
 
 @main.route("/download_graph")
