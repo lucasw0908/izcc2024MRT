@@ -1,10 +1,11 @@
+import os
 import logging
 import logging.handlers
 from flask import Flask
 from flask.logging import default_handler
 from flask_wtf import CSRFProtect
 
-from .config import DevConfig, ProdConfig
+from .config import DevConfig, ProdConfig, BASEDIR
 from .models import db
 from .modules.socketio import socketio
 
@@ -30,7 +31,7 @@ def init_logger(debug: bool=False) -> None:
         log.setLevel(logging.INFO)
         
     file_handler = logging.handlers.RotatingFileHandler(
-        filename=f"app.log",
+        filename=os.path.join(BASEDIR, "app.log"),
         encoding="utf-8",
         maxBytes=8**7, 
         backupCount=8
