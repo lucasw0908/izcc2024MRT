@@ -31,7 +31,7 @@ def init_logger(debug: bool=False) -> None:
         log.setLevel(logging.INFO)
         
     file_handler = logging.handlers.RotatingFileHandler(
-        filename=os.path.join(BASEDIR, "app.log"),
+        filename=os.path.join(BASEDIR, "logs", "app.log"),
         encoding="utf-8",
         maxBytes=8**7, 
         backupCount=8
