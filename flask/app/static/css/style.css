@@ -1,15 +1,15 @@
-body{
+body {
     font-family: "Noto Sans TC", sans-serif;
 }
 
-.top{
+.top {
     display: inline-flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
 }
 
-.user_info p{
+.user_info p {
     font-size: 200%;
 }
 
@@ -25,9 +25,9 @@ body{
     box-shadow: 0 10px 50px rgba(159, 162, 177, .8);
     font-size: 200%;
     margin-right: 20vw;
-  }
-  
-  .nav-item {
+}
+
+.nav-item {
     color: #83818c;
     padding: 20px;
     text-decoration: none;
@@ -38,30 +38,32 @@ body{
     font-weight: 500;
     position: relative;
     overflow: hidden;
-    
+
     &:before {
-      content: "";
-      position: absolute;
-      bottom: -6px;
-      left: 0;
-      width: 100%;
-      height: 5px;
-      background-color: #dfe2ea;
-      border-radius: 8px 8px 0 0;
-      opacity: 0;
-      transition: .3s;
+        content: "";
+        position: absolute;
+        bottom: -6px;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background-color: #dfe2ea;
+        border-radius: 8px 8px 0 0;
+        opacity: 0;
+        transition: .3s;
     }
-  }
-  
-  .nav-item:not(.is-active):hover:before {
+}
+
+.nav-item:not(.is-active):hover:before {
     opacity: 1;
     bottom: 0;
-  }
-  
-  
-  .nav-item:not(.is-active):hover { color: #333; }
-  
-  .nav-indicator {
+}
+
+
+.nav-item:not(.is-active):hover {
+    color: #333;
+}
+
+.nav-indicator {
     position: absolute;
     left: 0;
     bottom: 0;
@@ -70,13 +72,15 @@ body{
     height: 5px;
     z-index: 1;
     border-radius: 8px 8px 0 0;
-  }
-  
-  @media (max-width: 580px) {
-    .nav { overflow: auto; }
-  }
+}
 
-.MRT_map{
+@media (max-width: 580px) {
+    .nav {
+        overflow: auto;
+    }
+}
+
+.MRT_map {
     min-width: 10%;
     min-height: 10%;
     max-height: 100%;
@@ -92,18 +96,21 @@ body{
     display: none;
 }
 
-.station_info_text{
-    text-align:left;
+.station_info_text {
+    text-align: left;
     margin-left: 10%;
     font-size: 120%;
 }
-h1{
+
+h1 {
     margin-left: 5%;
 }
 
 .team_locate {
-    display: flex; /* 使用 Flexbox 排列元素 */
-    flex-wrap: wrap; /* 允許元素換行 */
+    display: flex;
+    /* 使用 Flexbox 排列元素 */
+    flex-wrap: wrap;
+    /* 允許元素換行 */
     margin-left: 5%;
 }
 
@@ -112,11 +119,15 @@ h1{
     font-size: 200%
 }
 
-#team0_location,#team1_location,#team2_location,#team3_location{
-    margin-right: 5%; /* 調整段落元素之間的間距 */
+#team0_location,
+#team1_location,
+#team2_location,
+#team3_location {
+    margin-right: 5%;
+    /* 調整段落元素之間的間距 */
 }
 
-.team_point{
+.team_point {
     display: flex;
     justify-content: center;
     margin: 0;
@@ -124,11 +135,14 @@ h1{
 
 .team_point .scoreboard {
     background-color: #fff;
-    padding: 30px; /* 調整 padding 來放大元素 */
+    padding: 30px;
+    /* 調整 padding 來放大元素 */
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 100%; /* 使用百分比來填滿父元素的寬度 */
-    max-width: 800px; /* 可以調整的最大寬度 */
+    width: 100%;
+    /* 使用百分比來填滿父元素的寬度 */
+    max-width: 800px;
+    /* 可以調整的最大寬度 */
     font-size: 200%;
 }
 
@@ -163,15 +177,17 @@ h1{
     text-align: right;
 }
 
-.swal2-popup{
+.swal2-popup {
     font-size: 175%;
 }
 
-.loacate_collapseTime_container, .point_is_imprisoned_container {
+.loacate_collapseTime_container,
+.point_is_imprisoned_container {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+
 #next_collapse_time_label {
     margin-left: auto;
     margin-right: 2%;

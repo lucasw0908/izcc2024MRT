@@ -16,6 +16,7 @@ OAUTH_URL = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&redirec
 
 class Config(object):
     SECRET_KEY = os.urandom(12).hex()
+    JSON_AS_ASCII = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PERMANENT_SESSION_LIFETIME = timedelta(days=31)
     # SESSION_COOKIE_SECURE = True,
@@ -25,12 +26,10 @@ class Config(object):
 
 class ProdConfig(Config):
     DEBUG = False
-    JSON_AS_ASCII = False
     SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI
 
 
 class DevConfig(Config):
     DEBUG = True
-    JSON_AS_ASCII = False
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(BASEDIR, "db.sqlite3")
     SQLALCHEMY_TRACK_MODIFICATIONS = False

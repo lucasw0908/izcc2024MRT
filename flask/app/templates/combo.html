@@ -1,94 +1,38 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-    <link href="../static/css/style.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="../static/img/favicon.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
-    <style>
-        .container {
-            margin: 20px auto;
-            background: #fff;
-            padding: 5%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            max-width: 85%;
-            font-size: 200%;
-        }
-        .item {
-            margin-bottom: 4%;
-        }
-        .item span {
-            font-weight: bold;
-            color: #828282;
-        }
-    </style>
-    <title>捷運大富翁-組合</title>
-</head>
-<body>
-    <div class="top">
-        <nav class="nav">
-            <a href="/" class="nav-item" active-color="gray">主頁</a>
-            <a href="/combo" class="nav-item" active-color="gray">組合</a>
-            <a href="/team_admin" class="nav-item" active-color="gray">隊隨</a>
-            <span class="nav-indicator"></span>
-        </nav>
-        <div class="user_info">
-            <p>{{ team }} - {{current_user}}</p>
-        </div>
+{% extends "base.html" %}
+{% block title %}捷運大富翁-組合{% endblock title %}
+
+{% block head %}
+<link href="{{url_for('static', filename='css/combo.css')}}" rel="stylesheet">
+<script src="{{url_for('static', filename='js/combo.js')}}"></script>
+{% endblock head %}
+
+{% block body %}
+
+<span id="team" style="display: none;">{{team}}</span>
+
+<div class="top">
+    <nav class="nav">
+        <a href="/" class="nav-item" active-color="gray">主頁</a>
+        <a href="/combo" class="nav-item" active-color="gray">組合</a>
+        <a href="/team_admin" class="nav-item" active-color="gray">隊隨</a>
+        <span class="nav-indicator"></span>
+    </nav>
+    <div class="user_info">
+        <p>{{team}} - {{current_user}}</p>
     </div>
+</div>
 
-    <div class="container">
-        {% for combo in combos %}
-        <div class="item" data-stations="{{ combo.stations | join(',') }}">
-            <span>{{ combo.name }} : </span>
-            <span class="stations">
-                {% for station in combo.stations %}
-                {{ station }}, 
-                {% endfor %}
-            </span>
-            <span class="points">+{{ combo.point }}分</span>
-        </div>
-        {% endfor %}
+<div class="container">
+    {% for combo in combos %}
+    <div class="item" data-stations="{{ combo.stations | join(',') }}">
+        <span>{{ combo.name }} : </span>
+        <span class="stations">
+            {% for station in combo.stations %}
+            {{ station }},
+            {% endfor %}
+        </span>
+        <span class="points">+{{ combo.point }}分</span>
     </div>
-        
-    <script>
-        document.addEventListener('DOMContentLoaded', changeColor);
-
-        function changeColor() {
-            fetch("http://localhost:8080/api/team/{{ team }}")
-                .then(response => response.json())
-                .then(data => {
-                    const items = document.querySelectorAll('.item');
-                    items.forEach(item => {
-                        const stationSpans = item.querySelector('.stations');
-                        const pointSpan = item.querySelector('.points');
-                        const stations = item.getAttribute('data-stations').split(',');
-                        const isInStations = stations.map(station => data.stations.includes(station.trim()));
-                
-                        const colors = {
-                            true: 'rgba(0, 128, 0, 0.5)', // 綠色
-                            false: 'rgba(255, 0, 0, 0.5)' // 紅色
-                        };
-
-                        stationSpans.innerHTML = ''; 
-
-                        stations.forEach((station, index) => {
-                            const span = document.createElement('span');
-                            span.textContent = station;
-                            span.style.color = colors[isInStations[index]]; // 根據狀態設置顏色
-                            stationSpans.appendChild(span);
-                            if (index < stations.length - 1) {
-                                stationSpans.appendChild(document.createTextNode(', ')); // 添加逗號分隔
-                            }
-                        });
-                    });
-                })
-            .catch(error => console.error('Error fetching data:', error));
-        }
-
-    </script>
-    </script>
-</body>
-</html>
+    {% endfor %}
+</div>
+{% endblock %}

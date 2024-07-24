@@ -1,239 +1,40 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>捷運大富翁-抽卡</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" type="image/png" href="../static/img/favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
-    
-    <style>
-        html, body {
-            position: relative;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background-color: #eee;
-            font-family: 'helvetica', sans-serif;
-            font-size: 16px;
-            transform: translate3d(0, 0, 0);
-            overflow: hidden;
-        }
+{% extends "base.html" %}
 
-        /* 當 SweetAlert2 彈窗打開時，禁用滾動 */
-        body.modal-open {
-            overflow: hidden;
-        }
+{% block title %}捷運大富翁-抽卡{% endblock title %}
 
-        .container {
-            position: relative;
-            width: 100%;
-            max-width: 1080px;
-            min-height: 100%;
-            margin: 0 auto;
-            padding: 20px;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden; /* 確保子元素不會超出容器 */
-        }       
+{% block head %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-        .element-card {
-            position: relative;
-            width: 300px;
-            height: 450px;
-            transform-style: preserve-3d;
-            transform: rotateY(0deg) translateX(0px) translateY(1000px);
-            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.4);
-            margin: 10px;
-            cursor: pointer;
-            opacity: 0; /* 初始隱藏 */
-        }
-        .element-card.show {
-            opacity: 1;
-            animation: draw 2s ease-out, spin 2s linear infinite 2s;
-        }
-        .element-card.stopped {
-            animation: none;
-        }
-        @keyframes spin {
-            0% {
-                transform: rotateY(0deg);
-            }
-            100% {
-                transform: rotateY(360deg);
-            }
-        }
-        @keyframes draw {
-            0% {
-                transform: translateY(1000px);
-                opacity: 0;
-            }
-            100% {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-        .element-card .front-facing, .element-card .back-facing {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 5px;
-        }
-        .element-card .front-facing {
-            background-image: url(../static/img/cards/card0.jpg);
-            background-size: cover;
-            background-position: center;
-        }
-        .element-card .back-facing {
-            transform: rotateY(180deg);
-            background-image: url('https://memeprod.sgp1.digitaloceanspaces.com/user-resource/71874e05c6cce6d6effe02a1627829e3.png');
-            background-size: cover;
-            background-position: center;
-        }
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link href="{{url_for('static', filename='css/card.css')}}" rel="stylesheet">
+<script src="{{url_for('static', filename='js/card.js')}}"></script>
+{% endblock head %}
 
-        .arrow {
-            position: absolute;
-            bottom: 20px;
-            left: 35vw;
-            transform: translateX(-50%);
-            line-height: 1;
-            color: rgb(255, 255, 255);
-            animation: bounce 2s infinite;
-        }
+{% block body %}
 
-        .arrow svg{
-            width: 700%;
-            height: 700%;
-        }
+<span id="team" style="display: none;">{{team}}</span>
 
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-30px);
-            }
-        }
-        button {
-            display: flex;
-            height: 3em;
-            width: 100px;
-            align-items: center;
-            justify-content: center;
-            background-color: #eeeeee4b;
-            border-radius: 3px;
-            letter-spacing: 1px;
-            transition: all 0.2s linear;
-            cursor: pointer;
-            border: none;
-            background: #fff;
-        }
-
-        button > svg {
-            margin-right: 5px;
-            margin-left: 5px;
-            font-size: 20px;
-            transition: all 0.4s ease-in;
-        }
-
-        button:hover > svg {
-            font-size: 1.2em;
-            transform: translateX(-5px);
-        }
-
-        button:hover {
-            box-shadow: 9px 9px 33px #d1d1d1, -9px -9px 33px #ffffff;
-            transform: translateY(-2px);
-        }
-        a {
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
-    <a id="backpage" href="/team_admin">
-        <button>
-            <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024">
-                <path d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z"></path>
-            </svg>
-            <span>Back</span>
-        </button>
-    </a>
-    <div class="container">
-        <div class="element-card">
-            <div class="front-facing" id="front-facing"></div>
-            <div class="back-facing"></div>
-        </div>
-    </div>
-    <div class="arrow">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up" viewBox="0 0 16 16">
-            <path d="M3.204 11h9.592L8 5.519zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659"/>
+<a id="backpage" href="/team_admin">
+    <button>
+        <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024">
+            <path
+                d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z">
+            </path>
         </svg>
+        <span>Back</span>
+    </button>
+</a>
+<div class="container">
+    <div class="element-card">
+        <div class="front-facing" id="front-facing"></div>
+        <div class="back-facing"></div>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var elementCard = document.querySelector('.element-card');
-            var arrow = document.querySelector('.arrow');
-            var startY, endY;
-
-            function getCardName() {
-                return fetch(`http://localhost:8080/api/team/{{team}}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        return data.current_card;
-                    });
-            }
-
-            getCardName().then(card => {
-                if (card === null) {
-                    document.body.classList.add('modal-open');
-                    Swal.fire({
-                        title: `沒有卡片可以抽`,
-                        icon: 'warning',
-                        text: "You don't have card.",
-                        confirmButtonText: "關閉",
-                        didClose: () => {
-                            document.body.classList.remove('modal-open');
-                            window.location.href = '/team_admin';
-                        }
-                    });
-                } else {
-                    document.getElementById("front-facing").style.backgroundImage = `url('../static/img/cards/${card}.jpg')`;
-                }
-            });
-
-            document.addEventListener('touchstart', function(e) {
-                startY = e.touches[0].clientY;
-            });
-
-            document.addEventListener('touchend', function(e) {
-                endY = e.changedTouches[0].clientY;
-                if (startY - endY > 50) { // 檢查滑動距離是否大於50px
-                    elementCard.classList.add('show');
-                    arrow.style.display = 'none'; // 隱藏箭頭
-                }
-            });
-
-            elementCard.addEventListener('click', function() {
-                elementCard.classList.toggle('stopped');
-                if (elementCard.classList.contains('stopped')) {
-                    elementCard.style.transform = 'rotateY(0deg)'; // 停止在正面
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+</div>
+<div class="arrow">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up"
+        viewBox="0 0 16 16">
+        <path
+            d="M3.204 11h9.592L8 5.519zm-.753-.659 4.796-5.48a1 1 0 0 1 1.506 0l4.796 5.48c.566.647.106 1.659-.753 1.659H3.204a1 1 0 0 1-.753-1.659" />
+    </svg>
+</div>
+{% endblock %}
