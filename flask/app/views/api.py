@@ -1,7 +1,8 @@
 import pygeohash as pgh
 import logging
 import re
-from flask import abort, Blueprint, jsonify
+from flask import abort, Blueprint, jsonify, session
+from zenora import APIClient
 
 from ..core import core
 from ..modules.checker import is_admin, is_player
@@ -40,11 +41,19 @@ def stations():
     
     data = []
     graph = core.metro.graph
+    unlock_stations = []
+    
+    if "token" in session:
+        bearer_client = APIClient(session.get("token"), bearer=True)
+        current_user = bearer_client.users.get_current_user()
+        team, _ = core.check_player(current_user.username)
+        if team is not None:
+            unlock_stations.extend(team.stations)
     
     for station_name in graph.keys():
         station = core.metro.find_station(station_name)
         data.append(station.__dict__)
-        if station.hidden:
+        if station.hidden and station_name not in unlock_stations:
             data[-1]["mission"] = "隱藏"
             data[-1]["tips"] = "隱藏"
             data[-1]["exit"] = "隱藏"
@@ -63,8 +72,17 @@ def station(name: str):
     if station is None:
         return jsonify({})
     
+    unlock_stations = []
+    
+    if "token" in session:
+        bearer_client = APIClient(session.get("token"), bearer=True)
+        current_user = bearer_client.users.get_current_user()
+        team, _ = core.check_player(current_user.username)
+        if team is not None:
+            unlock_stations.extend(team.stations)
+    
     data = station.__dict__
-    if station.hidden:
+    if station.hidden and name not in unlock_stations:
         data["mission"] = "隱藏"
         data["tips"] = "隱藏"
         data["exit"] = "隱藏"
