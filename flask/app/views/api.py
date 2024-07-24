@@ -262,6 +262,9 @@ def add_point(name: str, point: int):
     if not is_admin():
         abort(403)
         
+    if name not in core.teams:
+        return STATUS_CODES.S00004
+        
     core.teams[name].point += int(point)
     return STATUS_CODES.S00000
 
@@ -271,6 +274,9 @@ def set_point(name: str, point: int):
     
     if not is_admin():
         abort(403)
+        
+    if name not in core.teams:
+        return STATUS_CODES.S00004
         
     core.teams[name].point = point
     return STATUS_CODES.S00000
