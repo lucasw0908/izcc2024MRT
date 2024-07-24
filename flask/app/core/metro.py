@@ -6,7 +6,7 @@ import os
 from typing import Any
 
 from ..config import BASEDIR
-from ..game_config import DELETE_STATIONS, IS_SPECIAL, API_URL_TP, API_URL_NTP, LOCATION_API_URL_TP, LOCATION_API_URL_NTP
+from ..game_config import DELETE_STATIONS, IS_SPECIAL, IS_HIDDEN, API_URL_TP, API_URL_NTP, LOCATION_API_URL_TP, LOCATION_API_URL_NTP
 from ..data import load_data
 
 
@@ -100,7 +100,7 @@ class Station:
             "geohash": str(station["geohash"]),
         })
         
-        self.hidden = self.is_special or self.is_prison
+        self.hidden = self.is_special or self.is_prison or random.random() <= IS_HIDDEN
     
     
     def __str__(self) -> str:

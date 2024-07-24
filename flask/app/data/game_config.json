@@ -32,6 +32,7 @@
         "動物園"
     ],
     "is_special": 0.3,
+    "is_hidden": 0.1,
     "distance": 500.0,
     "imprisoned_time": {
         "min": 3,
