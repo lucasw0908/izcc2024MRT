@@ -107,8 +107,14 @@ function showLocate() {
                 if (teamNumber !== undefined) {
                     const locationElement = document.getElementById(`team${teamNumber}_location`);
                     if (locationElement) {
-                        locationElement.textContent = `${team.location}`;
+                        if (team.is_imprisoned === true){
+                            locationElement.textContent = `監獄⛓️`;
+                        }
+                        else{
+                            locationElement.textContent = `${team.location}`;
+                        }
                     }
+                    
                 }
             });
         })
@@ -205,21 +211,75 @@ function getCurrentLocation() {
     const team = document.querySelector('#team').innerHTML;
     // 先確認使用者裝置能不能抓地點
     if (navigator.geolocation) {
-
         // 使用者不提供權限，或是發生其它錯誤
         function error() {
             alert('無法取得你的位置');
         }
-
         // 使用者允許抓目前位置，回傳經緯度
         function success(position) {
             fetch(`http://localhost:8080/api/gps_location/${team}/${position.coords.latitude}/${position.coords.longitude}`)
         }
-
         // 跟使用者拿所在位置的權限
         navigator.geolocation.getCurrentPosition(success, error);
-
     } else {
         alert('Sorry, 你的裝置不支援地理位置功能。')
     }
 }
+
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    // 變數來存儲隊伍數據
+    let teamsData = [];
+
+    // 獲取 API 數據
+    fetch('http://localhost:8080/api/teams')
+        .then(response => response.json())
+        .then(data => {
+            teamsData = data;
+            setupEventListeners();
+        })
+        .catch(error => console.error('Error fetching teams data:', error));
+
+    // 設置事件監聽器的函數
+    function setupEventListeners() {
+        document.getElementById("team0_location_lebel").addEventListener("click", function() {
+            team_info_alert(this.textContent);
+        });
+        document.getElementById("team1_location_lebel").addEventListener("click", function() {
+            team_info_alert(this.textContent);
+        });
+        document.getElementById("team2_location_lebel").addEventListener("click", function() {
+            team_info_alert(this.textContent);
+        });
+        document.getElementById("team3_location_lebel").addEventListener("click", function() {
+            team_info_alert(this.textContent);
+        });
+        document.getElementById("team4_location_lebel").addEventListener("click", function() {
+            team_info_alert(this.textContent);
+        });
+    }
+
+    // 函數來顯示隊伍佔領的站
+    function team_info_alert(team) {
+        const team_name = team.replace(':','').trim();
+        const teamData = teamsData.find(t => t.name === team_name);
+
+        if (teamData) {
+            const stationsList = teamData.stations.length > 0 ? teamData.stations.join(', ') : '無';
+            Swal.fire({
+                title: `${team_name} 土地佔領`,
+                html: `佔領站: ${stationsList}`,
+                confirmButtonText: '關閉'
+            });
+        } else {
+            Swal.fire({
+                title: `錯誤`,
+                html: `找不到隊伍: ${team_name}`,
+                confirmButtonText: '關閉'
+            });
+        }
+    }
+});
+
