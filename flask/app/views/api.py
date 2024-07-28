@@ -147,9 +147,6 @@ def create_team(name: str, station: str):
     if not is_admin():
         abort(403)
         
-    if re.match(r"^[A-Za-z0-9_]+$", name) is None:
-        return STATUS_CODES.S00002
-        
     if name in core.teams:
         return STATUS_CODES.S20003
         
