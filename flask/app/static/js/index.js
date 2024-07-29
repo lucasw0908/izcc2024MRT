@@ -39,118 +39,137 @@ window.addEventListener('resize', resizeMap);
 window.addEventListener('load', resizeMap);
 
 
-function checkImageExists(imageUrl) {
-    return fetch(imageUrl, { method: 'HEAD' })
-        .then(response => response.ok)
-        .catch(() => false);
+async function checkImageExists(imageUrl) {
+    try {
+        const response = await fetch(imageUrl, { method: 'HEAD' });
+        return response.ok;
+    } catch (error) {
+        return false;
+    }
 }
-function station_info(station_name) {
-    const team = document.querySelector('#team').innerHTML;
-    station_name = station_name.replace("/", "_")
-    Promise.all([
-        fetch(`http://localhost:8080/api/station/${station_name}`).then(response => response.json()),
-        fetch(`http://localhost:8080/api/team/${team}`).then(response => response.json())
-    ])
-        .then(([data, team_data]) => {
-            let imageUrl = `../static/img/stations/${station_name}.jpg`;
-            checkImageExists(imageUrl).then(exists => {
-                let imageHtml = exists ? `<img src="${imageUrl}" alt="${station_name} 圖片" style="width:60%; height:auto;">` : '';
-                let lebel_image = (data.is_special === false || station_name === team_data.location) ? imageHtml : "";
-                let lebel_is_special = (data.is_special) ? "是" : "否";
-                let label_team = (data.team) ? data.team : "無人佔領";
-                let label_depiction = (data.is_special === false || station_name === team_data.location) ? data.mission : "隱藏";
-                let label_exit = (data.is_special === false || station_name === team_data.location) ? data.exit : "隱藏";
-                let lebel_difficult = null;
-                if (data.difficult == 1) { lebel_difficult = "簡單"; }
-                else if (data.difficult == 2) { lebel_difficult = "普通"; }
-                else if (data.difficult == 3) { lebel_difficult = "困難"; }
-                station_name = station_name.replace("_", "/")
 
-                Swal.fire({
-                    title: `${station_name} 站點資訊`,
-                    html: `
-                        <p>特殊站 : ${lebel_is_special}</p>
-                        <p>佔領的小隊 : ${label_team}</p>
-                        <p>任務敘述 : ${label_depiction}</p>
-                        <p>任務出口 : ${label_exit}</p>
-                        <p>任務難度: ${lebel_difficult}</p>
-                        ${lebel_image}
-                    `,
-                    confirmButtonText: "關閉",
-                    showCancelButton: true,
-                    cancelButtonText: "提示",
-                    customClass: { cancelButton: 'swal-button-yellow' },
-                }).then((result) => {
-                    if (result.dismiss === Swal.DismissReason.cancel) {
-                        Swal.fire({
-                            title: '提示',
-                            text: `${data.tips}`,
-                            confirmButtonText: "關閉",
-                        });
-                    }
-                });
+async function station_info(station_name) {
+    const team = document.querySelector('#team').innerHTML;
+    station_name = station_name.replace("/", "_");
+
+    const swalInstance = Swal.fire({
+        title: `${station_name.replace("_", "/")} 站點資訊`,
+        html: '載入中...',
+        showConfirmButton: false,
+        showCancelButton: false,
+        customClass: { cancelButton: 'swal-button-yellow' }
+    });
+
+    try {
+        const [data, team_data] = await Promise.all([
+            fetch(`http://localhost:8080/api/station/${station_name}`).then(response => response.json()),
+            fetch(`http://localhost:8080/api/team/${team}`).then(response => response.json())
+        ]);
+
+        const imageUrl = `../static/img/stations/${station_name}.jpg`;
+        const exists = await checkImageExists(imageUrl);
+        const imageHtml = exists ? `<img src="${imageUrl}" alt="${station_name} 圖片" style="width:60%; height:auto;">` : '';
+
+        const lebel_image = (!data.is_special || station_name === team_data.location) ? imageHtml : "";
+        const lebel_is_special = data.is_special ? "是" : "否";
+        const label_team = data.team ? data.team : "無人佔領";
+        const label_depiction = (!data.is_special || station_name === team_data.location) ? data.mission : "隱藏";
+        const label_exit = (!data.is_special || station_name === team_data.location) ? data.exit : "隱藏";
+        const lebel_difficult = data.difficult === 1 ? "簡單" : data.difficult === 2 ? "普通" : data.difficult === 3 ? "困難" : null;
+
+        station_name = station_name.replace("_", "/");
+
+        const result = await Swal.fire({
+            title: `${station_name} 站點資訊`,
+            html: `
+                <p>特殊站 : ${lebel_is_special}</p>
+                <p>佔領的小隊 : ${label_team}</p>
+                <p>任務敘述 : ${label_depiction}</p>
+                <p>任務出口 : ${label_exit}</p>
+                <p>任務難度: ${lebel_difficult}</p>
+                ${lebel_image}
+            `,
+            showConfirmButton: true,
+            confirmButtonText: "關閉",
+            showCancelButton: true,
+            cancelButtonText: "提示",
+            customClass: { cancelButton: 'swal-button-yellow' }
+        });
+
+        // Handle the result of the Swal.fire
+        if (result.dismiss === Swal.DismissReason.cancel) {
+            Swal.fire({
+                title: '提示',
+                text: `${data.tips}`,
+                confirmButtonText: "關閉"
             });
-        })
+        }
+    } catch (error) {
+        console.error('Error fetching station or team data:', error);
+        // Show error message
+        Swal.fire({
+            title: '錯誤',
+            html: '無法載入站點資訊',
+            showConfirmButton: true,
+            confirmButtonText: "關閉"
+        });
+    }
 }
 
 
 const chineseNumerals = { '零': 0, '一': 1, '二': 2, '三': 3, '四': 4, };
-function showLocate() {
-    fetch('http://localhost:8080/api/teams')
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(team => {
-                // 提取隊名中的數字部分，例如 "零小" -> "0"
-                const chineseNumeral = team.name.charAt(0); // 假設隊名的第一個字符是中文數字
-                const teamNumber = chineseNumerals[chineseNumeral];
 
-                if (teamNumber !== undefined) {
-                    const locationElement = document.getElementById(`team${teamNumber}_location`);
-                    if (locationElement) {
-                        if (team.is_imprisoned === true){
-                            locationElement.textContent = `監獄⛓️`;
-                        }
-                        else{
-                            locationElement.textContent = `${team.location}`;
-                        }
-                    }
-                    
+async function showLocate() {
+    try {
+        const response = await fetch('http://localhost:8080/api/teams');
+        const data = await response.json();
+
+        data.forEach(team => {
+            // 提取隊名中的數字部分，例如 "零小" -> "0"
+            const chineseNumeral = team.name.charAt(0); // 假設隊名的第一個字符是中文數字
+            const teamNumber = chineseNumerals[chineseNumeral];
+
+            if (teamNumber !== undefined) {
+                const locationElement = document.getElementById(`team${teamNumber}_location`);
+                if (locationElement) {
+                    locationElement.textContent = team.is_imprisoned ? `監獄⛓️` : `${team.location}`;
                 }
-            });
-        })
-        .catch(error => console.error('Error fetching data:', error));
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
 }
 
-function showPoint() {
-    fetch('http://localhost:8080/api/teams')
-        .then(response => response.json())
-        .then(data => {
-            const teams = document.querySelectorAll(".team");
-            const maxScore = 3000;
+async function showPoint() {
+    try {
+        const response = await fetch('http://localhost:8080/api/teams');
+        const data = await response.json();
+        const teams = document.querySelectorAll(".team");
+        const maxScore = 3000;
 
-            data.forEach(teamData => {
-                const chineseNumeral = teamData.name.charAt(0); // 假設隊名的第一個字符是中文數字
-                const teamNumber = chineseNumerals[chineseNumeral];
+        data.forEach(teamData => {
+            const chineseNumeral = teamData.name.charAt(0); // 假設隊名的第一個字符是中文數字
+            const teamNumber = chineseNumerals[chineseNumeral];
 
-                if (teamNumber !== undefined && teams[teamNumber]) {
-                    const teamElement = teams[teamNumber];
-                    const score = teamData.point;
-                    const progressBar = teamElement.querySelector(".progress");
-                    const scoreElement = teamElement.querySelector(".score");
+            if (teamNumber !== undefined && teams[teamNumber]) {
+                const teamElement = teams[teamNumber];
+                const score = teamData.point;
+                const progressBar = teamElement.querySelector(".progress");
+                const scoreElement = teamElement.querySelector(".score");
 
-                    teamElement.setAttribute("data-score", score);
+                teamElement.setAttribute("data-score", score);
 
-                    const widthPercent = (score / maxScore) * 100;
-                    progressBar.style.width = widthPercent + "%";
+                const widthPercent = (score / maxScore) * 100;
+                progressBar.style.width = widthPercent + "%";
 
-                    scoreElement.textContent = `${score} 分`;
-                }
-            });
-        })
-        .catch(error => console.error('Error fetching data:', error));
+                scoreElement.textContent = `${score} 分`;
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
 }
-
-
 let lastStatus = null;
 let lastWarning = null;
 function showMap() {
@@ -183,31 +202,73 @@ function showMap() {
         .catch(error => console.error('Error fetching data:', error));
 }
 
+async function showCollapse_time() {
+    try {
+        const response = await fetch('http://localhost:8080/api/next_collapse_time');
+        const data = await response.json();
+        const targetTime = parseTime(data);
+        const interval = setInterval(() => {
+            const now = new Date();
+            const timeDiff = targetTime - now;
 
-function showCollapse_time() {
-    fetch('http://localhost:8080/api/next_collapse_time')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('next_collapse_time_label').textContent = `下次崩塌時間 : ${data}`;
-        })
-        .catch(error => console.error('Error fetching data:', error));
-}
-
-
-function showImprisoned() {
-    const team = document.querySelector('#team').innerHTML;
-    fetch(`http://localhost:8080/api/team/${team}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.is_imprisoned) {
-                document.getElementById('is_imprisoned_label').textContent = `監獄剩餘時間 : ${data.imprisoned_time} 分鐘`;
+            if (timeDiff <= 0) {
+                clearInterval(interval);
+                document.getElementById('next_collapse_time_label').textContent = '載入中...';
+            } else {
+                const countdown = formatTimeDiff(timeDiff);
+                document.getElementById('next_collapse_time_label').textContent = `崩塌倒數 : ${countdown}`;
             }
-        })
-        .catch(error => console.error('Error fetching data:', error));
+        }, 1000);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+function parseTime(timeString) {
+    // 假設 data 格式為 'HH:MM'
+    const [hours, minutes] = timeString.split(':').map(Number);
+    const now = new Date();
+    const targetTime = new Date(now);
+    targetTime.setHours(hours, minutes, 0, 0);
+    
+    // 如果目標時間已過，設定為下一天的目標時間
+    if (targetTime <= now) {
+        targetTime.setDate(targetTime.getDate() + 1);
+    }
+    return targetTime;
+}
+
+function formatTimeDiff(timeDiff) {
+    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
 
 
-function getCurrentLocation() {
+function formatTimeDiff(timeDiff) {
+    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+async function showImprisoned() {
+    const team = document.querySelector('#team').innerHTML;
+    try {
+        const response = await fetch(`http://localhost:8080/api/team/${team}`);
+        const data = await response.json();
+        if (data.is_imprisoned) {
+            document.getElementById('is_imprisoned_label').textContent = `監獄剩餘時間 : ${data.imprisoned_time} 分鐘`;
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
+
+async function getCurrentLocation() {
     const team = document.querySelector('#team').innerHTML;
     // 先確認使用者裝置能不能抓地點
     if (navigator.geolocation) {
@@ -216,54 +277,44 @@ function getCurrentLocation() {
             alert('無法取得你的位置');
         }
         // 使用者允許抓目前位置，回傳經緯度
-        function success(position) {
-            fetch(`http://localhost:8080/api/gps_location/${team}/${position.coords.latitude}/${position.coords.longitude}`)
+        async function success(position) {
+            try {
+                const response = await fetch(`http://localhost:8080/api/gps_location/${team}/${position.coords.latitude}/${position.coords.longitude}`);
+                const data = await response.json();
+                return data.distance;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         }
         // 跟使用者拿所在位置的權限
         navigator.geolocation.getCurrentPosition(success, error);
     } else {
-        alert('Sorry, 你的裝置不支援地理位置功能。')
+        alert('Sorry, 你的裝置不支援地理位置功能。');
     }
 }
 
-
-
-
-document.addEventListener("DOMContentLoaded", function() {
-    // 變數來存儲隊伍數據
+document.addEventListener("DOMContentLoaded", async function() {
     let teamsData = [];
 
-    // 獲取 API 數據
-    fetch('http://localhost:8080/api/teams')
-        .then(response => response.json())
-        .then(data => {
-            teamsData = data;
-            setupEventListeners();
-        })
-        .catch(error => console.error('Error fetching teams data:', error));
-
-    // 設置事件監聽器的函數
-    function setupEventListeners() {
-        document.getElementById("team0_location_lebel").addEventListener("click", function() {
-            team_info_alert(this.textContent);
-        });
-        document.getElementById("team1_location_lebel").addEventListener("click", function() {
-            team_info_alert(this.textContent);
-        });
-        document.getElementById("team2_location_lebel").addEventListener("click", function() {
-            team_info_alert(this.textContent);
-        });
-        document.getElementById("team3_location_lebel").addEventListener("click", function() {
-            team_info_alert(this.textContent);
-        });
-        document.getElementById("team4_location_lebel").addEventListener("click", function() {
-            team_info_alert(this.textContent);
-        });
+    try {
+        const response = await fetch('http://localhost:8080/api/teams');
+        const data = await response.json();
+        teamsData = data;
+        setupEventListeners();
+    } catch (error) {
+        console.error('Error fetching teams data:', error);
     }
 
-    // 函數來顯示隊伍佔領的站
+    function setupEventListeners() {
+        for (let i = 0; i <= 4; i++) {
+            document.getElementById(`team${i}_location_lebel`).addEventListener("click", function() {
+                team_info_alert(this.textContent);
+            });
+        }
+    }
+    
     function team_info_alert(team) {
-        const team_name = team.replace(':','').trim();
+        const team_name = team.replace(':', '').trim();
         const teamData = teamsData.find(t => t.name === team_name);
 
         if (teamData) {
@@ -283,3 +334,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 });
 
+
+function showDistance(){
+    distance = getCurrentLocation();
+
+}
