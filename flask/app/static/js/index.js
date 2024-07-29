@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", () => {
     resizeMap();
 });
 
+window.addEventListener('resize', resizeMap);
+window.addEventListener('load', resizeMap);
 
 // repeat
 setInterval(showMap, 10000);
@@ -36,8 +38,6 @@ function resizeMap() {
         areas[i].setAttribute('coords', newCoords.join(','));
     }
 }
-window.addEventListener('resize', resizeMap);
-window.addEventListener('load', resizeMap);
 
 
 async function checkImageExists(imageUrl) {
@@ -48,14 +48,13 @@ async function checkImageExists(imageUrl) {
         return false;
     }
 }
-
 async function station_info(station_name) {
     const team = document.querySelector('#team').innerHTML;
     station_name = station_name.replace("/", "_");
 
     const swalInstance = Swal.fire({
         title: `${station_name.replace("_", "/")} 站點資訊`,
-        html: '載入中...',
+        html: '<div class="loading-container"><span>載入中</span><div class="chaotic-orbit"></div></div>',
         showConfirmButton: false,
         showCancelButton: false,
         customClass: { cancelButton: 'swal-button-yellow' }
@@ -116,6 +115,9 @@ async function station_info(station_name) {
         });
     }
 }
+
+
+
 
 
 const chineseNumerals = { '零': 0, '一': 1, '二': 2, '三': 3, '四': 4, };
