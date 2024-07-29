@@ -1,12 +1,12 @@
 // ready
 document.addEventListener("DOMContentLoaded", () => {
-    resizeMap();
     showMap();
     showCollapse_time();
     showPoint();
     showLocate();
     showImprisoned();
     getCurrentLocation();
+    resizeMap();
 });
 
 
