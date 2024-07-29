@@ -39,7 +39,7 @@ function delete_team() {
 function join_team() {
     const team = document.getElementById('join_team_team-name').value;
     const player_name = document.getElementById('join_team_user-name').value;
-    const admin = document.getElementById('join_team_team-admin').checked
+    const admin = document.getElementById('join_team_team-admin').checked;
     fetch(`http://localhost:8080/api/join_team/${team}/${player_name}/${admin}`)
         .then(response => response.text())
         .then(response => { alert(response); });

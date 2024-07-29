@@ -178,10 +178,12 @@ def join_team(name: str, player_name: str, admin: bool):
         
     if name not in core.teams:
         return STATUS_CODES.S00004
-        
-    if admin:
+
+    if admin == "admin":
+        print("Is admin")
         core.teams[name].admins.append(player_name)
     else:
+        print("Is player")
         core.teams[name].players.append(player_name)
         
     return STATUS_CODES.S00000
