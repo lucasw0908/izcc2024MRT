@@ -181,7 +181,7 @@ Returns : `Success`, `Invalid Team`
 
 ---
 
-- `/join_team/<team_name: str>/<player_name: str>/<is_admin: bool>` : Let the player join the team. You can input a undefined player name, that will allow the player join the team after first login.
+- `/join_team/<team_name: str>/<player_name: str>/<is_admin: str>` : Let the player join the team. You can input a undefined player name, that will allow the player join the team after first login. If `is_admin` is "admin", the player will be a admin in the team.
 
 Returns : `Success`, `Invalid Team`
 
