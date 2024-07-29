@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showPoint();
     showLocate();
     showImprisoned();
+    showDistance()
     getCurrentLocation();
     resizeMap();
 });
@@ -272,29 +273,28 @@ async function showImprisoned() {
     }
 }
 
-async function getCurrentLocation() {
-    const team = document.querySelector('#team').innerHTML;
-    // 先確認使用者裝置能不能抓地點
-    if (navigator.geolocation) {
-        // 使用者不提供權限，或是發生其它錯誤
-        function error() {
-            alert('無法取得你的位置');
+function getCurrentLocation() {
+    return new Promise((resolve, reject) => {
+        const team = document.querySelector('#team').innerHTML;
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                try {
+                    const response = await fetch(`http://localhost:8080/api/gps_location/${team}/${position.coords.latitude}/${position.coords.longitude}`);
+                    const data = await response.json();
+                    resolve({ distance: data.distance, location: data.location });
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    reject(error);
+                }
+            }, () => {
+                alert('無法取得你的位置');
+                reject(new Error('Geolocation error'));
+            });
+        } else {
+            alert('Sorry, 你的裝置不支援地理位置功能。');
+            reject(new Error('Geolocation not supported'));
         }
-        // 使用者允許抓目前位置，回傳經緯度
-        async function success(position) {
-            try {
-                const response = await fetch(`http://localhost:8080/api/gps_location/${team}/${position.coords.latitude}/${position.coords.longitude}`);
-                const data = await response.json();
-                return data.distance;
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        }
-        // 跟使用者拿所在位置的權限
-        navigator.geolocation.getCurrentPosition(success, error);
-    } else {
-        alert('Sorry, 你的裝置不支援地理位置功能。');
-    }
+    });
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
@@ -339,7 +339,12 @@ document.addEventListener("DOMContentLoaded", async function() {
 });
 
 
-function showDistance(){
-    distance = getCurrentLocation();
-
+async function showDistance() {
+    const { distance, location } = await getCurrentLocation();
+    const distanceInKm = distance / 1000;
+    if (location) {
+        document.getElementById('distance_label').textContent = '( 你已到站 )';
+    } else {
+        document.getElementById('distance_label').textContent = `( 你距離下一站 ${distanceInKm} km )`;
+    }
 }
