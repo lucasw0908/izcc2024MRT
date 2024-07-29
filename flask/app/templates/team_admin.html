@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}捷運大富翁-對隨{% endblock title %}
+{% block title %}捷運大富翁-隊隨{% endblock title %}
 
 {% block head %}
 <link href="{{url_for('static', filename='css/team_admin.css')}}" rel="stylesheet">
@@ -40,6 +40,10 @@
 
     <button class="button" onclick="finish_misson();">
         任務完成<i class="bi bi-check-lg"></i>
+    </button>
+
+    <button class="button" onclick="admin();">
+        隊伍管理<i class="bi bi-kanban"></i>
     </button>
 </div>
 {% endblock %}
