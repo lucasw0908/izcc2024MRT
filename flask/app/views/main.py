@@ -101,3 +101,16 @@ def dice():
             return render_template("dice.html", current_user=current_user.username, team=team, graph=core.metro.graph)
 
     return redirect("/")
+
+
+@main.route("/initialization")
+def initialization():
+    if "token" in session:
+        bearer_client = APIClient(session.get("token"), bearer=True)
+        current_user = bearer_client.users.get_current_user()
+        team, is_admin = core.check_player(current_user.username)
+        
+        if is_admin:
+            return render_template("initialization.html", current_user=current_user.username, team=team, graph=core.metro.graph)
+
+    return redirect("/")

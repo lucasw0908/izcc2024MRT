@@ -97,8 +97,3 @@ function getCurrentLocation() {
         alert("Sorry, 你的裝置不支援地理位置功能。")
     }
 }
-
-
-function admin(){
-    window.location.href = "/admin";
-}

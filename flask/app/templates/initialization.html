@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}捷運大富翁-初始{% endblock title %}
+
+{% block head %}
+<link href="{{url_for('static', filename='css/initialization.css')}}" rel="stylesheet">
+<script src="{{url_for('static', filename='js/initialization.js')}}"></script>
+{% endblock head %}
+{% block body %}
+
+<span id="team" style="display: none;">{{team}}</span>
+
+<div class="top">
+    <nav class="nav">
+        <a href="/" class="nav-item" active-color="gray">主頁</a>
+        <a href="/combo" class="nav-item" active-color="gray">組合</a>
+        <a href="/team_admin" class="nav-item" active-color="gray">隊隨</a>
+        <span class="nav-indicator"></span>
+    </nav>
+
+    <div class="user_info">
+        <p>{{team}} - {{current_user}}</p>
+    </div>
+</div>
+
+<div class="big_font-size">
+    <h2>{{team}}</h2>
+
+    <h3>新增小隊員</h3>
+    <table class="input-table">
+        <tr>
+            <td>
+                <div class="input-group">
+                    <input required="" type="text" name="text" autocomplete="off" class="input" id="join_team_user-name">
+                    <label class="user-label" >Discord ID</label>
+                </div>
+            </td>
+            <td>
+                <button type="submit" class="submit-button" onclick="join_team()">確認</button>
+            </td>
+        </tr>
+    </table>
+
+    <h3>刪除小隊員</h3>
+    <table class="input-table">
+        <tr>
+            <td>
+                <div class="input-group">
+                    <input required="" type="text" name="text" autocomplete="off" class="input" id="leave_team_user-name">
+                    <label class="user-label">Discord ID</label>
+                </div>
+            </td>
+            <td>
+                <button type="submit" class="submit-button" onclick="leave_team()">確認</button>
+            </td>
+        </tr>
+    </table>
+
+    <h3 id="teammate_list_label">隊員列表</h3>
+    <div>
+        <ul id="admins_list"></ul>
+        <ul id="players_list"></ul>
+    </div>
+</div>
+
+{% endblock %}
