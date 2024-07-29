@@ -343,7 +343,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 async function showDistance() {
     const { distance, location } = await getCurrentLocation();
-    const distanceInKm = distance / 1000;
+    const distanceInKm = (distance / 1000).toFixed(1);
     if (location) {
         document.getElementById('distance_label').textContent = '( 你已到站 )';
     } else {
