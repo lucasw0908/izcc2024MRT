@@ -20,7 +20,7 @@ function mission_label() {
 }
 
 
-function finish_misson() {
+function finish_mission() {
     const team = document.querySelector("#team").innerHTML;
     fetch(`/api/finish_mission/${team}`).then(response => response.text())
         .then(response => {
