@@ -1,6 +1,5 @@
 import pygeohash as pgh
 import logging
-import re
 from flask import abort, Blueprint, jsonify, session
 from zenora import APIClient
 
