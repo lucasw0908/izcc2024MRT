@@ -96,6 +96,10 @@ body {
     display: none;
 }
 
+.MRT_map {
+    pointer-events: none; /* 禁用點擊事件 */
+}
+
 .station_info_text {
     text-align: left;
     margin-left: 10%;

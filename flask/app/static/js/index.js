@@ -37,6 +37,8 @@ function resizeMap() {
         });
         areas[i].setAttribute('coords', newCoords.join(','));
     }
+    mapReady = true;
+    document.querySelector('.MRT_map').style.pointerEvents = 'auto'; // 啟用點擊事件
 }
 
 
