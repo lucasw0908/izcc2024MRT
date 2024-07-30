@@ -8,9 +8,9 @@
     ],
     "card_count": 25,
     "station_points": {
-        "0": 20,
-        "1": 35,
-        "2": 50
+        "1": 20,
+        "2": 35,
+        "3": 50
     },
     "start_station": "中正紀念堂",
     "end_station": "秀朗橋",
