@@ -537,25 +537,25 @@
     "木柵": {
         "Mission": "與捷運站旁的廟宇合照",
         "Tips": "",
-        "Exit": "1",
+        "Exit": "1號出口",
         "Difficult": 1
     },
     "萬芳社區": {
         "Mission": "拍下中華電信的標誌",
         "Tips": "出口旁的大樓上",
-        "Exit": "1",
+        "Exit": "1號出口",
         "Difficult": 1
     },
     "萬芳醫院": {
         "Mission": "拍下萬芳醫院的模樣",
         "Tips": "",
-        "Exit": "1",
+        "Exit": "1號出口",
         "Difficult": 1
     }, 
     "辛亥": {
         "Mission": "前往辛亥國小並與國小正門合照",
         "Tips": "",
-        "Exit": "1",
+        "Exit": "1號出口",
         "Difficult": 2
     },
     "麟光": {
@@ -567,25 +567,25 @@
     "六張犁": {
         "Mission": "與附圖合照並擺出士兵敬禮手勢",
         "Tips": "出口旁",
-        "Exit": "1",
+        "Exit": "1號出口",
         "Difficult": 1
     },
     "科技大樓": {
         "Mission": "找出附圖地標",
         "Tips": "位於富邦銀行旁",
-        "Exit": "1",
+        "Exit": "1號出口",
         "Difficult":2 
     },
     "大安": {
         "Mission": "與永固名店街的招牌拍照",
         "Tips": "出口旁",
-        "Exit": "6",
+        "Exit": "6號出口",
         "Difficult": 1
     },
     "中山國中": {
         "Mission": "找到三民書局和久大文具店並拍照",
-        "Tips": "",
-        "Exit": "1",
+        "Tips": "無",
+        "Exit": "1號出口",
         "Difficult": 1
     }
 }
