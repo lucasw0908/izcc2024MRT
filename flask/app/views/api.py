@@ -303,6 +303,25 @@ def finish_mission(name: str):
     return STATUS_CODES.S00000 if card is None else card
 
 
+@api.route("/skip_mission/<name>")
+def skip_mission(name: str):
+    
+    if not is_admin():
+        abort(403)
+    
+    if name not in core.teams:
+        return STATUS_CODES.S00004
+    
+    if core.teams[name].is_imprisoned:
+        return STATUS_CODES.S20002
+    
+    if core.teams[name].current_mission_finished:
+        return STATUS_CODES.S50003
+    
+    core.skip_mission(name=name)
+    return STATUS_CODES.S00000
+
+
 @api.route("/gps_location/<name>/<latitude>/<longitude>")
 def gps_location(name: str, latitude: float, longitude: float):
     

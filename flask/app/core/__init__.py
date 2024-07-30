@@ -92,12 +92,14 @@ class Core:
         
     
     def load_data(self) -> None:
+        """Load the data from the database."""
         for team in Teams.query.all():
             team: Teams
             self.create_team(team.name, team.players, team.admins)
             
         
     def save_data(self) -> None:
+        """Save the data to the database."""
         for team in self.teams.values():
             if team.name == "admins":
                 continue
@@ -296,6 +298,11 @@ class Core:
             return None
         
         if self.teams[name].current_mission_finished:
+            log.warning(f"Team {name} has finished the mission.")
+            return None
+        
+        if self.teams[name].location != self.teams[name].target_location:
+            log.warning(f"Team {name} is not in the target location.")
             return None
         
         station = self.metro.find_station(self.teams[name].target_location)
@@ -323,6 +330,32 @@ class Core:
                 card = f"card{self.dice(CARD_COUNT)}"
                 self.teams[name].current_card = card
             return self.teams[name].current_card
+        
+        
+    def skip_mission(self, name: str) -> None:
+        """
+        Skip the mission.
+        
+        Parameters
+        ----------
+        name: :type:`str`
+            The name of the team.
+        """
+        
+        if name not in self.teams.keys():
+            log.warning(f"Team {name} does not exist.")
+            return None
+        
+        if self.teams[name].current_mission_finished:
+            log.warning(f"Team {name} has finished the mission.")
+            return None
+        
+        if self.teams[name].location != self.teams[name].target_location:
+            log.warning(f"Team {name} is not in the target location.")
+            return None
+        
+        self.teams[name].current_mission_finished = True
+        self.teams[name].location = self.teams[name].target_location
             
         
     def dice(self, faces: int=6) -> int:
