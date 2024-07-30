@@ -6,11 +6,21 @@ from zenora import APIClient
 from ..core import core
 from ..modules.checker import is_admin, is_player
 from ..data import load_data
-from ..status_codes import STATUS_CODES
+from ..status_codes import STATUS_CODES, LANGUAGE
 
 
 log = logging.getLogger(__name__)
 api = Blueprint("api", __name__, url_prefix="/api")
+
+
+@api.route("/status_codes")
+def status_codes_default():
+    try: 
+        data = STATUS_CODES.localization(language=LANGUAGE, is_return=True)
+        return jsonify(data)
+    
+    except Exception as e:
+        abort(404)
 
 
 @api.route("/status_codes/<language>")
