@@ -225,6 +225,12 @@ Returns: `card`, `Success`, `Invalid Team`, `Team is imprisoned`, `Location not 
 
 ---
 
+- `/skip_mission/<mission_name: str>` : The third stage of this round. You can skip mission using the api.
+
+Returns: `Success`, `Invalid Team`, `Team is imprisoned`, `Location not reached`, `Mission already finished`
+
+---
+
 - `/add_point/<name: str>/<point: int>` : Add team point.
 
 Returns: `Success`, `Invalid Team`
