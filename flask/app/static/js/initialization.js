@@ -6,7 +6,7 @@ setInterval(team_list, 10000);
 
 function team_list() {
     const team = document.getElementById('team').textContent;
-    fetch(`http://localhost:8080/api/team/${team}`)
+    fetch(`http://localhost:4011/api/team/${team}`)
         .then(response => response.json())
         .then(data => { 
             // 獲取標籤
@@ -53,14 +53,14 @@ function team_list() {
 function join_team() {
     const team = document.getElementById('team').textContent;
     const player_name = document.getElementById('join_team_user-name').value;
-    fetch(`http://localhost:8080/api/join_team/${team}/${player_name}/false`)
+    fetch(`http://localhost:4011/api/join_team/${team}/${player_name}/false`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
 
 function leave_team() {
     const player_name = document.getElementById("leave_team_user-name").value;
-    fetch(`http://localhost:8080/api/leave_team/${player_name}`)
+    fetch(`http://localhost:4011/api/leave_team/${player_name}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 function add_point() {
     const team = document.getElementById('team').textContent;
     const points = document.getElementById('rangeValue').textContent;
-    fetch(`http://localhost:8080/api/add_point/${team}/${points}`)
+    fetch(`http://localhost:4011/api/add_point/${team}/${points}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }

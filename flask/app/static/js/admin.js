@@ -1,7 +1,7 @@
 function add_point() {
     const team = document.getElementById('add_point_team_name').value;
     const points = document.getElementById('add_points').value;
-    fetch(`http://localhost:8080/api/add_point/${team}/${points}`)
+    fetch(`http://localhost:4011/api/add_point/${team}/${points}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
@@ -9,14 +9,14 @@ function add_point() {
 function set_point() {
     const team = document.getElementById('set_point_team-name').value;
     const points = document.getElementById('set_points').value;
-    fetch(`http://localhost:8080/api/set_point/${team}/${points}`)
+    fetch(`http://localhost:4011/api/set_point/${team}/${points}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
 
 function finish_misson() {
     const team = document.getElementById('finish_misson_team-name').value;
-    fetch(`http://localhost:8080/api/finish_mission/${team}`)
+    fetch(`http://localhost:4011/api/finish_mission/${team}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
@@ -24,14 +24,14 @@ function finish_misson() {
 function create_team() {
     const team = document.getElementById('create_team_team-name').value;
     const position = document.getElementById('create_team_team-position').value;
-    fetch(`http://localhost:8080/api/create_team/${team}/${position}`)
+    fetch(`http://localhost:4011/api/create_team/${team}/${position}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
 
 function delete_team() {
     const team = document.getElementById('delete_team_team-name').value;
-    fetch(`http://localhost:8080/api/delete_team/${team}`)
+    fetch(`http://localhost:4011/api/delete_team/${team}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
@@ -40,14 +40,14 @@ function join_team() {
     const team = document.getElementById('join_team_team-name').value;
     const player_name = document.getElementById('join_team_user-name').value;
     const admin = document.getElementById('join_team_team-admin').checked;
-    fetch(`http://localhost:8080/api/join_team/${team}/${player_name}/${admin}`)
+    fetch(`http://localhost:4011/api/join_team/${team}/${player_name}/${admin}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
 
 function leave_team() {
     const player_name = document.getElementById("leave_team_user-name").value;
-    fetch(`http://localhost:8080/api/leave_team/${player_name}`)
+    fetch(`http://localhost:4011/api/leave_team/${player_name}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
@@ -55,7 +55,7 @@ function leave_team() {
 function move_to_location() {
     const team = document.getElementById('move_team_team-name').value;
     const location = document.getElementById('move_location').value;
-    fetch(`http://localhost:8080/api/move_to_location/${team}/${location}`)
+    fetch(`http://localhost:4011/api/move_to_location/${team}/${location}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
