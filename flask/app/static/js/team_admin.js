@@ -24,7 +24,7 @@ function finish_misson() {
     const team = document.querySelector("#team").innerHTML;
     fetch(`/api/finish_mission/${team}`).then(response => response.text())
         .then(response => {
-            if (response === "Success") {
+            if (response === "Success" || response === "成功") {
                 Swal.fire({
                     title: "任務完成",
                     icon: "success",
@@ -60,7 +60,7 @@ function skip_mission() {
     const team = document.querySelector("#team").innerHTML;
     fetch(`/api/skip_mission/${team}`).then(response => response.text())
         .then(response => {
-            if (response === "Success") {
+            if (response === "Success" || response === "成功") {
                 Swal.fire({
                     title: "成功放棄",
                     icon: "success",

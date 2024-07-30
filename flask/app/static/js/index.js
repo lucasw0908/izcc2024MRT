@@ -346,11 +346,20 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 
 async function showDistance() {
+    const team = document.querySelector('#team').innerHTML;
     const { distance, location } = await getCurrentLocation();
     const distanceInKm = (distance / 1000).toFixed(1);
-    if (location) {
-        document.getElementById('distance_label').textContent = '( 你已到站 )';
-    } else {
-        document.getElementById('distance_label').textContent = `( 你距離下一站 ${distanceInKm} km )`;
+    try {
+        const response = await fetch(`/api/team/${team}`);
+        const data = await response.json();
+        if (data.target_location) {
+            if (location) {
+                document.getElementById('distance_label').textContent = `( 你已到${data.target_location}站 )`;
+            } else {
+                document.getElementById('distance_label').textContent = `( 你距離${data.target_location}站 ${distanceInKm} km )`;
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
     }
 }
