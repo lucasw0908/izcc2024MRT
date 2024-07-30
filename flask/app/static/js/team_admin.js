@@ -56,6 +56,30 @@ function finish_misson() {
 }
 
 
+function skip_misson() {
+    const team = document.querySelector("#team").innerHTML;
+    fetch(`/api/skip_mission/${team}`).then(response => response.text())
+        .then(response => {
+            if (response === "Success") {
+                Swal.fire({
+                    title: "成功放棄",
+                    icon: "success",
+                    confirmButtonText: "OK",
+                    willClose: () => {
+                        mission_label();
+                    }
+                });
+            }
+            else {
+                Swal.fire({
+                    title: response,
+                    icon: "warning",
+                    confirmButtonText: "OK"
+                });
+            }
+        })
+}
+
 function missionAPI() {
     const team = document.querySelector("#team").innerHTML;
     fetch(`/api/team/${team}`)
@@ -74,6 +98,8 @@ function missionAPI() {
             }
         })
 }
+
+
 
 function getCurrentLocation() {
     const team = document.querySelector("#team").innerHTML;
