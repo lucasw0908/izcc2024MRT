@@ -64,3 +64,29 @@ function leave_team() {
         .then(response => response.text())
         .then(response => { alert(response); });
 }
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const rangeSlider = document.getElementById('rangeSlider');
+    const rangeInput = document.getElementById('rangeInput');
+    const rangeValue = document.getElementById('rangeValue');
+
+    rangeSlider.addEventListener('input', function() {
+        const value = this.value;
+        rangeValue.textContent = value;
+        rangeInput.value = value;
+    });
+
+    rangeInput.addEventListener('input', function() {
+        const value = this.value;
+        rangeValue.textContent = value;
+        rangeSlider.value = value;
+    });
+});
+
+function add_point() {
+    const team = document.getElementById('team').textContent;
+    const points = document.getElementById('rangeValue').textContent;
+    fetch(`http://localhost:8080/api/add_point/${team}/${points}`)
+        .then(response => response.text())
+        .then(response => { alert(response); });
+}

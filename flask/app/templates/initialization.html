@@ -23,16 +23,25 @@
     </div>
 </div>
 
-<div class="big_font-size">
+
+<div class="content">
     <h2>{{team}}</h2>
 
-    <h3>新增小隊員</h3>
+    <h2>分數控制</h2>
+    <div class="slider-container">
+        <div class="value-display" id="rangeValue">80</div>
+        <input type="range" min="-100" max="100" value="80" step="5" class="slider" id="rangeSlider">
+        <input type="number" min="-100" max="100" value="80" id="rangeInput" class="number-input">
+        <button type="submit" class="submit-button" onclick="add_point()">確認</button>
+    </div>
+
+    <h2>新增小隊員</h2>
     <table class="input-table">
         <tr>
             <td>
                 <div class="input-group">
                     <input required="" type="text" name="text" autocomplete="off" class="input" id="join_team_user-name">
-                    <label class="user-label" >Discord ID</label>
+                    <label class="user-label">Discord ID</label>
                 </div>
             </td>
             <td>
@@ -41,7 +50,7 @@
         </tr>
     </table>
 
-    <h3>刪除小隊員</h3>
+    <h2>刪除小隊員</h2>
     <table class="input-table">
         <tr>
             <td>
@@ -56,7 +65,7 @@
         </tr>
     </table>
 
-    <h3 id="teammate_list_label">隊員列表</h3>
+    <h2 id="teammate_list_label">隊員列表</h2>
     <div>
         <ul id="admins_list"></ul>
         <ul id="players_list"></ul>
