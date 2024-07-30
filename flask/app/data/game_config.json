@@ -7,6 +7,11 @@
         "ianwen_is_a_sheep"
     ],
     "card_count": 26,
+    "station_points": {
+        "0": 20,
+        "1": 35,
+        "2": 50
+    },
     "start_station": "中正紀念堂",
     "end_station": "秀朗橋",
     "delete_stations": [

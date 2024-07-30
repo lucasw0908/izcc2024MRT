@@ -6,7 +6,7 @@ import os
 from typing import Any
 
 from ..config import BASEDIR
-from ..game_config import DELETE_STATIONS, IS_SPECIAL, IS_HIDDEN, API_URL_TP, API_URL_NTP, LOCATION_API_URL_TP, LOCATION_API_URL_NTP
+from ..game_config import DELETE_STATIONS, IS_SPECIAL, IS_HIDDEN, API_URL_TP, API_URL_NTP, LOCATION_API_URL_TP, LOCATION_API_URL_NTP, STATION_POINTS
 from ..data import load_data
 
 
@@ -96,7 +96,7 @@ class Station:
             "tips": str(station["Tips"]),
             "is_special": random.random() <= IS_SPECIAL,
             "is_prison": station["Mission"] == "監獄",
-            "point": {1: 20, 2: 35, 3: 50}.get(station["Difficult"], 0),
+            "point": STATION_POINTS.get(station["Difficult"], 0),
             "geohash": str(station["geohash"]),
         })
         

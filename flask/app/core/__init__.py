@@ -247,6 +247,7 @@ class Core:
         self.teams[name].target_location = station.name
         self.teams[name].stations.append(station.name)
         
+        # 達成組合
         for combo in load_data("combo"):
             if combo["name"] in self.teams[name].combos:
                 continue
@@ -257,10 +258,12 @@ class Core:
                 self.teams[name].combos.append(combo["name"])
                 combos.append(combo["name"])
         
+        # 過路費
         if station.team is not None and station.team != name:
             self.teams[name].point -= station.point
             self.teams[station.team].point += station.point
             
+        # 監獄
         if station.is_prison:
             self.teams[name].is_imprisoned = True
             self.teams[name].imprisoned_time = random.randint(IMPRISONED_TIME["min"], IMPRISONED_TIME["max"])
@@ -297,19 +300,24 @@ class Core:
         
         station = self.metro.find_station(self.teams[name].target_location)
         
+        if station is None:
+            log.warning(f"Station {self.teams[name].target_location} does not exist.")
+            return None
+        
+        # 佔領分數
         if station.team is None:
             self.teams[name].point += 30
-            self.metro.__dict__[station.name].team = name
+            self.metro.find_station(station.name).team = name
             
+        # 過路費減免
         elif station.team != name:
-            match station.point:
-                case 20: self.teams[name].point += 10
-                case 35: self.teams[name].point += 15
-                case 50: self.teams[name].point += 20
+            self.teams[name].point += station.point
                 
+        # 初始化
         self.teams[name].current_mission_finished = True
         self.teams[name].location = self.teams[name].target_location
         
+        # 抽卡
         if station.is_special:
             if self.teams[name].current_card is None:
                 card = f"card{self.dice(CARD_COUNT)}"

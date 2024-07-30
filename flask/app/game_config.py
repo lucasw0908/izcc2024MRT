@@ -24,6 +24,9 @@ END_STATION: str = GAME_CONFIG.get("end_station")
 DELETE_STATIONS: list[str] = GAME_CONFIG.get("delete_stations", [])
 """The stations that will not be used in the game."""
 
+STATION_POINTS: dict[str, int] = GAME_CONFIG.get("station_points", {})
+"""The points of every difficults of station."""
+
 IS_SPECIAL: float = GAME_CONFIG.get("is_special", 0.3)
 """The probability of every station to be a special station. Default is 0.3."""
 
