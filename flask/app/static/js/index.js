@@ -57,7 +57,8 @@ async function station_info(station_name) {
         html: '<div class="loading-container"><span>載入中</span><div class="chaotic-orbit"></div></div>',
         showConfirmButton: false,
         showCancelButton: false,
-        customClass: { cancelButton: 'swal-button-yellow' }
+        customClass: { cancelButton: 'swal-button-yellow' },
+        allowOutsideClick: false
     });
 
     try {
