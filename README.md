@@ -63,8 +63,6 @@
 ### 進階設定
 - 隊伍
 - 分數
-- 
-
 
 ## [API](https://github.com/lucasw0908/izcc2024MRT/blob/main/assets/API.md)
 
