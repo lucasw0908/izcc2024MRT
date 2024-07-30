@@ -14,10 +14,10 @@ RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
 # 安装 uwsgi
-RUN pip install uwsgi
+# RUN pip install uwsgi
 
 # 暴露端口 4011
-EXPOSE 4011
+EXPOSE 8080
 
 # 启动 uwsgi
-CMD ["uwsgi", "--ini", "uwsgi.ini"]
+CMD ["python", "main.py"]
