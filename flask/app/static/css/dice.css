@@ -219,12 +219,10 @@ body {
 }
 
 .point_setting td {
-    font-size: 400%;
     font-weight: bold;
 }
 
 #mission_label {
-    font-size: 300%;
     margin-left: 5%;
 }
 
@@ -232,4 +230,12 @@ body {
     font-size: 25px;
     position: fixed;
     bottom: 7vh;
+}
+
+#swal2-title{
+    font-size: 100%;
+}
+
+.swal2-confirm{
+    font-size: 70%;
 }

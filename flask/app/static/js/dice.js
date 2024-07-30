@@ -420,7 +420,13 @@ function connectAPI() {
 
 document.addEventListener("DOMContentLoaded", connectAPI());
 
-function ChoiceAPI() {
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function ChoiceAPI() {
+    await sleep(1000);
+
     const team = document.querySelector('#team').innerHTML;
     fetch(`http://localhost:8080/api/move/${team}`)
         .then(response => response.json())
@@ -459,10 +465,12 @@ function ChoiceAPI() {
                             }
                         })
                 });
-            }); 3
+            });
+
         })
         .catch(error => { console.error(error); });
 }
+
 
 
 window.addEventListener('deviceorientation', rotationHandler, false);
