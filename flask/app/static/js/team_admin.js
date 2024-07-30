@@ -56,7 +56,7 @@ function finish_misson() {
 }
 
 
-function skip_misson() {
+function skip_mission() {
     const team = document.querySelector("#team").innerHTML;
     fetch(`/api/skip_mission/${team}`).then(response => response.text())
         .then(response => {
