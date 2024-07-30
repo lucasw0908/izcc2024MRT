@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', changeColor);
 
 function changeColor() {
     const team = document.querySelector('#team').innerHTML;
-    fetch(`${location.hostname}/api/team/${team}`)
+    fetch(`/api/team/${team}`)
         .then(response => response.json())
         .then(data => {
             const items = document.querySelectorAll('.item');

@@ -65,8 +65,8 @@ async function station_info(station_name) {
 
     try {
         const [data, team_data] = await Promise.all([
-            fetch(`${location.hostname}/api/station/${station_name}`).then(response => response.json()),
-            fetch(`${location.hostname}/api/team/${team}`).then(response => response.json())
+            fetch(`/api/station/${station_name}`).then(response => response.json()),
+            fetch(`/api/team/${team}`).then(response => response.json())
         ]);
 
         const imageUrl = `../static/img/stations/${station_name}.jpg`;
@@ -127,7 +127,7 @@ const chineseNumerals = { '零': 0, '一': 1, '二': 2, '三': 3, '四': 4, };
 
 async function showLocate() {
     try {
-        const response = await fetch(`${location.hostname}/api/teams`);
+        const response = await fetch(`/api/teams`);
         const data = await response.json();
 
         data.forEach(team => {
@@ -149,7 +149,7 @@ async function showLocate() {
 
 async function showPoint() {
     try {
-        const response = await fetch(`${location.hostname}/api/teams`);
+        const response = await fetch(`/api/teams`);
         const data = await response.json();
         const teams = document.querySelectorAll(".team");
         const maxScore = 3000;
@@ -182,7 +182,7 @@ let lastWarning = null;
 
 async function showMap() {
     try {
-        const response = await fetch(`${location.hostname}/api/collapse_status`);
+        const response = await fetch(`/api/collapse_status`);
         const data = await response.json();
 
         if (data.status !== lastStatus || data.warning !== lastWarning) {
@@ -214,7 +214,7 @@ async function showMap() {
 
 async function showCollapse_time() {
     try {
-        const response = await fetch(`${location.hostname}/api/next_collapse_time`);
+        const response = await fetch(`/api/next_collapse_time`);
         const data = await response.json();
         const targetTime = parseTime(data);
         const interval = setInterval(() => {
@@ -268,7 +268,7 @@ function formatTimeDiff(timeDiff) {
 async function showImprisoned() {
     const team = document.querySelector('#team').innerHTML;
     try {
-        const response = await fetch(`${location.hostname}/api/team/${team}`);
+        const response = await fetch(`/api/team/${team}`);
         const data = await response.json();
         if (data.is_imprisoned) {
             document.getElementById('is_imprisoned_label').textContent = `監獄剩餘時間 : ${data.imprisoned_time} 分鐘`;
@@ -285,7 +285,7 @@ function getCurrentLocation() {
             navigator.geolocation.getCurrentPosition(async (position) => {
                 try {
                     console.log(location.hostname)
-                    const response = await fetch(`${location.hostname}/api/gps_location/${team}/${position.coords.latitude}/${position.coords.longitude}`);
+                    const response = await fetch(`/api/gps_location/${team}/${position.coords.latitude}/${position.coords.longitude}`);
                     const data = await response.json();
                     resolve({ distance: data.distance, location: data.location });
                 } catch (error) {
@@ -307,7 +307,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     let teamsData = [];
 
     try {
-        const response = await fetch('${location.hostname}/api/teams');
+        const response = await fetch('/api/teams');
         const data = await response.json();
         teamsData = data;
         setupEventListeners();
