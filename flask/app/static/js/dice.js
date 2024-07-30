@@ -414,7 +414,7 @@ function throwDice() {
 
 function connectAPI() {
     const team = document.querySelector('#team').innerHTML;
-    fetch(`http://${location.hostname}/api/move/${team}`).then(response => response.json())
+    fetch(`${location.hostname}/api/move/${team}`).then(response => response.json())
         .then(data => { params.desiredResult = data.step; })
 }
 
@@ -428,7 +428,7 @@ async function ChoiceAPI() {
     await sleep(1000);
 
     const team = document.querySelector('#team').innerHTML;
-    fetch(`http://${location.hostname}/api/move/${team}`)
+    fetch(`${location.hostname}/api/move/${team}`)
         .then(response => response.json())
         .then(data => {
             const choices = data.choice;
@@ -450,8 +450,8 @@ async function ChoiceAPI() {
                 button.addEventListener('click', (event) => {
                     let newLocation = event.target.textContent;
                     Promise.all([
-                        fetch(`http://${location.hostname}/api/move_to_location/${team}/${newLocation}`).then(response => response.text()),
-                        fetch(`http://${location.hostname}/api/team/${team}`).then(response => response.json())
+                        fetch(`${location.hostname}/api/move_to_location/${team}/${newLocation}`).then(response => response.text()),
+                        fetch(`${location.hostname}/api/team/${team}`).then(response => response.json())
                     ])
                         .then(([data, team_data]) => {
                             if (data) {

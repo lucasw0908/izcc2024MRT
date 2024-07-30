@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function mission_label() {
     const team = document.querySelector("#team").innerHTML;
-    fetch(`http://${location.hostname}/api/team/${team}`)
+    fetch(`${location.hostname}/api/team/${team}`)
         .then(response => response.json())
         .then(data => {
             now_status = data.current_mission_finished
@@ -22,7 +22,7 @@ function mission_label() {
 
 function finish_misson() {
     const team = document.querySelector("#team").innerHTML;
-    fetch(`http://${location.hostname}/api/finish_mission/${team}`).then(response => response.text())
+    fetch(`${location.hostname}/api/finish_mission/${team}`).then(response => response.text())
         .then(response => {
             if (response === "Success") {
                 Swal.fire({
@@ -58,7 +58,7 @@ function finish_misson() {
 
 function missionAPI() {
     const team = document.querySelector("#team").innerHTML;
-    fetch(`http://${location.hostname}/api/team/${team}`)
+    fetch(`${location.hostname}/api/team/${team}`)
         .then(response => response.json())
         .then(data => {
             if (data.current_mission_finished) {
@@ -87,7 +87,7 @@ function getCurrentLocation() {
 
         // 使用者允許抓目前位置，回傳經緯度
         function success(position) {
-            fetch(`http://${location.hostname}/api/gps_location/${team}/${position.coords.latitude}/${position.coords.longitude}`)
+            fetch(`${location.hostname}/api/gps_location/${team}/${position.coords.latitude}/${position.coords.longitude}`)
         }
 
         // 跟使用者拿所在位置的權限

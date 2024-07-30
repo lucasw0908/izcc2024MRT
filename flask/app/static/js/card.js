@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getCardName() {
         const team = document.querySelector('#team').innerHTML;
-        return fetch(`http://${location.hostname}/api/team/${team}`)
+        return fetch(`${location.hostname}/api/team/${team}`)
             .then(response => response.json())
             .then(data => {
                 return data.current_card;
