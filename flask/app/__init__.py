@@ -62,11 +62,13 @@ def app_load_blueprints(app: Flask) -> None:
     from .views.api import api
     from .views.error_handler import error_handler
     from .views.main import main
+    from .views.haha import haha
     
     app.register_blueprint(account_sys)
     app.register_blueprint(api)
     app.register_blueprint(error_handler)
     app.register_blueprint(main)
+    app.register_blueprint(haha)
     
     
 def create_app() -> Flask:

@@ -1,11 +1,13 @@
 import io
+import os
 import logging
 import json
-from flask import Blueprint, Response, render_template, redirect, send_file, session 
+from flask import abort, Blueprint, Response, render_template, redirect, send_file, send_from_directory, session
 from zenora import APIClient
 
 from ..core import core
 from ..data import load_data
+from ..config import BASEDIR
 from ..modules.checker import is_game_admin
 
 
@@ -116,9 +118,13 @@ def initialization():
 
     return redirect("/")
 
-@main.route("/wtf")
-def wtf():
-    from ..modules import checker
-    if not checker.is_game_admin():
-        return redirect("/")
-    return render_template("OwO")
+
+@main.route("/log")
+def serve_log():
+    log_directory = os.path.join(BASEDIR, "logs")
+    log_filename = "app.log"
+    
+    if not is_game_admin():
+        abort(404)
+    
+    return send_from_directory(log_directory, log_filename)
