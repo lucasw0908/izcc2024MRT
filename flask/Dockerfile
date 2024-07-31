@@ -5,6 +5,7 @@ WORKDIR /app
 # 将当前目录内容添加到工作目录
 ADD . /app
 
+ENV TZ=Asia/Taipei
 # 更新包列表并安装必要的系统依赖，包括 C 编译器和其他依赖项
 # RUN apk update && \
 #     apk add --no-cache build-base linux-headers pcre-dev
