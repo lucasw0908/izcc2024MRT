@@ -19,6 +19,7 @@ setInterval(showCollapse_time, 10000);
 setInterval(showPoint, 10000);
 setInterval(showLocate, 10000);
 setInterval(showImprisoned, 10000);
+setInterval(showDistance,10000);
 
 function resizeMap() {
     const img = document.querySelector('.MRT_map img[style*="display: block"]');
