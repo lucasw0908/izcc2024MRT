@@ -6,8 +6,8 @@ WORKDIR /app
 ADD . /app
 
 # 更新包列表并安装必要的系统依赖，包括 C 编译器和其他依赖项
-RUN apk update && \
-    apk add --no-cache build-base linux-headers pcre-dev
+# RUN apk update && \
+#     apk add --no-cache build-base linux-headers pcre-dev
 
 # 升级 pip 并安装 requirements.txt 中的依赖
 RUN pip install --upgrade pip && \

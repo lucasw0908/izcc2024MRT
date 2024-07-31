@@ -3,11 +3,27 @@
 {% block title %}捷運大富翁-管理員{% endblock title %}
 
 {% block head %}
-    <link href="{{url_for('static', filename='css/admin.css')}}" rel="stylesheet">
-    <script src="{{url_for('static', filename='js/admin.js')}}"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link href="{{url_for('static', filename='css/admin.css')}}" rel="stylesheet">
+<script src="{{url_for('static', filename='js/admin.js')}}"></script>
 {% endblock head %}
 
 {% block body %}
+
+<div class="background"></div>
+
+<a id="backpage" href="/team_admin">
+    <button>
+        <svg height="16" width="16" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 1024">
+            <path
+                d="M874.690416 495.52477c0 11.2973-9.168824 20.466124-20.466124 20.466124l-604.773963 0 188.083679 188.083679c7.992021 7.992021 7.992021 20.947078 0 28.939099-4.001127 3.990894-9.240455 5.996574-14.46955 5.996574-5.239328 0-10.478655-1.995447-14.479783-5.996574l-223.00912-223.00912c-3.837398-3.837398-5.996574-9.046027-5.996574-14.46955 0-5.433756 2.159176-10.632151 5.996574-14.46955l223.019353-223.029586c7.992021-7.992021 20.957311-7.992021 28.949332 0 7.992021 8.002254 7.992021 20.957311 0 28.949332l-188.073446 188.073446 604.753497 0C865.521592 475.058646 874.690416 484.217237 874.690416 495.52477z">
+            </path>
+        </svg>
+        <span>Back</span>
+    </button>
+</a>
+
 <h1>Hello Admin : {{current_user}}</h1>
 <h2>分數</h2>
 <h3>加分</h3>
@@ -17,7 +33,7 @@
         <td><input type="text" id="add_point_team_name" class="input-field"></td>
         <td class="label"><label for="add_points">分數:</label></td>
         <td><input type="text" id="add_points" class="input-field"></td>
-        <td><button type="submit" class="submit-button" onclick="add_point()">確認</button></td>
+        <td><button type="submit" class="btn btn-success submit-button" onclick="add_point()">確認</button></td>
     </tr>
 </table>
 <h3>設定分數</h3>
@@ -27,7 +43,7 @@
         <td><input type="text" id="set_point_team-name" class="input-field"></td>
         <td class="label"><label for="points">分數:</label></td>
         <td><input type="text" id="set_points" class="input-field"></td>
-        <td><button type="submit" class="submit-button" onclick="set_point()">確認</button></td>
+        <td><button type="submit" class="btn btn-success submit-button" onclick="set_point()">確認</button></td>
     </tr>
 </table>
 
@@ -36,7 +52,7 @@
     <tr>
         <td class="label"><label for="finish_misson_team-name">小隊:</label></td>
         <td><input type="text" id="finish_misson_team-name" class="input-field"></td>
-        <td><button type="submit" class="submit-button" onclick="finish_misson()">確認</button></td>
+        <td><button type="submit" class="btn btn-success submit-button" onclick="finish_misson()">確認</button></td>
     </tr>
 </table>
 
@@ -48,7 +64,7 @@
         <td><input type="text" id="create_team_team-name" class="input-field"></td>
         <td class="label"><label for="create_team_team-position">初始站名:</label></td>
         <td><input type="text" id="create_team_team-position" class="input-field"></td>
-        <td><button type="submit" class="submit-button" onclick="create_team()">確認</button></td>
+        <td><button type="submit" class="btn btn-success submit-button" onclick="create_team()">確認</button></td>
     </tr>
 </table>
 
@@ -57,7 +73,7 @@
     <tr>
         <td class="label"><label for="delete_team_team-name">小隊:</label></td>
         <td><input type="text" id="delete_team_team-name" class="input-field"></td>
-        <td><button type="submit" class="submit-button" onclick="delete_team()">確認</button></td>
+        <td><button type="submit" class="btn btn-success submit-button" onclick="delete_team()">確認</button></td>
     </tr>
 </table>
 
@@ -70,7 +86,7 @@
         <td><input type="text" id="join_team_user-name" class="input-field"></td>
         <td><input type="checkbox" id="join_team_team-admin"></td>
         <td class="label"><label>隊隨</label></td>
-        <td><button type="submit" class="submit-button" onclick="join_team()">確認</button></td>
+        <td><button type="submit" class="btn btn-success submit-button" onclick="join_team()">確認</button></td>
     </tr>
 </table>
 
@@ -79,7 +95,7 @@
     <tr>
         <td class="label"><label for="points">名稱:</label></td>
         <td><input type="text" id="leave_team_user-name" class="input-field"></td>
-        <td><button type="submit" class="submit-button" onclick="leave_team()">確認</button></td>
+        <td><button type="submit" class="btn btn-success submit-button" onclick="leave_team()">確認</button></td>
     </tr>
 </table>
 
@@ -90,7 +106,7 @@
         <td><input type="text" id="move_team_team-name" class="input-field"></td>
         <td class="label"><label for="move_location">站名:</label></td>
         <td><input type="text" id="move_location" class="input-field"></td>
-        <td><button type="submit" class="submit-button" onclick="move_to_location()">確認</button></td>
+        <td><button type="submit" class="btn btn-success submit-button" onclick="move_to_location()">確認</button></td>
     </tr>
 </table>
 {% endblock %}
