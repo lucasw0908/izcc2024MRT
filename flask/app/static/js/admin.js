@@ -34,7 +34,7 @@ function finish_misson() {
         return;
     }
 
-    fetch(`/api/finish_mission/${team}`)
+    fetch(`/api/admin/finish_mission/${team}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
@@ -48,7 +48,7 @@ function create_team() {
         return;
     }
 
-    fetch(`/api/create_team/${team}/${position}`)
+    fetch(`/api/admin/create_team/${team}/${position}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
@@ -61,7 +61,7 @@ function delete_team() {
         return;
     }
 
-    fetch(`/api/delete_team/${team}`)
+    fetch(`/api/admin/delete_team/${team}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
@@ -76,9 +76,16 @@ function join_team() {
         return;
     }
 
-    fetch(`/api/join_team/${team}/${player_name}/${admin}`)
+    if (admin) {
+        fetch(`/api/admin/join_team/${team}/${player_name}`)
         .then(response => response.text())
         .then(response => { alert(response); });
+    }
+    else {
+        fetch(`/api/join_team/${team}/${player_name}`)
+        .then(response => response.text())
+        .then(response => { alert(response); });
+    }
 }
 
 function leave_team() {
@@ -94,7 +101,7 @@ function leave_team() {
         .then(response => { alert(response); });
 }
 
-function move_to_location() {
+function set_location() {
     const team = document.getElementById('move_team_team-name').value;
     const location = document.getElementById('move_location').value;
 
@@ -103,7 +110,20 @@ function move_to_location() {
         return;
     }
     
-    fetch(`/api/move_to_location/${team}/${location}`)
+    fetch(`/api/admin/set_location/${team}/${location}`)
+        .then(response => response.text())
+        .then(response => { alert(response); });
+}
+
+function release() {
+    const team = document.getElementById('release_team-name').value;
+
+    if (team === "") {
+        alert("請填入隊伍名稱");
+        return
+    }
+
+    fetch(`/api/admin/release/${team}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }

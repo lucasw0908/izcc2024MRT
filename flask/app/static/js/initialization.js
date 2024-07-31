@@ -53,7 +53,7 @@ function team_list() {
 function join_team() {
     const team = document.getElementById('team').textContent;
     const player_name = document.getElementById('join_team_user-name').value;
-    fetch(`/api/join_team/${team}/${player_name}/false`)
+    fetch(`/api/join_team/${team}/${player_name}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
