@@ -118,7 +118,6 @@ def initialization():
 
 @main.route("/wtf")
 def wtf():
-    from ..modules import checker
-    if not checker.is_game_admin():
+    if not is_game_admin():
         return redirect("/")
-    return render_template("OwO")
+    return "OwO"
