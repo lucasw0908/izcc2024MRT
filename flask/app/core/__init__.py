@@ -157,12 +157,14 @@ class Core:
         """
         
         for team in self.teams:
+            
             if player in self.teams[team].admins:
                 return self.teams[team], True
-            if player in self.teams[team].players:
-                return self.teams[team], False
             
-        return None, False
+            if player in self.teams[team].players:
+                return self.teams[team], player in ADMINS
+            
+        return None, player in ADMINS
     
     
     def _move(self, current_station: str, target_deep: int, deep: int=1) -> list[str]:
@@ -354,6 +356,7 @@ class Core:
             log.warning(f"Team {name} is not in the target location.")
             return None
         
+        # 初始化
         self.teams[name].current_mission_finished = True
         self.teams[name].location = self.teams[name].target_location
             

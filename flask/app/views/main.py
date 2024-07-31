@@ -6,6 +6,7 @@ from zenora import APIClient
 
 from ..core import core
 from ..data import load_data
+from ..modules.checker import is_game_admin
 
 
 log = logging.getLogger(__name__)
