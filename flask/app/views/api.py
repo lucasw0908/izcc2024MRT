@@ -150,37 +150,8 @@ def team(name: str):
     return jsonify({})
 
 
-@api.route("/create_team/<name>/<station>")
-def create_team(name: str, station: str):
-           
-    if not is_admin():
-        abort(403)
-        
-    if name in core.teams:
-        return STATUS_CODES.S20003
-        
-    if core.metro.find_station(station) is None:
-        return STATUS_CODES.S00003
-        
-    core.create_team(name=name, station=station)
-    return STATUS_CODES.S00000
-    
-    
-@api.route("/delete_team/<name>")
-def delete_team(name: str):
-        
-    if not is_admin():
-        abort(403)
-        
-    team = core.teams.pop(name, None)
-    if team is None:
-        return STATUS_CODES.S00004
-    
-    return STATUS_CODES.S00000
-
-
-@api.route("/join_team/<name>/<player_name>/<admin>")
-def join_team(name: str, player_name: str, admin: str):
+@api.route("/join_team/<name>/<player_name>")
+def join_team(name: str, player_name: str):
     
     if not is_admin():
         abort(403)
@@ -188,12 +159,7 @@ def join_team(name: str, player_name: str, admin: str):
     if name not in core.teams:
         return STATUS_CODES.S00004
 
-    if admin == "admin":
-        log.debug("Is admin")
-        core.teams[name].admins.append(player_name)
-    else:
-        log.debug("Is player")
-        core.teams[name].players.append(player_name)
+    core.teams[name].players.append(player_name)
         
     return STATUS_CODES.S00000
 

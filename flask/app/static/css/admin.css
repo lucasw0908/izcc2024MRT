@@ -5,11 +5,16 @@ input {
 }
 
 body {
+    height: 100dvh;
+    width: 100dvw;
+    padding: 0;
+    margin: 0;
     font-family: monospace;
     font-size: 1em;
     font-weight: bold;
     color: white;
     background-color: black;
+    overflow-x: hidden;
 }
 
 .background {
@@ -23,25 +28,59 @@ body {
     z-index: -1;
 }
 
+.container {
+    padding-top: 4dvh;
+    padding-left: 4dvw;
+    padding-right: 4dvw;
+    padding-bottom: 4dvh;
+    background-color: rgba(255, 2550, 255, 0.2);
+    border-radius: 10px;
+}
+
 h1 {
-    padding-top: 1em;
+    padding-top: 5dvh;
     font-size: 3em;
+    font-weight: bold;
 }
 
 h2 {
-    padding-top: 2em;
+    padding-top: 5dvh;
     font-size: 2em;
+    font-weight: bold;
 }
 
 h3 {
-    padding-top: 1.5em;
+    padding-top: 5dvh;
     font-size: 1.5em;
 }
 
 label {
     font-size: 1.3em;
+    text-wrap: nowrap;
+    margin-left: 1em;
+}
+
+.text-input {
+    width: 5em;
+}
+
+#join_team_team-admin {
+    height: 1.5em;
+    width: 1.5em;
+    margin-left: 1em;
+}
+
+td {
+    padding-top: 1em;
+}
+
+span {
+    font-size: 1.3em;
+    text-wrap: nowrap;
 }
 
 button {
+    text-wrap: nowrap;
     border-radius: 0%;
+    margin-left: 1em;
 }
