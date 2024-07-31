@@ -83,6 +83,7 @@ def release_team(name: str):
     
     return STATUS_CODES.S00000
 
+
 @admin_api.route("/finish_mission/<name>")
 def finish_mission(name: str):
     
