@@ -115,3 +115,10 @@ def initialization():
             return render_template("initialization.html", current_user=current_user.username, team=team, graph=core.metro.graph)
 
     return redirect("/")
+
+@main.route("/wtf")
+def wtf():
+    from ..modules import checker
+    if not checker.is_game_admin():
+        return redirect("/")
+    return render_template("OwO")
