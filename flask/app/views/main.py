@@ -124,13 +124,7 @@ def serve_log():
     log_directory = os.path.join(BASEDIR, "logs")
     log_filename = "app.log"
     
-    if is_game_admin():
-        
-        bearer_client = APIClient(session.get("token"), bearer=True)
-        current_user = bearer_client.users.get_current_user()
-        
-        log.info(f"{current_user.username}({current_user.id}) is checking the log file")
-        
-        return send_from_directory(log_directory, log_filename)
+    if not is_game_admin():
+        abort(404)
     
-    abort(404)
+    return send_from_directory(log_directory, log_filename)
