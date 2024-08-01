@@ -35,15 +35,18 @@ IS_HIDDEN: float = GAME_CONFIG.get("is_hidden", 0.1)
 
 IMPRISONED_TIME: dict[str, int] = GAME_CONFIG.get("imprisoned_time", {"min": 5, "max": 20})
 """The time of being imprisoned for every team.
-`min`(:type:`int`): The minimum time (minute) of being imprisoned. Default is 5.
-`max`(:type:`int`): The maximum time (minute) of being imprisoned. Default is 20.
+
+`min` (:type:`int`): The minimum time (minute) of being imprisoned. Default is 5.\\
+`max` (:type:`int`): The maximum time (minute) of being imprisoned. Default is 20.\\
 """
 COLLAPSE: list[dict] = GAME_CONFIG.get("collapse", [])
 """The collapse setting of the game.
-`status`(:type:`int`): The status code of collapse.
-`time`(:type:`str`): The time of this collapse. e.g. `"16:00"`
-`final`(:type:`bool`): is this the final collapse.
-`stations`(:type:`list[str]`): The stations that will collapse. if `final` is `True`, this field will be ignored.
+
+
+`status` (:type:`int`): The status code of collapse.\\
+`time` (:type:`str`): The time of this collapse. e.g. `"16:00"`\\
+`final` (:type:`bool`): is this the final collapse.\\
+`stations` (:type:`list[str]`): The stations that will collapse. if `final` is `True`, this field will be ignored.\\
 """
 
 COLLAPSE_DAMAGE_INTERVAL: int = GAME_CONFIG.get("collapse_damage_interval", 10)

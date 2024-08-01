@@ -106,8 +106,8 @@ def collapse_status():
         abort(403)
     
     return jsonify({
-        "status":core.collapse.status,
-        "warning":core.collapse.warning
+        "status": core.collapse.status,
+        "warning": core.collapse.warning
     })
 
 

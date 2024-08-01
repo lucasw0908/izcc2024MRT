@@ -31,13 +31,11 @@ class Core:
         
         self.create_team("admins", admins=ADMINS)
         
-        log.debug("Core initialized.")
-        
         
     def init_socketio(self, socketio: SocketIO) -> None:
         self.socketio = socketio
         
-        log.debug("SocketIO initialized.")
+        log.info("SocketIO initialized.")
         
         self.init_collapse()
         self.init_prison()
@@ -54,54 +52,60 @@ class Core:
         
         for collapse in COLLAPSE:
             hour, minute = map(int, collapse["time"].split(":"))
-            collapse_time = datetime.now().replace(hour=hour, minute=minute)
+            collapse_time = datetime.now().replace(hour=hour, minute=minute, second=0, microsecond=0)
             
             if collapse_time < datetime.now():
-                self._collapse_warning()
                 self._collapse()
                 
             elif collapse_time - datetime.now() < timedelta(minutes=5):
                 self._collapse_warning()
+                
                 self.collapse_scheduler.add_job(self._collapse, "date", run_date=collapse_time)
+                log.info(f"Add collapse job at {collapse_time}.")
             
             else:
                 self.collapse_scheduler.add_job(self._collapse_warning, "date", run_date=collapse_time - timedelta(minutes=5))
+                log.info(f"Add collapse warning job at {collapse_time - timedelta(minutes=5)}.")
+                
                 self.collapse_scheduler.add_job(self._collapse, "date", run_date=collapse_time)
+                log.info(f"Add collapse job at {collapse_time}.")
             
         self.collapse_scheduler.add_job(self._collapse_damage, "interval", minutes=COLLAPSE_DAMAGE_INTERVAL)
         self.collapse_scheduler.start()
         
-        log.debug("Collapse scheduler started.")
+        log.info("Collapse scheduler started.")
         
         
     def init_prison(self) -> None:
         self.prison_scheduler.add_job(self._release, "interval", minutes=1)
         self.prison_scheduler.start()
         
-        log.debug("Prison scheduler started.")
+        log.info("Prison scheduler started.")
     
     
     def _collapse(self) -> None:
         self.collapse.warning = False
-        for index, collapse in enumerate(COLLAPSE):
-            if collapse["status"] == self.collapse.status:
-                if collapse["final"]:
-                    for station in self.metro.graph.keys():
-                        if station == END_STATION:
-                            continue
-                        COLLAPSE_LIST.append(station)
-                    self.collapse.status = 0
-                    return None
+        
+        collapse = COLLAPSE[self.collapse.status]
                 
-                for station in collapse["stations"]:
-                    COLLAPSE_LIST.append(station)
-                    
-                self.collapse.status += 1
-                self.collapse.next_time = COLLAPSE[index + 1]["time"]
+        if collapse["final"]:
+            for station in self.metro.graph.keys():
+                if station == END_STATION: continue
+                COLLAPSE_LIST.append(station)
                 
-                self.socketio.emit("collapse", collapse["stations"])
-                
-                log.info("Station collapsed.")
+            log.debug("All stations collapsed.")
+            
+            return None
+        
+        for station in collapse["stations"]:
+            COLLAPSE_LIST.append(station)
+            
+        self.collapse.next_time = COLLAPSE[self.collapse.status + 1]["time"]
+        self.collapse.status += 1
+        
+        self.socketio.emit("collapse", collapse["stations"])
+        
+        log.info(f"Station collapsed. Current status: {self.collapse.status}.")
                 
                 
     def _collapse_damage(self) -> None:
@@ -128,8 +132,11 @@ class Core:
             
             team.imprisoned_time -= 1
             if team.imprisoned_time <= 0:
+                
                 team.is_imprisoned = False
                 team.imprisoned_time = 0
+                
+                log.debug(f"Team {team.name} released.")
                 self.socketio.emit("release", team.name)
         
     
