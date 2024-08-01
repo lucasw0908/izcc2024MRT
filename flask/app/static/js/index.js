@@ -178,6 +178,7 @@ async function showPoint() {
     }
 }
 
+
 let lastStatus = null;
 let lastWarning = null;
 
