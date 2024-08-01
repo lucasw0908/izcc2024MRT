@@ -1,12 +1,12 @@
 from ..game_config import START_STATION
 
 class Team:
-    def __init__(self, name: str, players: list[str]=[], admins: list[str]=[], location: str | None=None) -> None:
+    def __init__(self, name: str, players: list[str]=None, admins: list[str]=None, location: str | None=None) -> None:
         self.name = name
         self.location = location if location is not None else START_STATION
         self.target_location = None
-        self.players = players
-        self.admins = admins
+        self.players = players if players is not None else []
+        self.admins = admins if admins is not None else []
         
         self.point: int = 10
         self.step: int = 0
