@@ -5,8 +5,8 @@ class Team:
         self.name = name
         self.location = location if location is not None else START_STATION
         self.target_location = None
-        self.players = players if players is not None else []
-        self.admins = admins if admins is not None else []
+        self.players = players or []
+        self.admins = admins or []
         
         self.point: int = 10
         self.step: int = 0
