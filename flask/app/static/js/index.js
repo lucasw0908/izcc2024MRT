@@ -178,37 +178,38 @@ async function showPoint() {
     }
 }
 
+let lastStatus = null;
+let lastWarning = null;
+
 async function showMap() {
     try {
         const response = await fetch(`/api/collapse_status`);
         const data = await response.json();
 
-        if (data.status === lastStatus && data.warning === lastWarning) {
-            return;  // 沒有變化，無需更新
-        }
+        if (data.status !== lastStatus || data.warning !== lastWarning) {
+            lastStatus = data.status;
+            lastWarning = data.warning;
+            let images = document.querySelectorAll('.MRT_map img');
+            images.forEach(img => img.style.display = 'none');
 
-        lastStatus = data.status;
-        lastWarning = data.warning;
-
-        let images = document.querySelectorAll('.MRT_map img');
-        images.forEach(img => img.style.display = 'none');
-
-        if (data.warning === false) {
-            if (data.status === 0) {
-                document.getElementById('Map0').style.display = 'block';
-            } else if (data.status === 1) {
-                document.getElementById('Map2').style.display = 'block';
-            } else if (data.status === 2) {
-                document.getElementById('Map4').style.display = 'block';
-            }
-        } else {
-            if (data.status === 0) {
-                document.getElementById('Map1').style.display = 'block';
-            } else if (data.status === 1) {
-                document.getElementById('Map3').style.display = 'block';
+            if (data.warning === false) {
+                if (data.status === 0) {
+                    document.getElementById('Map0').style.display = 'block';
+                } else if (data.status === 1) {
+                    document.getElementById('Map2').style.display = 'block';
+                } else if (data.status === 2) {
+                    document.getElementById('Map4').style.display = 'block';
+                }
+            } else {
+                if (data.status === 0) {
+                    document.getElementById('Map1').style.display = 'block';
+                } else if (data.status === 1) {
+                    document.getElementById('Map3').style.display = 'block';
+                }
             }
         }
-    } catch (error) {
+    }
+    catch (error){
         console.error('Error fetching data:', error);
     }
 }
