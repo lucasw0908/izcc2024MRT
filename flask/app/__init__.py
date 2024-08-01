@@ -8,6 +8,7 @@ from flask_wtf import CSRFProtect
 from .config import DevConfig, ProdConfig, BASEDIR
 from .models import db
 from .modules.socketio import socketio
+from .core import core
 
 
 log = logging.getLogger(__name__)
@@ -82,13 +83,14 @@ def create_app() -> Flask:
     app: :class:`Flask`
         A flask app.
     """
-    init_logger()
+    init_logger(debug=True)
     app = Flask(__name__)
     app.config.from_object(DevConfig)
     csrf = CSRFProtect(app)
     app_load_blueprints(app)
     db.__init__(app)
     socketio.init_app(app)
+    core.init_socketio(socketio)
     with app.app_context(): db.create_all()
     
     return app

@@ -6,7 +6,6 @@ from ..core import core
 
 log = logging.getLogger(__name__)
 socketio = SocketIO()
-core.init_socketio(socketio)
 
 
 @socketio.on("connect")

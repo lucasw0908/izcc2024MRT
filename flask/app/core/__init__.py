@@ -30,6 +30,27 @@ class Core:
         
         self.create_team("admins", admins=ADMINS)
         
+        log.debug("Core initialized.")
+        
+        
+    def init_socketio(self, socketio: SocketIO) -> None:
+        self.socketio = socketio
+        
+        log.debug("SocketIO initialized.")
+        
+        self.init_collapse()
+        self.init_prison()
+        
+        
+    def init_collapse(self) -> None:
+        
+        if self.socketio is None:
+            log.error("SocketIO is not initialized.")
+            return None
+        
+        if self.collapse_scheduler.running:
+            self.collapse_scheduler.shutdown()
+        
         for collapse in COLLAPSE:
             hour, minute = map(int, collapse["time"].split(":"))
             collapse_time = datetime.now().replace(hour=hour, minute=minute)
@@ -49,8 +70,14 @@ class Core:
         self.collapse_scheduler.add_job(self._collapse_damage, "interval", minutes=COLLAPSE_DAMAGE_INTERVAL)
         self.collapse_scheduler.start()
         
+        log.debug("Collapse scheduler started.")
+        
+        
+    def init_prison(self) -> None:
         self.prison_scheduler.add_job(self._release, "interval", minutes=1)
         self.prison_scheduler.start()
+        
+        log.debug("Prison scheduler started.")
     
     
     def _collapse(self) -> None:
@@ -72,7 +99,8 @@ class Core:
                 self.collapse.next_time = COLLAPSE[index + 1]["time"]
                 
                 self.socketio.emit("collapse", collapse["stations"])
-                log.info(f"Station {collapse['stations']} collapsed.")
+                
+                log.info("Station collapsed.")
                 
                 
     def _collapse_damage(self) -> None:
@@ -102,12 +130,6 @@ class Core:
                 team.is_imprisoned = False
                 team.imprisoned_time = 0
                 self.socketio.emit("release", team.name)
-                
-                
-    def init_socketio(self, socketio: SocketIO) -> None:
-        self.socketio = socketio
-        
-        log.info("SocketIO initialized.")
         
     
     def load_data(self) -> None:
@@ -116,9 +138,13 @@ class Core:
             team: Teams
             self.create_team(team.name, team.players, team.admins)
             
+        log.debug("Load data from the database.")
+            
         
     def save_data(self) -> None:
         """Save the data to the database."""
+        db.create_all()
+        
         for team in self.teams.values():
             if team.name == "admins":
                 continue
@@ -126,7 +152,10 @@ class Core:
                 db.session.add(Teams(team.name, team.players, team.admins, team.point))
             else:
                 Teams.query.filter_by(name=team.name).update({"players": team.players, "admins": team.admins, "point": team.point})
+                
         db.session.commit()
+        
+        log.debug("Save data to the database.")
 
     
     def create_team(self, name: str, players: list[str]=None, admins: list[str]=None, station: str=None) -> None:
@@ -155,6 +184,8 @@ class Core:
             return None
             
         self.teams[name] = Team(name, players if players is not None else [], admins if admins is not None else [], station)
+        
+        log.debug(f"Team {name} created.")
         
         
     def check_player(self, player: str) -> tuple[Team | None, bool]:
@@ -236,10 +267,12 @@ class Core:
                     
         self.teams[name].choice = self.choice[step]
         
+        log.debug(f"Team {name} can move to {self.choice[step]}.")
+        
         return self.choice[step]
     
     
-    def move_to_location(self, name: str, location: str) -> tuple[list[str], int]:
+    def move_to_location(self, name: str, location: str) -> None:
         """
         Move the team to the location.
         
@@ -279,6 +312,10 @@ class Core:
                 point += combo["point"]
                 self.teams[name].combos.append(combo["name"])
                 combos.append(combo["name"])
+                
+                self.socketio.emit("combo", combo["name"])
+                
+                log.debug(f"Team {name} achieved combo {combo['name']}.")
         
         # 過路費
         if station.team is not None and station.team != name:
@@ -295,7 +332,9 @@ class Core:
         self.teams[name].current_card = None
         self.metro.find_station(location).hidden = False
         
-        return combos, point
+        log.debug(f"The target location of team {name} is {location}.")
+        
+        return None
         
         
     def finish_mission(self, name: str) -> str | None:
@@ -350,11 +389,16 @@ class Core:
         self.teams[name].current_mission_finished = True
         self.teams[name].location = self.teams[name].target_location
         
+        log.debug(f"Team {name} finished the mission.")
+        
         # 抽卡
         if station.is_special:
             if self.teams[name].current_card is None:
                 card = f"card{self.dice(CARD_COUNT)}"
                 self.teams[name].current_card = card
+            
+            log.debug(f"Team {name} draw card {self.teams[name].current_card}.")    
+            
             return self.teams[name].current_card
         
         
@@ -383,6 +427,8 @@ class Core:
         # 初始化
         self.teams[name].current_mission_finished = True
         self.teams[name].location = self.teams[name].target_location
+        
+        log.debug(f"Team {name} skipped the mission.")
             
         
     def dice(self, faces: int=6) -> int:
