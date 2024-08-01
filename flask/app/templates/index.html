@@ -5,6 +5,9 @@
 {% block head %}
 <link href="{{url_for('static', filename='css/style.css')}}" rel="stylesheet">
 <script src="{{url_for('static', filename='js/index.js')}}"></script>
+
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
 <meta property="og:title" content="捷運大富翁">
 <meta property="og:description" content="由IZCC共同開發，作為社團內具特色的一個活動，在社團內的暑訓、寒訓等活動皆可使用，遊戲結合了現實的團隊活動與資訊科技的應用，目標是希望能讓參與者藉由資訊社的活動體驗資訊科技帶來的娛樂與應用。">
 <meta property="og:image" content="{{url_for('static', filename='img/favicon.png')}}">

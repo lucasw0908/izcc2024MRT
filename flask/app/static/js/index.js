@@ -42,7 +42,6 @@ function resizeMap() {
     document.querySelector('.MRT_map').style.pointerEvents = 'auto'; // 啟用點擊事件
 }
 
-
 async function checkImageExists(imageUrl) {
     try {
         const response = await fetch(imageUrl, { method: 'HEAD' });
@@ -361,12 +360,43 @@ async function showDistance() {
         const data = await response.json();
         if (data.target_location) {
             if (location) {
-                document.getElementById('distance_label').textContent = `( 你已到${data.target_location}站 )`;
+                document.getElementById('distance_label').textContent = `( 你們已到${data.target_location}站 )`;
             } else {
-                document.getElementById('distance_label').textContent = `( 你距離${data.target_location}站 ${distanceInKm} km )`;
+                document.getElementById('distance_label').textContent = `( 你們距離${data.target_location}站 ${distanceInKm} km )`;
             }
         }
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
+
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const socket = io();
+    socket.emit('connect', data);
+
+    socket.on('connected', () => {
+        console.log('Connected to server');
+        
+    });
+
+
+    socket.on('collapse_damage', () => {
+        Swal.fire({
+            title: '崩塌傷害',
+            icon: 'warming',
+            text: '你們受到了崩塌的傷害',
+            confirmButtonText: '關閉'
+        });
+    });
+
+    socket.on('collapse_warning', () => {
+        Swal.fire({
+            title: '崩塌警告',
+            icon: 'warning',
+            text: '5 分鐘後將崩塌 請注意你們的位置',
+            confirmButtonText: '關閉'
+        });
+    });
+
+});
