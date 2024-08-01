@@ -39,8 +39,8 @@ def delete_team(name: str):
     return STATUS_CODES.S00000
 
 
-@admin_api.route("/join_team/<name>/<player_name>")
-def join_team(name: str, player_name: str):
+@admin_api.route("/join_team/<name>/<player_name>/<admin>")
+def join_team(name: str, player_name: str, admin: str):
     
     if not is_admin():
         abort(403)
@@ -48,7 +48,10 @@ def join_team(name: str, player_name: str):
     if name not in core.teams:
         return STATUS_CODES.S00004
 
-    core.teams[name].admins.append(player_name)
+    if admin == "false":
+        core.teams[name].players.append(player_name)
+    else:
+        core.teams[name].admins.append(player_name)
         
     return STATUS_CODES.S00000
 
