@@ -2,7 +2,7 @@ import pygeohash as pgh
 import logging
 import random
 from apscheduler.schedulers.background import BackgroundScheduler
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask_socketio import SocketIO
 
 from ..game_config import ADMINS, CARD_COUNT, COLLAPSE, COLLAPSE_DAMAGE_INTERVAL, COLLAPSE_DAMAGE, COLLAPSE_LIST, END_STATION, DISTANCE, IMPRISONED_TIME
@@ -32,11 +32,21 @@ class Core:
         
         for collapse in COLLAPSE:
             hour, minute = map(int, collapse["time"].split(":"))
-            self.collapse_scheduler.add_job(self._collapse_damage, "interval", minutes=COLLAPSE_DAMAGE_INTERVAL)
-            self.collapse_scheduler.add_job(self._collapse, "date", run_date=datetime.now().replace(hour=hour, minute=minute))
-            if minute >= 5: minute -= 5
-            else: hour -= 1; minute += 55
-            self.collapse_scheduler.add_job(self._collapse_warning, "date", run_date=datetime.now().replace(hour=hour, minute=minute))
+            collapse_time = datetime.now().replace(hour=hour, minute=minute)
+            
+            if collapse_time < datetime.now():
+                self._collapse_warning()
+                self._collapse()
+                
+            elif collapse_time - datetime.now() < timedelta(minutes=5):
+                self._collapse_warning()
+                self.collapse_scheduler.add_job(self._collapse, "date", run_date=collapse_time)
+            
+            else:
+                self.collapse_scheduler.add_job(self._collapse_warning, "date", run_date=collapse_time - timedelta(minutes=5))
+                self.collapse_scheduler.add_job(self._collapse, "date", run_date=collapse_time)
+            
+        self.collapse_scheduler.add_job(self._collapse_damage, "interval", minutes=COLLAPSE_DAMAGE_INTERVAL)
         self.collapse_scheduler.start()
         
         self.prison_scheduler.add_job(self._release, "interval", minutes=1)
@@ -61,6 +71,7 @@ class Core:
                 self.collapse.status += 1
                 self.collapse.next_time = COLLAPSE[index + 1]["time"]
                 
+                self.socketio.emit("collapse", collapse["stations"])
                 log.info(f"Station {collapse['stations']} collapsed.")
                 
                 
@@ -68,18 +79,24 @@ class Core:
         for team in self.teams.values():
             if team.location in COLLAPSE_LIST:
                 team.point -= COLLAPSE_DAMAGE
+                self.socketio.emit("collapse_damage", team.name)
+                
+        log.info(f"Station collapsed, all teams in the station will be damaged.")
                 
                 
     def _collapse_warning(self) -> None:
         self.collapse.warning = True
         
+        self.socketio.emit("collapse_warning")
         log.info(f"Station will collapse in 5 minutes.")
         
         
     def _release(self) -> None:
         for team in self.teams.values():
+            
             if not team.is_imprisoned:
                 continue
+            
             team.imprisoned_time -= 1
             if team.imprisoned_time <= 0:
                 team.is_imprisoned = False
@@ -89,6 +106,8 @@ class Core:
                 
     def init_socketio(self, socketio: SocketIO) -> None:
         self.socketio = socketio
+        
+        log.info("SocketIO initialized.")
         
     
     def load_data(self) -> None:
