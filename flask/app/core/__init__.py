@@ -100,9 +100,12 @@ class Core:
         for station in collapse["stations"]:
             COLLAPSE_LIST.append(station)
             
-        self.collapse.next_time = COLLAPSE[self.collapse.status + 1]["time"]
-        self.collapse.status += 1
+        if self.collapse.status + 1 < len(COLLAPSE):
+            self.collapse.next_time = COLLAPSE[self.collapse.status + 1]["time"]
+        else:
+            self.collapse.next_time = None
         
+        self.collapse.status += 1
         self.socketio.emit("collapse", collapse["stations"])
         
         log.info(f"Station collapsed. Current status: {self.collapse.status}.")
