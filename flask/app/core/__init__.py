@@ -28,7 +28,7 @@ class Core:
         self.collapse_scheduler = BackgroundScheduler()
         self.prison_scheduler = BackgroundScheduler()
         
-        self.create_team("admins", admins=list(ADMINS))
+        self.create_team("admins", admins=ADMINS)
         
         for collapse in COLLAPSE:
             hour, minute = map(int, collapse["time"].split(":"))
