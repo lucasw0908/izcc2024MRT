@@ -49,7 +49,7 @@ def join_team(name: str, player_name: str):
         return STATUS_CODES.S00004
 
     core.teams[name].admins.append(player_name)
-        
+    
     return STATUS_CODES.S00000
 
 
