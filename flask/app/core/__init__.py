@@ -115,6 +115,7 @@ class Core:
         for team in self.teams.values():
             if team.location in COLLAPSE_LIST:
                 team.point -= COLLAPSE_DAMAGE
+                team.add_point_log(-COLLAPSE_DAMAGE, "Station collapsed")
                 self.socketio.emit("collapse_damage", team.name)
                 
         log.info(f"Station collapsed, all teams in the station will be damaged.")
@@ -228,6 +229,30 @@ class Core:
         return None, player in ADMINS
     
     
+    def check_combo(self, name: str) -> None:
+        """
+        Check if the team achieved the combo and add the point.
+        
+        Parameters
+        ----------
+        name: :type:`str`
+            The name of the team.
+        """
+        
+        for combo in load_data("combo"):
+            if combo["name"] in self.teams[name].combos:
+                continue
+            
+            if combo["stations"] == set(combo["stations"]).intersection(set(self.teams[name].stations)):
+                self.teams[name].point += combo["point"]
+                self.teams[name].combos.append(combo["name"])
+                self.teams[name].add_point_log(combo["point"], f"Achieved combo {combo['name']}")
+                
+                self.socketio.emit("combo", combo["name"])
+                
+                log.debug(f"Team {name} achieved combo {combo['name']}.")
+    
+    
     def _move(self, current_station: str, target_deep: int, deep: int=1) -> list[str]:
         choice = []
         
@@ -308,35 +333,28 @@ class Core:
             log.warning(f"Team {name} does not exist.")
             return None
         
-        point = 0
-        combos = []
         station = self.metro.find_station(location)
         self.teams[name].target_location = station.name
         
         # 達成組合
-        for combo in load_data("combo"):
-            if combo["name"] in self.teams[name].combos:
-                continue
-            
-            if combo["stations"] == set(combo["stations"]).intersection(set(self.teams[name].stations)):
-                self.teams[name].point += combo["point"]
-                point += combo["point"]
-                self.teams[name].combos.append(combo["name"])
-                combos.append(combo["name"])
-                
-                self.socketio.emit("combo", combo["name"])
-                
-                log.debug(f"Team {name} achieved combo {combo['name']}.")
+        self.check_combo(name)
         
         # 過路費
         if station.team is not None and station.team != name:
             self.teams[name].point -= station.point
+            self.teams[name].add_point_log(-station.point, f"To team {station.team}")
+            
             self.teams[station.team].point += station.point
+            self.teams[station.team].add_point_log(station.point, f"From team {name}")
             
         # 監獄
         if station.is_prison:
             self.teams[name].is_imprisoned = True
             self.teams[name].imprisoned_time = random.randint(IMPRISONED_TIME["min"], IMPRISONED_TIME["max"])
+            self.teams[name].current_mission_finished = True
+            
+            log.debug(f"Team {name} is imprisoned.")
+            
         else:
             self.teams[name].current_mission_finished = False
             
@@ -381,16 +399,15 @@ class Core:
             log.warning(f"Station {self.teams[name].target_location} does not exist.")
             return None
         
-        # 佔領分數
+        # 完成任務加分
+        self.teams[name].point += station.point
+        self.teams[name].add_point_log(station.point, f"Finish mission at {station.name}")
+        
+        # 佔領
         if station.team is None:
-            self.teams[name].point += 30
             self.metro.find_station(station.name).team = name
             if station.name not in self.teams[name].owned_stations:
                 self.teams[name].owned_stations.append(station.name)
-            
-        # 過路費減免
-        elif station.team != name:
-            self.teams[name].point += station.point
             
         # 紀錄經過站點
         if station.name not in self.teams[name].stations:
@@ -527,6 +544,7 @@ class Core:
         self.teams[name].stations = []
         self.teams[name].combos = []
         self.teams[name].choice = []
+        self.teams[name].point_log = []
         
         log.debug(f"Team {name} reset.")
         
