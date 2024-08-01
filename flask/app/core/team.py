@@ -7,7 +7,7 @@ class Team:
     def __init__(self, name: str, players: Optional[list[str]]=None, admins: Optional[list[str]]=None, location: Optional[str]=None) -> None:
         self.name: str = name
         self.location: str = location or START_STATION
-        self.target_location: Optional[str] = None
+        self.target_location: Optional[str] = location or START_STATION
         self.players = players or []
         self.admins = admins or []
         

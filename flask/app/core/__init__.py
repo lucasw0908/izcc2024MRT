@@ -97,6 +97,8 @@ class Core:
                 if station == END_STATION: continue
                 COLLAPSE_LIST.append(station)
                 
+            self.collapse.status += 1
+                
             log.debug("All stations collapsed.")
             
             return None
@@ -302,7 +304,7 @@ class Core:
         
         self.choice = {i: [] for i in range(1, 7)}
         self.visited = []
-        current_station = self.teams[name].location
+        current_station = self.teams[name].target_location
         self._move(current_station, step)
                     
         self.teams[name].choice = self.choice[step]
