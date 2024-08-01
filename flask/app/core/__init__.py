@@ -316,12 +316,16 @@ class Core:
         if station.team is None:
             self.teams[name].point += 30
             self.metro.find_station(station.name).team = name
-            if station.name not in self.teams[name].stations:
-                self.teams[name].stations.append(station.name)
+            if station.name not in self.teams[name].owned_stations:
+                self.teams[name].owned_stations.append(station.name)
             
         # 過路費減免
         elif station.team != name:
             self.teams[name].point += station.point
+            
+        # 紀錄經過站點
+        if station.name not in self.teams[name].stations:
+            self.teams[name].stations.append(station.name)
                 
         # 初始化
         self.teams[name].current_mission_finished = True
