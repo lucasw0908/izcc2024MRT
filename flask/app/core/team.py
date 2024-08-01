@@ -18,6 +18,7 @@ class Team:
         self.is_imprisoned = False
         
         self.stations = []
+        self.owned_stations = []
         self.combos = []
         self.choice = []
         

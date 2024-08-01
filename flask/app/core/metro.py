@@ -82,7 +82,7 @@ class Station:
         self.geohash: str
         self.hidden: bool
         
-        self.team: str = None
+        self.team: str | None = None
         
         self.__dict__.update({
             "sequence": int(station["Sequence"]),
