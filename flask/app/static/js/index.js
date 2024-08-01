@@ -5,13 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
     showPoint();
     showLocate();
     showImprisoned();
-    showDistance()
-    getCurrentLocation();
     resizeMap();
+    showDistance();
 });
 
-window.addEventListener('resize', resizeMap);
-window.addEventListener('load', resizeMap);
 
 // repeat
 setInterval(showMap, 10000);
@@ -20,6 +17,10 @@ setInterval(showPoint, 10000);
 setInterval(showLocate, 10000);
 setInterval(showImprisoned, 10000);
 setInterval(showDistance,10000);
+
+
+window.addEventListener('resize', resizeMap);
+window.addEventListener('load', resizeMap);
 
 function resizeMap() {
     const img = document.querySelector('.MRT_map img[style*="display: block"]');
@@ -368,35 +369,3 @@ async function showDistance() {
         console.error('Error fetching data:', error);
     }
 }
-
-
-document.addEventListener('DOMContentLoaded', (event) => {
-    const socket = io.connect(location.href);
-    socket.emit('Connect', {message: "Connected from client"});
-
-    socket.on('Connected', (data) => {
-        console.log(data["message"]);
-    });
-
-
-    socket.on('collapse_damage', (team_name) => {
-        if(team_name === document.querySelector('#team').innerHTML){
-            Swal.fire({
-                title: '崩塌傷害',
-                icon: 'warming',
-                text: '你們受到了崩塌的傷害',
-                confirmButtonText: '關閉'
-            });
-        }
-    });
-
-    socket.on('collapse_warning', () => {
-        Swal.fire({
-            title: '崩塌警告',
-            icon: 'warning',
-            text: '5 分鐘後將崩塌 請注意你們的位置',
-            confirmButtonText: '關閉'
-        });
-    });
-
-});

@@ -1,0 +1,30 @@
+document.addEventListener('DOMContentLoaded', (event) => {
+    const socket = io.connect(location.href);
+    socket.emit('Connect', {message: "Connected from client"});
+
+    socket.on('Connected', (data) => {
+        console.log(data["message"]);
+    });
+
+
+    socket.on('collapse_damage', (team_name) => {
+        if(team_name === document.querySelector('#team').innerHTML){
+            Swal.fire({
+                title: '崩塌傷害',
+                icon: 'warming',
+                text: '你們受到了崩塌的傷害',
+                confirmButtonText: '關閉'
+            });
+        }
+    });
+
+    socket.on('collapse_warning', () => {
+        Swal.fire({
+            title: '崩塌警告',
+            icon: 'warning',
+            text: '5 分鐘後將崩塌 請注意你們的位置',
+            confirmButtonText: '關閉'
+        });
+    });
+
+});
