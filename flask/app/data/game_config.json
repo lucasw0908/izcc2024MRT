@@ -48,7 +48,7 @@
     "collapse_list": [],
     "collapse": [
         {
-            "status": 0,
+            "status": 1,
             "time": "15:00",
             "final": false,
             "stations": [
@@ -76,7 +76,7 @@
             ]
         },
         {
-            "status": 1,
+            "status": 2,
             "time": "16:00",
             "final": false,
             "stations": [
@@ -101,7 +101,7 @@
             ]
         },
         {
-            "status": 2,
+            "status": 3,
             "time": "17:00",
             "final": true,
             "stations": []
