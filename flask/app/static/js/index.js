@@ -290,7 +290,6 @@ function getCurrentLocation() {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(async (position) => {
                 try {
-                    console.log(location.hostname)
                     const response = await fetch(`/api/gps_location/${team}/${position.coords.latitude}/${position.coords.longitude}`);
                     const data = await response.json();
                     resolve({ distance: data.distance, location: data.location });
@@ -372,12 +371,11 @@ async function showDistance() {
 
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    const socket = io();
-    socket.emit('connect', data);
+    const socket = io.connect(location.href);
+    socket.emit('Connect', {message: "Connected from client"});
 
-    socket.on('connected', () => {
-        console.log('Connected to server');
-        
+    socket.on('Connected', (data) => {
+        console.log(data["message"]);
     });
 
 

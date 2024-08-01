@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 socketio = SocketIO()
 
 
-@socketio.on("connect")
-def connect():
-    log.info("Client connected")
-    socketio.emit("connected", {"data": "Connected"})
+@socketio.on("Connect")
+def connect(data):
+    log.info(data["message"])
+    socketio.emit("Connected", {"message": "Connected from server"})
