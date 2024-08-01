@@ -110,7 +110,7 @@ class Core:
         db.session.commit()
 
     
-    def create_team(self, name: str, players: list[str]=[], admins: list[str]=[], station: str=None) -> None:
+    def create_team(self, name: str, players: list[str]=None, admins: list[str]=None, station: str=None) -> None:
         """
         Create a new team.
         
@@ -135,7 +135,7 @@ class Core:
             log.warning(f"Team {name} already exists.")
             return None
             
-        self.teams[name] = Team(name, players, admins, station)
+        self.teams[name] = Team(name, players if players is not None else [], admins if admins is not None else [], station)
         
         
     def check_player(self, player: str) -> tuple[Team | None, bool]:
