@@ -70,6 +70,23 @@ def set_location(name: str, location: str):
     return STATUS_CODES.S00000
 
 
+@admin_api.route("/imprison/<name>/<time>")
+def imprison(name: str, time: int):
+    
+    if not is_admin():
+        abort(403)
+        
+    if name not in core.teams:
+        return STATUS_CODES.S00004
+        
+    core.teams[name].is_imprisoned = True
+    core.teams[name].imprisoned_time = time
+    
+    log.debug(f"Team {name} is imprisoned by admin.")
+    
+    return STATUS_CODES.S00000
+
+
 @admin_api.route("/release_team/<name>")
 def release_team(name: str):
     
@@ -80,6 +97,8 @@ def release_team(name: str):
         return STATUS_CODES.S00004
         
     core.teams[name].is_imprisoned = False
+    
+    log.debug(f"Team {name} is released by admin.")
     
     return STATUS_CODES.S00000
 

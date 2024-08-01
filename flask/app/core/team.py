@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from ..game_config import START_STATION
@@ -10,6 +11,7 @@ class Team:
         self.players = players or []
         self.admins = admins or []
         
+        self.point_log: list[dict] = []
         self.point: int = 10
         self.step: int = 0
         
@@ -31,3 +33,12 @@ class Team:
     
     def __repr__(self) -> str:
         return self.name
+    
+    
+    def add_point_log(self, point: int, reason: str) -> None:
+        data = {
+            "point": point,
+            "reason": reason,
+            "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        self.point_log.append(data)
