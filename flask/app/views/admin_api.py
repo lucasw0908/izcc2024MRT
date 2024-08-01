@@ -48,14 +48,8 @@ def join_team(name: str, player_name: str):
     if name not in core.teams:
         return STATUS_CODES.S00004
 
-    for i in core.teams:
-        print(core.teams[i].admins)
-
     core.teams[name].admins.append(player_name)
     
-    for i in core.teams:
-        print(core.teams[i].admins)
-        
     return STATUS_CODES.S00000
 
 
