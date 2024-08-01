@@ -1,0 +1,28 @@
+{
+    "S00000": "Éxito.",
+    
+    "S00001": "Solicitud inválida.",
+    "S00002": "Nombre inválido.",
+    "S00003": "Estación inválida.",
+    "S00004": "Equipo inválido.",
+    "S00005": "Jugador inválido.",
+    "S00006": "Ubicación inválida.",
+    "S00007": "Misión inválida.",
+    "S00010": "Tipo inválido.",
+
+    "S10001": "Error en la estación.",
+    
+    "S20001": "Error en el equipo.",
+    "S20002": "El equipo está encarcelado.",
+    "S20003": "El equipo ya existe.",
+    
+    "S30001": "Error en el jugador.",
+    "S30002": "El jugador no está en ningún equipo.",
+    
+    "S40001": "Error en la ubicación.",
+    "S40002": "Ubicación no alcanzada.",
+    
+    "S50001": "Error en la misión.",
+    "S50002": "La misión no está terminada.",
+    "S50003": "La misión ya está terminada."
+}
