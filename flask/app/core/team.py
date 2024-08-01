@@ -1,26 +1,28 @@
+from typing import Optional
+
 from ..game_config import START_STATION
 
 class Team:
-    def __init__(self, name: str, players: list[str]=None, admins: list[str]=None, location: str | None=None) -> None:
-        self.name = name
-        self.location = location if location is not None else START_STATION
-        self.target_location = None
+    def __init__(self, name: str, players: Optional[list[str]]=None, admins: Optional[list[str]]=None, location: Optional[str]=None) -> None:
+        self.name: str = name
+        self.location: str = location or START_STATION
+        self.target_location: Optional[str] = None
         self.players = players or []
         self.admins = admins or []
         
         self.point: int = 10
         self.step: int = 0
         
-        self.current_mission_finished = True
-        self.current_card: str | None = None
+        self.current_mission_finished: bool = True
+        self.current_card: Optional[str] = None
         
         self.imprisoned_time: int = 0
-        self.is_imprisoned = False
+        self.is_imprisoned: bool = False
         
-        self.stations = []
-        self.owned_stations = []
-        self.combos = []
-        self.choice = []
+        self.stations: list[str] = []
+        self.owned_stations: list[str] = []
+        self.combos: list[str] = []
+        self.choice: list[str] = []
         
         
     def __str__(self) -> str:
