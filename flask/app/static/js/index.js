@@ -163,9 +163,6 @@ async function station_info(station_name) {
 }
 
 
-
-
-
 const chineseNumerals = { '零': 0, '一': 1, '二': 2, '三': 3, '四': 4, };
 
 async function showLocate() {
@@ -266,14 +263,6 @@ function formatTimeDiff(timeDiff) {
 }
 
 
-function formatTimeDiff(timeDiff) {
-    const hours = Math.floor(timeDiff / (1000 * 60 * 60));
-    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-}
-
 async function showImprisoned() {
     const team = document.querySelector('#team').innerHTML;
     try {
@@ -286,6 +275,7 @@ async function showImprisoned() {
         console.error('Error fetching data:', error);
     }
 }
+
 
 function getCurrentLocation() {
     return new Promise((resolve, reject) => {
@@ -311,47 +301,6 @@ function getCurrentLocation() {
     });
 }
 
-document.addEventListener("DOMContentLoaded", async function() {
-    let teamsData = [];
-
-    try {
-        const response = await fetch('/api/teams');
-        const data = await response.json();
-        teamsData = data;
-        setupEventListeners();
-    } catch (error) {
-        console.error('Error fetching teams data:', error);
-    }
-
-    function setupEventListeners() {
-        for (let i = 0; i <= 4; i++) {
-            document.getElementById(`team${i}_location_lebel`).addEventListener("click", function() {
-                team_info_alert(this.textContent);
-            });
-        }
-    }
-    
-    function team_info_alert(team) {
-        const team_name = team.replace(':', '').trim();
-        const teamData = teamsData.find(t => t.name === team_name);
-
-        if (teamData) {
-            const stationsList = teamData.owned_stations.length > 0 ? teamData.stations.join(', ') : '無';
-            Swal.fire({
-                title: `${team_name} 土地佔領`,
-                html: `佔領站: ${stationsList}`,
-                confirmButtonText: '關閉'
-            });
-        } else {
-            Swal.fire({
-                title: `錯誤`,
-                html: `找不到隊伍: ${team_name}`,
-                confirmButtonText: '關閉'
-            });
-        }
-    }
-});
-
 
 async function showDistance() {
     const team = document.querySelector('#team').innerHTML;
@@ -371,3 +320,69 @@ async function showDistance() {
         console.error('Error fetching data:', error);
     }
 }
+
+
+document.addEventListener("DOMContentLoaded", async function() {
+    let teamsData = [];
+
+    try {
+        const response = await fetch('/api/teams');
+        const data = await response.json();
+        teamsData = data;
+        setupEventListeners();
+    } catch (error) {
+        console.error('Error fetching teams data:', error);
+    }
+
+    function setupEventListeners() {
+        for (let i = 0; i <= 4; i++) {
+            document.getElementById(`team${i}_location_lebel`).addEventListener("click", function() {
+                owned_stations_alert(this.textContent);
+            });
+            document.getElementById(`team${i}_point_lebel`).addEventListener("click", function() {
+                point_log_alert(this.textContent);
+            });
+        }
+    }
+    
+    function owned_stations_alert(team) {
+        const team_name = team.replace(':', '').trim();
+        const teamData = teamsData.find(t => t.name === team_name);
+
+        if (teamData) {
+            const stationsList = teamData.owned_stations.length > 0 ? teamData.stations.join(', ') : '無';
+            Swal.fire({
+                title: `${team_name} 土地佔領`,
+                html: `佔領站: ${stationsList}`,
+                confirmButtonText: '關閉'
+            });
+        } else {
+            Swal.fire({
+                title: `錯誤`,
+                html: `找不到隊伍: ${team_name}`,
+                confirmButtonText: '關閉'
+            });
+        }
+    }
+
+
+    function point_log_alert(team) {
+        const team_name = team.replace(':', '').trim();
+        const teamData = teamsData.find(t => t.name === team_name);
+
+        if (teamData) {
+            const point_log = teamData.point_log.length > 0 ? teamData.point_log.map(log => `${log.point} 分 - ${log.reason} (${log.time})`).join('<br>') : '無';
+            Swal.fire({
+                title: `${team_name} 分數紀錄`,
+                html: `${point_log}`,
+                confirmButtonText: '關閉'
+            });
+        } else {
+            Swal.fire({
+                title: `錯誤`,
+                html: `找不到隊伍: ${team_name}`,
+                confirmButtonText: '關閉'
+            });
+        }
+    }
+});
