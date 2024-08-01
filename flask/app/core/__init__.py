@@ -77,6 +77,10 @@ class Core:
         
         
     def init_prison(self) -> None:
+        
+        if self.prison_scheduler.running:
+            self.prison_scheduler.shutdown()
+            
         self.prison_scheduler.add_job(self._release, "interval", minutes=1)
         self.prison_scheduler.start()
         

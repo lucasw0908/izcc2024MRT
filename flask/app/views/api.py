@@ -62,7 +62,7 @@ def stations():
     for station_name in graph.keys():
         station = core.metro.find_station(station_name)
         data.append(station.__dict__)
-        if station.hidden and station_name not in unlock_stations:
+        if station.hidden and (station_name not in unlock_stations):
             data[-1]["mission"] = "隱藏"
             data[-1]["tips"] = "隱藏"
             data[-1]["exit"] = "隱藏"
