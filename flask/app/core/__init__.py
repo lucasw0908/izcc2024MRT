@@ -249,7 +249,6 @@ class Core:
         combos = []
         station = self.metro.find_station(location)
         self.teams[name].target_location = station.name
-        self.teams[name].stations.append(station.name)
         
         # 達成組合
         for combo in load_data("combo"):
@@ -317,6 +316,8 @@ class Core:
         if station.team is None:
             self.teams[name].point += 30
             self.metro.find_station(station.name).team = name
+            if station.name not in self.teams[name].stations:
+                self.teams[name].stations.append(station.name)
             
         # 過路費減免
         elif station.team != name:
@@ -420,6 +421,33 @@ class Core:
         log.debug(data)
         
         return data
+    
+    
+    def reset_team(self, name: str) -> None:
+        """
+        Reset the team.
+        
+        Parameters
+        ----------
+        name: :type:`str`
+            The name of the team.
+        """
+        
+        if name not in self.teams.keys():
+            log.warning(f"Team {name} does not exist.")
+            return None
+        
+        self.teams[name].point = 10
+        self.teams[name].step = 0
+        self.teams[name].target_location = None
+        self.teams[name].current_mission_finished = True
+        self.teams[name].current_card = None
+        self.teams[name].imprisoned_time = 0
+        self.teams[name].is_imprisoned = False
+        self.teams[name].stations = []
+        self.teams[name].combos = []
+        self.teams[name].choice = []
+        
     
     
 core = Core()

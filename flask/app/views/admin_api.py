@@ -2,7 +2,7 @@ import logging
 from flask import abort, Blueprint
 
 from ..core import core
-from ..modules.checker import is_admin
+from ..modules.checker import is_admin, is_game_admin
 from ..status_codes import STATUS_CODES
 
 
@@ -104,3 +104,17 @@ def finish_mission(name: str):
     
     card = core.finish_mission(name=name)
     return STATUS_CODES.S00000 if card is None else card
+
+
+@admin_api.route("/reset_team/<name>")
+def reset_team(name: str):
+        
+    if not is_admin():
+        abort(403)
+        
+    if name not in core.teams:
+        return STATUS_CODES.S00004
+        
+    core.reset_team(name)
+    
+    return STATUS_CODES.S00000

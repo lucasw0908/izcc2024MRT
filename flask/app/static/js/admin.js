@@ -115,7 +115,7 @@ function set_location() {
         .then(response => { alert(response); });
 }
 
-function release() {
+function release_team() {
     const team = document.getElementById('release_team-name').value;
 
     if (team === "") {
@@ -123,7 +123,15 @@ function release() {
         return
     }
 
-    fetch(`/api/admin/release/${team}`)
+    fetch(`/api/admin/release_team/${team}`)
+        .then(response => response.text())
+        .then(response => { alert(response); });
+}
+
+function reset_team() {
+    const team = document.getElementById('reset_team').value;
+    
+    fetch(`/api/admin/reset_team/${team}`)
         .then(response => response.text())
         .then(response => { alert(response); });
 }
