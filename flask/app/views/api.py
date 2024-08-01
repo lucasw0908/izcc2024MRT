@@ -321,3 +321,18 @@ def gps_location(name: str, latitude: float, longitude: float):
     log.debug(f"Team {name} is at {longitude}, {latitude}")
     
     return jsonify(core.check_pos(name, pgh.encode(latitude, longitude)))
+
+
+@api.route("/imprison/<name>/<time>")
+def imprison(name: str, time: int):
+    
+    if not is_admin():
+        abort(403)
+        
+    if name not in core.teams:
+        return STATUS_CODES.S00004
+        
+    core.teams[name].is_imprisoned = True
+    core.teams[name].imprisoned_time = time
+    
+    return STATUS_CODES.S00000
