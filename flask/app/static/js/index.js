@@ -331,7 +331,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const teamData = teamsData.find(t => t.name === team_name);
 
         if (teamData) {
-            const stationsList = teamData.stations.length > 0 ? teamData.stations.join(', ') : '無';
+            const stationsList = teamData.owned_stations.length > 0 ? teamData.stations.join(', ') : '無';
             Swal.fire({
                 title: `${team_name} 土地佔領`,
                 html: `佔領站: ${stationsList}`,
