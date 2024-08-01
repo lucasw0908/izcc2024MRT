@@ -379,13 +379,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 
 
-    socket.on('collapse_damage', () => {
-        Swal.fire({
-            title: '崩塌傷害',
-            icon: 'warming',
-            text: '你們受到了崩塌的傷害',
-            confirmButtonText: '關閉'
-        });
+    socket.on('collapse_damage', (team_name) => {
+        if(team_name === document.querySelector('#team').innerHTML){
+            Swal.fire({
+                title: '崩塌傷害',
+                icon: 'warming',
+                text: '你們受到了崩塌的傷害',
+                confirmButtonText: '關閉'
+            });
+        }
     });
 
     socket.on('collapse_warning', () => {
