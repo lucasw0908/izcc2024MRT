@@ -528,6 +528,8 @@ class Core:
         self.teams[name].combos = []
         self.teams[name].choice = []
         
+        log.debug(f"Team {name} reset.")
+        
     
     
 core = Core()
