@@ -199,12 +199,16 @@ async function showMap() {
                     document.getElementById('Map2').style.display = 'block';
                 } else if (data.status === 2) {
                     document.getElementById('Map4').style.display = 'block';
+                } else if (data.status === 3) {
+                    document.getElementById('Map6').style.display = 'block';
                 }
             } else {
                 if (data.status === 0) {
                     document.getElementById('Map1').style.display = 'block';
                 } else if (data.status === 1) {
                     document.getElementById('Map3').style.display = 'block';
+                } else if (data.status === 2) {
+                    document.getElementById('Map5').style.display = 'block';
                 }
             }
         }
