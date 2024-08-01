@@ -43,6 +43,48 @@ function resizeMap() {
     document.querySelector('.MRT_map').style.pointerEvents = 'auto'; // 啟用點擊事件
 }
 
+
+let lastStatus = null;
+let lastWarning = null;
+
+async function showMap() {
+    try {
+        const response = await fetch(`/api/collapse_status`);
+        const data = await response.json();
+
+        if (data.status !== lastStatus || data.warning !== lastWarning) {
+            lastStatus = data.status;
+            lastWarning = data.warning;
+            let images = document.querySelectorAll('.MRT_map img');
+            images.forEach(img => img.style.display = 'none');
+
+            if (data.warning === false) {
+                if (data.status === 0) {
+                    document.getElementById('Map0').style.display = 'block';
+                } else if (data.status === 1) {
+                    document.getElementById('Map2').style.display = 'block';
+                } else if (data.status === 2) {
+                    document.getElementById('Map4').style.display = 'block';
+                } else if (data.status === 3) {
+                    document.getElementById('Map6').style.display = 'block';
+                }
+            } else {
+                if (data.status === 0) {
+                    document.getElementById('Map1').style.display = 'block';
+                } else if (data.status === 1) {
+                    document.getElementById('Map3').style.display = 'block';
+                } else if (data.status === 2) {
+                    document.getElementById('Map5').style.display = 'block';
+                }
+            }
+        }
+    }
+    catch (error){
+        console.error('Error fetching data:', error);
+    }
+}
+
+
 async function checkImageExists(imageUrl) {
     try {
         const response = await fetch(imageUrl, { method: 'HEAD' });
@@ -174,47 +216,6 @@ async function showPoint() {
             }
         });
     } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-}
-
-
-let lastStatus = null;
-let lastWarning = null;
-
-async function showMap() {
-    try {
-        const response = await fetch(`/api/collapse_status`);
-        const data = await response.json();
-
-        if (data.status !== lastStatus || data.warning !== lastWarning) {
-            lastStatus = data.status;
-            lastWarning = data.warning;
-            let images = document.querySelectorAll('.MRT_map img');
-            images.forEach(img => img.style.display = 'none');
-
-            if (data.warning === false) {
-                if (data.status === 0) {
-                    document.getElementById('Map0').style.display = 'block';
-                } else if (data.status === 1) {
-                    document.getElementById('Map2').style.display = 'block';
-                } else if (data.status === 2) {
-                    document.getElementById('Map4').style.display = 'block';
-                } else if (data.status === 3) {
-                    document.getElementById('Map6').style.display = 'block';
-                }
-            } else {
-                if (data.status === 0) {
-                    document.getElementById('Map1').style.display = 'block';
-                } else if (data.status === 1) {
-                    document.getElementById('Map3').style.display = 'block';
-                } else if (data.status === 2) {
-                    document.getElementById('Map5').style.display = 'block';
-                }
-            }
-        }
-    }
-    catch (error){
         console.error('Error fetching data:', error);
     }
 }
