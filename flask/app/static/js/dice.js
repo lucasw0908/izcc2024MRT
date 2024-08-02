@@ -24,7 +24,7 @@ const params = {
 
     // ux
     times: 0,
-    desiredResult: 5,
+    desiredResult: null,
     throw: throwMe,
 };
 
