@@ -1,7 +1,7 @@
 //ready
 document.addEventListener("DOMContentLoaded", () => {
     mission_label();
-    getCurrentLocation();
+    showDistance();
 });
 
 function mission_label() {
@@ -112,27 +112,71 @@ function missionAPI() {
         })
 }
 
+async function showDistance() {
+    const team = document.querySelector('#team').innerHTML;
+    const { distance, location } = await getCurrentLocation();
+    const distanceInKm = (distance / 1000).toFixed(1);
+    try {
+        const response = await fetch(`/api/team/${team}`);
+        const data = await response.json();
+        if (data.target_location) {
+            if (location) {
+                document.getElementById('distance_label').textContent = `目前位置 : 你們已到${data.target_location}站 `;
+            } else {
+                document.getElementById('distance_label').textContent = `目前位置 : 你們距離${data.target_location}站 ${distanceInKm} km `;
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+}
 
 
 function getCurrentLocation() {
-    const team = document.querySelector("#team").innerHTML;
-    // 先確認使用者裝置能不能抓地點
-    if (navigator.geolocation) {
-
-        // 使用者不提供權限，或是發生其它錯誤
-        function error() {
-            alert("無法取得你的位置");
+    return new Promise((resolve, reject) => {
+        const team = document.querySelector('#team').innerHTML;
+        if (navigator.geolocation) {
+            // 使用高精度模式
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000, // 10 秒超時
+                maximumAge: 0 // 不使用緩存位置
+            };
+            
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                try {
+                    const { latitude, longitude } = position.coords;
+                    const response = await fetch(`/api/gps_location/${team}/${latitude}/${longitude}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP 錯誤！狀態: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    resolve({ distance: data.distance, location: data.location });
+                } catch (error) {
+                    console.error('獲取數據時出錯:', error);
+                    reject(error);
+                }
+            }, (error) => {
+                // 處理定位錯誤
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        alert('使用者拒絕了地理位置請求。');
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        alert('位置信息不可用。');
+                        break;
+                    case error.TIMEOUT:
+                        alert('請求地理位置超時。');
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        alert('發生未知錯誤。');
+                        break;
+                }
+                reject(error);
+            }, options);
+        } else {
+            alert('對不起，您的裝置不支援地理位置功能。');
+            reject(new Error('Geolocation not supported'));
         }
-
-        // 使用者允許抓目前位置，回傳經緯度
-        function success(position) {
-            fetch(`/api/gps_location/${team}/${position.coords.latitude}/${position.coords.longitude}`)
-        }
-
-        // 跟使用者拿所在位置的權限
-        navigator.geolocation.getCurrentPosition(success, error);
-
-    } else {
-        alert("Sorry, 你的裝置不支援地理位置功能。")
-    }
+    });
 }

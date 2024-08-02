@@ -110,8 +110,13 @@
 }
 
 #mission_label {
-    font-size: 300%;
-    margin-left: 5%;
+    font-size: 200%;
+    margin-left: 10%;
+}
+
+#distance_label {
+    font-size: 200%;
+    margin-left: 10%;
 }
 
 #throwbtn {
