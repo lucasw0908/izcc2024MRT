@@ -268,5 +268,17 @@ h1 {
     100% { transform: translate(calc(var(--uib-size) * 0.5)) scale(0.73684); opacity: 0.65; }
 }
 
+#chartContainer {
+    width: 80%;
+    max-width: 800px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+#scoreChart {
+    margin-top: 10%;
+}
+
    
    

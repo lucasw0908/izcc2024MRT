@@ -7,6 +7,11 @@
 <script src="{{url_for('static', filename='js/index.js')}}"></script>
 <script src="{{url_for('static', filename='js/socket.js')}}"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 
 <meta property="og:title" content="捷運大富翁">
@@ -241,4 +246,6 @@
         </div>
     </div>
 </div>
+
+<canvas id="scoreChart" width="400" height="200"></canvas>
 {% endblock %}

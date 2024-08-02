@@ -5,8 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
     showPoint();
     showLocate();
     showImprisoned();
-    resizeMap();
+    showPointchart();
     showDistance();
+    resizeMap();
+    window.addEventListener('resize', resizeMap);
+    window.addEventListener('load', resizeMap);
 });
 
 
@@ -17,10 +20,6 @@ setInterval(showPoint, 10000);
 setInterval(showLocate, 10000);
 setInterval(showImprisoned, 10000);
 setInterval(showDistance,10000);
-
-
-window.addEventListener('resize', resizeMap);
-window.addEventListener('load', resizeMap);
 
 function resizeMap() {
     const img = document.querySelector('.MRT_map img[style*="display: block"]');
@@ -117,7 +116,8 @@ async function station_info(station_name) {
         const imageHtml = exists ? `<img src="${imageUrl}" alt="${station_name} 圖片" style="width:60%; height:auto;">` : '';
 
         const lebel_image = (!data.is_special || station_name === team_data.location) ? imageHtml : "";
-        const lebel_is_special = data.is_special ? "是" : "否";
+        let lebel_is_special = data.is_special ? "是" : "否";
+        lebel_is_special = data.is_prison ? "是" : "否";
         const label_team = data.team ? data.team : "無人佔領";
         const label_depiction = (!data.is_special || station_name === team_data.location) ? data.mission : "隱藏";
         const label_exit = (!data.is_special || station_name === team_data.location) ? data.exit : "隱藏";
@@ -397,10 +397,11 @@ document.addEventListener("DOMContentLoaded", async function() {
 
         if (teamData) {
             const point_log = teamData.point_log.length > 0 ? teamData.point_log.map(log => `${log.point} 分 - ${log.reason} (${log.time})`).join('<br>') : '無';
+
             Swal.fire({
                 title: `${team_name} 分數紀錄`,
-                html: `${point_log}`,
-                confirmButtonText: '關閉'
+                html: `${point_log}<canvas id="scoreChart" width="1000" height="500"></canvas>`,
+                confirmButtonText: '關閉',
             });
         } else {
             Swal.fire({
@@ -411,3 +412,108 @@ document.addEventListener("DOMContentLoaded", async function() {
         }
     }
 });
+
+
+async function showPointchart() {
+    try {
+        const response = await fetch('/api/teams');
+        const teamsData = await response.json();
+        const allTimes = Array.from(new Set(teamsData.flatMap(teamData => teamData.point_log.map(log => log.time)))).sort();
+        const datasets = teamsData
+        .filter(teamData => teamData.name !== 'admins')  // 跳過隊伍名為 'admins' 的數據
+        .map((teamData, index) => {
+            let cumulativeScore = 0;
+            const data = allTimes.map(time => {
+                const log = teamData.point_log.find(log => log.time === time);
+                if (log) {
+                    cumulativeScore += log.point;
+                }
+                return cumulativeScore;
+            });
+            return {
+                label: teamData.name,
+                data: data,
+                borderColor: getColor(index,0.7),
+                backgroundColor: getColor(index, 0.2),
+                fill: false,
+                tension: 0,  
+                pointStyle: 'circle',
+                pointRadius: 5,
+                pointBackgroundColor: getColor(index),
+            };
+        });
+
+        const maxTime = moment(allTimes[allTimes.length - 1]).add(1, 'hour').toISOString();
+        const rangeMaxTime = moment(allTimes[0]).add(2 / 3 * (moment(maxTime).diff(moment(allTimes[0]))), 'milliseconds').toISOString();
+        const minTime = moment(rangeMaxTime).subtract(1, 'hour').toISOString();
+        const ctx = document.getElementById('scoreChart').getContext('2d');
+
+        const scoreChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: allTimes,
+                datasets: datasets
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: { display: true, text: '時間' ,font: { size: 28 ,weight: 'bold'} },
+                        type: 'time',
+                        time: {
+                            unit: 'hour',
+                            tooltipFormat:'HH:mm',
+                            displayFormats: {
+                                hour: 'HH:mm'
+                            }
+                        },
+                        ticks: {
+                            font: { size: 14 ,weight: 'bold'}
+                        },
+                        max: maxTime,
+                        min: minTime,
+                    },
+                    y: {
+                        title: { display: true, text: '分數' ,font: { size: 28 ,weight: 'bold'}},
+                        ticks: {
+                            font: { size: 14 ,weight: 'bold'}
+                        },
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: { size: 28 ,weight: 'bold' }
+                        }
+                    },
+                    tooltip: {
+                        bodyFont: { size: 40 ,weight: 'bold'}
+                    }
+                },
+                elements: {
+                    line: {
+                        borderWidth: 7
+                    },
+                    point: {
+                        radius: 10,
+                        hoverRadius: 12
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching teams data:', error);
+    }
+}
+
+
+function getColor(index, alpha = 1) {
+    const colors = [
+        'rgba(75, 192, 192, ALPHA)',
+        'rgba(255, 99, 132, ALPHA)',
+        'rgba(54, 162, 235, ALPHA)',
+        'rgba(255, 206, 86, ALPHA)',
+        'rgba(153, 102, 255, ALPHA)',
+        'rgba(255, 159, 64, ALPHA)'
+    ];
+    return colors[index % colors.length].replace('ALPHA', alpha);
+}
