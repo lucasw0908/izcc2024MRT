@@ -94,7 +94,6 @@ body.modal-open {
 }
 
 .element-card .front-facing {
-    background-image: url(../static/img/cards/card0.jpg);
     background-size: cover;
     background-position: center;
 }
