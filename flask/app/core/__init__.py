@@ -29,7 +29,7 @@ class Core:
         self.collapse_scheduler = BackgroundScheduler()
         self.prison_scheduler = BackgroundScheduler()
         
-        self.create_team("admins", admins=ADMINS)
+        self.create_team("admins", admins=ADMINS.copy())
         
         
     def init_socketio(self, socketio: SocketIO) -> None:
