@@ -250,7 +250,11 @@ def add_point(name: str, point: int):
     point = int(point)
         
     core.teams[name].point += point
-    core.teams[name].add_point_log(point, "By admin")
+    
+    bearer_client = APIClient(session.get("token"), bearer=True)
+    current_user = bearer_client.users.get_current_user()        
+    
+    core.teams[name].add_point_log(point, f"By {current_user.username}")
     
     return STATUS_CODES.S00000
 
@@ -266,7 +270,10 @@ def set_point(name: str, point: int):
     
     point = int(point)
     
-    core.teams[name].add_point_log(point - core.teams[name].point, "By admin")
+    bearer_client = APIClient(session.get("token"), bearer=True)
+    current_user = bearer_client.users.get_current_user()
+
+    core.teams[name].add_point_log(point - core.teams[name].point, f"By {current_user.username}")
     core.teams[name].point = point
     
     return STATUS_CODES.S00000
