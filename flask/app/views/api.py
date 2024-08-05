@@ -159,6 +159,14 @@ def join_team(name: str, player_name: str):
     if name not in core.teams:
         return STATUS_CODES.S00004
 
+    current_team, admin = core.check_player(player_name)
+    
+    if current_team is not None:
+        if admin:
+            core.teams[current_team].admins.remove(player_name)
+        else:
+            core.teams[current_team].players.remove(player_name)
+
     core.teams[name].players.append(player_name)
         
     return STATUS_CODES.S00000
