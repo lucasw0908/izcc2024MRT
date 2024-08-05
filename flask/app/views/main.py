@@ -8,7 +8,7 @@ from zenora import APIClient
 from ..core import core
 from ..data import load_data
 from ..config import BASEDIR
-from ..modules.checker import is_game_admin
+from ..modules.checker import is_game_admin, is_admin
 
 
 log = logging.getLogger(__name__)
@@ -72,9 +72,9 @@ def team_admin():
     if "token" in session:
         bearer_client = APIClient(session.get("token"), bearer=True)
         current_user = bearer_client.users.get_current_user()
-        team, is_admin = core.check_player(current_user.username)
+        team, _ = core.check_player(current_user.username)
         
-        if is_admin:
+        if is_admin():
             return render_template("team_admin.html", current_user=current_user.username, team=team, graph=core.metro.graph)
         
     return redirect("/")
@@ -85,9 +85,9 @@ def card():
     if "token" in session:
         bearer_client = APIClient(session.get("token"), bearer=True)
         current_user = bearer_client.users.get_current_user()
-        team, is_admin = core.check_player(current_user.username)
+        team, _ = core.check_player(current_user.username)
         
-        if is_admin:
+        if is_admin():
             return render_template("card.html", current_user=current_user.username, team=team, graph=core.metro.graph)
         
     return redirect("/")
@@ -98,9 +98,9 @@ def dice():
     if "token" in session:
         bearer_client = APIClient(session.get("token"), bearer=True)
         current_user = bearer_client.users.get_current_user()
-        team, is_admin = core.check_player(current_user.username)
+        team, _ = core.check_player(current_user.username)
         
-        if is_admin:
+        if is_admin():
             return render_template("dice.html", current_user=current_user.username, team=team, graph=core.metro.graph)
 
     return redirect("/")
@@ -111,9 +111,9 @@ def initialization():
     if "token" in session:
         bearer_client = APIClient(session.get("token"), bearer=True)
         current_user = bearer_client.users.get_current_user()
-        team, is_admin = core.check_player(current_user.username)
+        team, _ = core.check_player(current_user.username)
         
-        if is_admin:
+        if is_admin():
             return render_template("initialization.html", current_user=current_user.username, team=team, graph=core.metro.graph)
 
     return redirect("/")
