@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', (event) => {
-    const socketUrl = (location.protocol === 'https:') ? 'wss://mrt.ckcsc.net' : 'ws://mrt.ckcsc.net';
-    const socket = io.connect(socketUrl);
-    
+
+    const socket = io.connect(location.href);
+
     socket.emit('Connect', {message: "Connected from client"});
 
     socket.on('Connected', (data) => {
