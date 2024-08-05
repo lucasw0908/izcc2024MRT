@@ -8,8 +8,8 @@ class Team:
         self.name: str = name
         self.location: str = location or START_STATION
         self.target_location: Optional[str] = location or START_STATION
-        self.players = players or []
-        self.admins = admins or []
+        self.players = players if players is not None else []
+        self.admins = admins if admins is not None else []
         
         self.point_log: list[dict] = []
         self.point: int = 10
