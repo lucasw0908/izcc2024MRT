@@ -1,10 +1,7 @@
 document.addEventListener('DOMContentLoaded', (event) => {
-    if (location.href === "https://mrt.ckcsc.net"){
-        const socket = io.connect("wss://mrt.ckcsc.net")
-    }
-    else{
-    const socket = io.connect(location.href);
-    }
+    const socketUrl = (location.protocol === 'https:') ? 'wss://mrt.ckcsc.net' : 'ws://mrt.ckcsc.net';
+    const socket = io.connect(socketUrl);
+    
     socket.emit('Connect', {message: "Connected from client"});
 
     socket.on('Connected', (data) => {
