@@ -2,6 +2,7 @@ import os
 import logging
 import logging.handlers
 from flask import Flask
+from flask_cors import CORS
 from flask.logging import default_handler
 from flask_wtf import CSRFProtect
 
@@ -87,9 +88,10 @@ def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object(DevConfig)
     csrf = CSRFProtect(app)
+    CORS(app)
     app_load_blueprints(app)
     db.__init__(app)
-    socketio.init_app(app)
+    socketio.init_app(app, cors_allowed_origins="*")
     core.init_socketio(socketio)
     with app.app_context(): db.create_all()
     
