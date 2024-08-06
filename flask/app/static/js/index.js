@@ -396,12 +396,17 @@ document.addEventListener("DOMContentLoaded", async function() {
         const teamData = teamsData.find(t => t.name === team_name);
 
         if (teamData) {
-            const point_log = teamData.point_log.length > 0 ? teamData.point_log.map(log => `${log.point} 分 - ${log.reason} (${log.time})`).join('<br>') : '無';
-
+            const point_log = teamData.point_log.length > 0 
+                ? teamData.point_log.map(log => `${log.point} 分 - ${log.reason} (${log.time})`).join('<br>') 
+                : '無';
             Swal.fire({
                 title: `${team_name} 分數紀錄`,
-                html: `${point_log}<canvas id="scoreChart" width="1000" height="500"></canvas>`,
+                html: `<div id="pointLog" style="max-height: 700px ; overflow-y: scroll;">${point_log}</div>`,
                 confirmButtonText: '關閉',
+                didOpen: () => {
+                    const pointLogDiv = document.getElementById('pointLog');
+                    pointLogDiv.scrollTo(0, pointLogDiv.scrollHeight);
+                }
             });
         } else {
             Swal.fire({
