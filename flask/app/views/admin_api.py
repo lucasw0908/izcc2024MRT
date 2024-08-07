@@ -1,5 +1,7 @@
 import logging
-from flask import abort, Blueprint
+from logging import INFO
+from flask import abort, Blueprint, session, request
+from zenora import APIClient
 
 from ..core import core
 from ..modules.checker import is_admin, is_game_admin
@@ -8,6 +10,17 @@ from ..status_codes import STATUS_CODES
 
 log = logging.getLogger(__name__)
 admin_api = Blueprint("admin_api", __name__, url_prefix="/api/admin")
+
+yellow_text_color = "\33[33m"
+reset_text_color = "\33[0m"
+
+
+@admin_api.before_request
+def log_user():
+    if "token" in session:
+        bearer_client = APIClient(session.get("token"), bearer=True)
+        current_user = bearer_client.users.get_current_user()
+        log.log(INFO, f"{yellow_text_color}User \"{current_user.username}\" is using an admin api: \"{request.endpoint}\"{reset_text_color}")
 
 
 @admin_api.route("/create_team/<name>/<station>")
