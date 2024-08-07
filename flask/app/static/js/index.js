@@ -114,10 +114,14 @@ async function station_info(station_name) {
         const imageUrl = `../static/img/stations/${station_name}.jpg`;
         const exists = await checkImageExists(imageUrl);
         const imageHtml = exists ? `<img src="${imageUrl}" alt="${station_name} 圖片" style="width:60%; height:auto;">` : '';
-
         const lebel_image = (!data.is_special || station_name === team_data.location) ? imageHtml : "";
-        let lebel_is_special = data.is_special ? "是" : "否";
-        lebel_is_special = data.is_prison ? "是" : "否";
+        let lebel_is_special = "";
+        if (data.is_special || data.is_prison) {
+            lebel_is_special = "是" 
+        }
+        else{
+            lebel_is_special = "否"
+        }
         const label_team = data.team ? data.team : "無人佔領";
         const label_depiction = (!data.is_special || station_name === team_data.location) ? data.mission : "隱藏";
         const label_exit = (!data.is_special || station_name === team_data.location) ? data.exit : "隱藏";
