@@ -44,7 +44,7 @@
         "max": 25
     },
     "collapse_damage_interval": 10,
-    "collapse_damage": 10,
+    "collapse_damage": 25,
     "collapse_list": [],
     "collapse": [
         {
