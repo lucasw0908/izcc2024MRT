@@ -150,3 +150,14 @@ def reset_team(name: str):
     core.reset_team(name)
     
     return STATUS_CODES.S00000
+
+
+@admin_api.route("/end_game")
+def end_game():
+    
+    if not is_game_admin():
+        abort(403)
+        
+    core.end_game()
+    
+    return STATUS_CODES.S00000

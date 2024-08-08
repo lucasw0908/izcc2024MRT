@@ -20,6 +20,7 @@ log = logging.getLogger(__name__)
 
 class Core:
     def __init__(self) -> None:
+        self.is_running = True
         self.metro = MetroSystem()
         self.socketio = None
         self.teams: dict[str, Team] = {}
@@ -88,6 +89,11 @@ class Core:
     
     
     def _collapse(self) -> None:
+        
+        if self.is_running is False:
+            log.warning("Game ended.")
+            return None
+        
         self.collapse.warning = False
         
         collapse = COLLAPSE[self.collapse.status]
@@ -118,6 +124,11 @@ class Core:
                 
                 
     def _collapse_damage(self) -> None:
+        
+        if self.is_running is False:
+            log.warning("Game ended.")
+            return None
+        
         for team in self.teams.values():
             if team.location in COLLAPSE_LIST:
                 team.point -= COLLAPSE_DAMAGE
@@ -128,6 +139,11 @@ class Core:
                 
                 
     def _collapse_warning(self) -> None:
+        
+        if self.is_running is False:
+            log.warning("Game ended.")
+            return None
+        
         self.collapse.warning = True
         
         self.socketio.emit("collapse_warning")
@@ -297,6 +313,10 @@ class Core:
         choice: :type:`list[str]`
             The list of possible station ids to move.
         """
+        
+        if self.is_running is False:
+            log.warning("Game ended.")
+            return None
 
         if name not in self.teams.keys():
             log.warning(f"Team {name} does not exist.")
@@ -334,6 +354,10 @@ class Core:
         point: :type:`int`
             The point to add.
         """
+        
+        if self.is_running is False:
+            log.warning("Game ended.")
+            return None
         
         if name not in self.teams.keys():
             log.warning(f"Team {name} does not exist.")
@@ -386,6 +410,10 @@ class Core:
         card: :type:`str`
             The card to draw.
         """
+        
+        if self.is_running is False:
+            log.warning("Game ended.")
+            return None
         
         if name not in self.teams.keys():
             log.warning(f"Team {name} does not exist.")
@@ -446,6 +474,10 @@ class Core:
             The name of the team.
         """
         
+        if self.is_running is False:
+            log.warning("Game ended.")
+            return None
+        
         if name not in self.teams.keys():
             log.warning(f"Team {name} does not exist.")
             return None
@@ -495,6 +527,10 @@ class Core:
         geohash: :type:`str`
             The geohash of the position.
         """
+        
+        if self.is_running is False:
+            log.warning("Game ended.")
+            return None
         
         if name not in self.teams.keys():
             log.warning(f"Team {name} does not exist.")
@@ -554,6 +590,12 @@ class Core:
         
         log.debug(f"Team {name} reset.")
         
+        
+    def end_game(self) -> None:
+        """End the game."""
+        self.is_running = False
+        
+        log.info("Game ended.")
     
     
 core = Core()
