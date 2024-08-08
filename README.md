@@ -1,5 +1,13 @@
 # 捷運大富翁
 
+## 目錄
+
+- [簡介](#簡介)
+- [遊戲內容](#遊戲內容)
+- [介面介紹](#介面介紹)
+- [遊戲設定](#遊戲設定)
+- [歷史版本](#歷史版本)
+
 ## 簡介
 
 由IZCC共同開發，作為社團內具特色的一個活動，在社團內的暑訓、寒訓等活動皆可使用，遊戲結合了現實的團隊活動與資訊科技的應用，目標是希望能讓參與者藉由資訊社的活動體驗資訊科技帶來的娛樂與應用。
@@ -12,20 +20,26 @@
 
 ### 計分方式
 
-#### 加分：
-- 完成無人土地的任務 (簡單:20 普通:35 困難:50)
-- 卡片
-- 組合 
-#### 扣分：
-- 縮圈 (每10分偵測一次 扣10分)
-- 卡片
+#### 加分
 
-#### 備註:
-- 踩到自己的站:0
-- 踩到別人的站:依照難易度扣分 (完成任務後:0)
+- 完成無人土地的任務 (根據設定內對應難度的分數進行扣分)
+- 卡片 (卡片效果需手動加分)
+- 組合
+
+#### 扣分
+
+- 縮圈
+- 卡片 (卡片效果需手動扣分)
+
+#### 備註
+
+- 踩到自己的站：0
+- 踩到別人的站：依照難易度扣分 (完成任務後：0)
 
 ### 起點
+
 各小隊會抽籤分散到各顏色的線，等到所有小隊到達各自起點後統一開始。
+
 - 台北車站往頂埔方向
 - 台電大樓往松山方向
 - 大安往南港展覽館方向
@@ -33,38 +47,228 @@
 - 忠孝新生往南勢角方向
 
 ### 縮圈
-指定時間後會開始往終點縮圈，且縮圈速度會越來越快，需注意自己所在的位置，如果持續留在圈外則會被扣分。（game_config.json中查看/設定各階段哪幾站在圈外）
+
+指定時間後會開始往終點縮圈，且縮圈速度會越來越快，需注意自己所在的位置，如果持續留在圈外則會被扣分。
+
 - 第一階段 3:00
 - 第二階段 4:00
 - 第三階段 5:00  
 
 ### 抽卡
+
 特殊站會顯示在地圖上，過完該站任務後可進行抽卡，有加分扣分以及額外任務。(目前有26張卡片)
 
 ## 介面介紹
 
 ### 首頁
+
 - 地圖 (點擊可獲得各站資訊)
 - 各小隊資訊 (位置、分數)
 - 點擊各小隊位置的標籤（零小：），可獲得各隊佔領過的站
+- 分數變更歷史
 
 ### 組合
-顯示有哪些組合可以額外加分
+
+顯示有哪些組合可以額外加分，已造訪的站點會變成綠色，反之為紅色，完成後系統會自動加分
 
 ### 隊隨
+
 - 骰子
 - 抽卡
-- 任務完成
+- 完成任務
+- 跳過任務
+- 常用設定
+- 進階設定
 
 ### 常用設定
+
 - 增減小隊員
 - 加減分(抽完卡後需要)
 
 ### 進階設定
-- 隊伍
-- 分數
 
-## [API](https://github.com/lucasw0908/izcc2024MRT/blob/main/assets/API.md)
+- 創建 / 刪除 / 重設隊伍
+- 分數控制
+- 遊戲開始 / 結束
+
+## 遊戲設定
+
+### 一般遊戲內容設定
+
+所有設定皆在
+[`game_config.json`](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/data/game_config.json)
+中進行設定，且改變設定後須重新啟動程式以套用設定，
+另外參數說明可在
+[`game_config.py`](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/game_config.py)
+中獲取更詳細的資訊
+
+#### 參數說明
+
+> [!Info]
+> 由於以下參數說明為程式內註解，均以英文為主
+
+`LANGUAGE`：The response language of api. Default is "en".
+
+`ADMINS`：The list of admin's discord username.
+
+`CARD_COUNT`：The number of card in the game.
+
+`DISTANCE`：
+The minimum effective distance between the team and the station.
+Default is 500.0.
+
+`START_STATION`：The default start station of every team.
+
+`END_STATION`：The goal station of every team.
+
+`DELETE_STATIONS`：The stations that will not be used in the game.
+
+`STATION_POINTS`：The points of every difficults of station.
+
+`IS_SPECIAL`：
+The probability of every station to be a special station.
+Default is 0.3.
+
+`IS_HIDDEN`：
+The probability of every normal(not prison or special) station to be a hidden station.
+Default is 0.1.
+
+`IMPRISONED_TIME`：
+The time of being imprisoned for every team.
+
+- `min`: The minimum time (minute) of being imprisoned. Default is 5.
+- `max`: The maximum time (minute) of being imprisoned. Default is 20.
+
+`COLLAPSE`：
+The collapse setting of the game.
+
+- `status`: The status code of collapse.
+- `time`: The time of this collapse. e.g. `"16:00"`
+- `final`: is this the final collapse.
+- `stations`: The stations that will collapse.
+if `final` is `True`, this field will be ignored.
+
+`COLLAPSE_DAMAGE_INTERVAL`：
+The interval of collapse damage in minute.
+Default is 10.
+
+`COLLAPSE_DAMAGE`：
+The damage of collapse.
+Default is 10.
+
+`COLLAPSE_LIST`：The list of stations that collapsed in the beginning.
+
+### 站點資訊設定
+
+所有設定皆在
+[`station_info.json`](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/data/station_info.json)
+中進行設定，且改變設定後須重新啟動程式以套用設定
+
+範例格式如下
+
+```json=
+{
+    "南勢角": {
+        "Mission": "到興南夜市門口拍合照",
+        "Tips": "出去後往左邊走",
+        "Exit": "4號出口",
+        "Difficult": 1
+    },
+    "景安": {
+        "Mission": "跟中和四面佛合照",
+        "Tips": "走到對面右轉",
+        "Exit": "景平路",
+        "Difficult": 1
+    },
+}
+```
+
+### 組合資訊設定
+
+所有設定皆在
+[`combo.json`](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/data/combo.json)
+中進行設定，且改變設定後須重新啟動程式以套用設定
+
+範例格式如下
+
+```json=
+[   
+    {
+        "name": "IZCC",
+        "point": 100,
+        "stations": ["中正紀念堂","松江南京","善導寺","七張"]
+    },
+    {
+        "name": "山山山山",
+        "point": 100,
+        "stations": ["芝山","圓山","象山","松山"]
+    },
+]
+```
+
+## 開發說明
+
+### API
+
+若是需要改變前端的呈現，可參考此資料對API進行交互藉此控制遊戲核心
+
+- [API文件](https://github.com/lucasw0908/izcc2024MRT/blob/main/assets/API.md)
+
+文件內說明可能有遺漏或版本不符等問題，最新版本之API說明可參考
+
+- [`api.py`](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/views/api.py)
+- [`admin_api.py`](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/views/admin_api.py)
+
+### 紀錄日誌
+
+所有紀錄日誌皆儲存於
+[logs](https://github.com/lucasw0908/izcc2024MRT/tree/main/flask/app/logs)
+資料夾內，詳細可參閱資料夾內說明文件
+
+### 狀態代碼
+
+為了本地化支援，本專案使用狀態代碼作為對後端回傳之說明訊息
+
+如欲新增語言可至以下資料夾內新增對應語言之翻譯文件
+
+- [status codes](https://github.com/lucasw0908/izcc2024MRT/tree/main/flask/app/status_codes)
+
+詳細狀態代碼資訊可參考文件內容，預設為英文文件如下：
+
+```=
+{
+    "S00000": "Success.",
+    
+    "S00001": "Invalid Request.",
+    "S00002": "Invalid Name.",
+    "S00003": "Invalid Station.",
+    "S00004": "Invalid Team.",
+    "S00005": "Invalid Player.",
+    "S00006": "Invalid Location.",
+    "S00007": "Invalid Mission.",
+    "S00010": "Invalid Type.",
+
+    "S10001": "Station Error",
+    
+    "S20001": "Team Error",
+    "S20002": "Team is imprisoned.",
+    "S20003": "Team is already exist.",
+    
+    "S30001": "Player Error",
+    "S30002": "Player is not in any team.",
+    
+    "S40001": "Location Error",
+    "S40002": "Location not reached.",
+    
+    "S50001": "Mission Error",
+    "S50002": "Mission not finished.",
+    "S50003": "Mission already finished.",
+
+    "S90001": "Localization file not found.",
+    
+    "S99999": "Game Over"
+}
+```
 
 ## 歷史版本
 
