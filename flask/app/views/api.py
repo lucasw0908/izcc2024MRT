@@ -169,6 +169,8 @@ def team(name: str):
 @api.route("/join_team/<name>/<player_name>")
 def join_team(name: str, player_name: str):
     """
+    Join the team.
+    
     Parameters
     ----------
     name: :type:`str`
@@ -176,6 +178,17 @@ def join_team(name: str, player_name: str):
         
     player_name: :type:`str`
         The name of the player.
+        
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Codes
+    ------------
+    - S00000: Success
+    - S00004: The team does not exist.
+    - S99999: The game is not running.
     """
     
     if not is_admin():
@@ -203,10 +216,23 @@ def join_team(name: str, player_name: str):
 @api.route("/leave_team/<player_name>")
 def leave_team(player_name: str):
     """
+    Leave the team.
+    
     Parameters
     ----------
     player_name: :type:`str`
         The name of the player.
+        
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Codes
+    ------------
+    - S00000: Success
+    - S30002: The player does not exist in any team.
+    - S99999: The game is not running.
     """
     
     if not is_admin():
@@ -230,6 +256,9 @@ def leave_team(player_name: str):
 @api.route("/move/<name>")
 def move(name: str):
     """
+    The first stage of this round. \\
+    Let the team dice and choose the station you can go next.
+    
     Parameters
     ----------
     name: :type:`str`
@@ -281,6 +310,9 @@ def move(name: str):
 @api.route("/move_to_location/<name>/<location>")
 def move_to_location(name: str, location: str):
     """
+    The second stage of this round. \\
+    Set the target station of the team.
+    
     Parameters
     ----------
     name: :type:`str`
@@ -333,6 +365,8 @@ def move_to_location(name: str, location: str):
 @api.route("/add_point/<name>/<point>")
 def add_point(name: str, point: int):
     """
+    Add points to the team.
+    
     Parameters
     ----------
     name: :type:`str`
@@ -378,6 +412,8 @@ def add_point(name: str, point: int):
 @api.route("/set_point/<name>/<point>")
 def set_point(name: str, point: int):
     """
+    Set the point of the team.
+    
     Parameters
     ----------
     name: :type:`str`
@@ -422,6 +458,9 @@ def set_point(name: str, point: int):
 @api.route("/finish_mission/<name>")
 def finish_mission(name: str):
     """
+    The third stage of this round. Told system mission finished. \\
+    If the station is special, you will get the `card` (filename) in response.
+    
     Parameters
     ----------
     name: :type:`str`
@@ -467,6 +506,9 @@ def finish_mission(name: str):
 @api.route("/skip_mission/<name>")
 def skip_mission(name: str):
     """
+    The third stage of this round. \\
+    Skip the current mission of the team.
+    
     Parameters
     ----------
     name: :type:`str`
@@ -512,6 +554,8 @@ def skip_mission(name: str):
 @api.route("/gps_location/<name>/<latitude>/<longitude>")
 def gps_location(name: str, latitude: float, longitude: float):
     """
+    Update the GPS location of the team.
+    
     Parameters
     ----------
     name: :type:`str`

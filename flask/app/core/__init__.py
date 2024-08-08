@@ -170,6 +170,11 @@ class Core:
                 
     def start_game(self) -> None:
         """Start the game."""
+        
+        if self.is_running:
+            log.warning("Game already started.")
+            return None
+        
         self.is_running = True
         
         log.info("Game started.")
@@ -177,6 +182,11 @@ class Core:
             
     def end_game(self) -> None:
         """End the game."""
+        
+        if not self.is_running:
+            log.warning("Game already ended.")
+            return None
+        
         self.is_running = False
         
         log.info("Game ended.")

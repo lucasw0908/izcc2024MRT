@@ -26,6 +26,29 @@ def log_user():
 
 @admin_api.route("/create_team/<name>/<station>")
 def create_team(name: str, station: str):
+    """
+    Create a team with the given name and station.
+    
+    Parameters
+    ----------
+    name: :type:`str`
+        The name of the team.
+        
+    station: :type:`str`
+        The station of the team.
+        
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Codes
+    ------------
+    - S00000: The team is created successfully.
+    - S00003: The station is not found.
+    - S20003: The team is already exists.
+    - S99999: The game is not running.
+    """
            
     if not is_admin():
         abort(403)
@@ -45,6 +68,23 @@ def create_team(name: str, station: str):
     
 @admin_api.route("/delete_team/<name>")
 def delete_team(name: str):
+    """
+    Parameters
+    ----------
+    name: :type:`str`
+        The name of the team.
+        
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Code
+    -----------
+    - S00000: The team is deleted successfully
+    - S00004: The team does not exist.
+    - S99999: The game is not running
+    """
         
     if not is_admin():
         abort(403)
@@ -137,6 +177,29 @@ def release_team(name: str):
 
 @admin_api.route("/finish_mission/<name>")
 def finish_mission(name: str):
+    """
+    Finish the current mission of the team but admin version. \\
+    If the team is imprisoned, the team will be released. \\
+    If the team is not in the target location, the team will be moved to the target location.
+    
+    
+    Parameters
+    ----------
+    name: :type:`str`
+        The name of the team.
+        
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Code
+    -----------
+    - S00000: The mission is finished successfully.
+    - S00004: The team does not exist.
+    - S50003: The current mission is already finished.
+    - S99999: The game is not running.
+    """
     
     if not is_admin():
         abort(403)
@@ -162,6 +225,18 @@ def finish_mission(name: str):
 
 @admin_api.route("/save_team")
 def save_team():
+    """
+    Save the team to the database.
+    
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Code
+    -----------
+    - S00000: The game is ended successfully.
+    """
     
     if not is_game_admin():
         abort(403)
@@ -175,6 +250,18 @@ def save_team():
 
 @admin_api.route("/load_team")
 def load_team():
+    """
+    Load the team from the database.
+    
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Code
+    -----------
+    - S00000: The game is ended successfully.
+    """
     
     if not is_game_admin():
         abort(403)
@@ -188,6 +275,24 @@ def load_team():
 
 @admin_api.route("/reset_team/<name>")
 def reset_team(name: str):
+    """
+    Reset the team.
+    
+    Parameters
+    ----------
+    name: :type:`str`
+        The name of the team.
+        
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Code
+    -----------
+    - S00000: The team is reset successfully.
+    - S00004: The team does not exist
+    """
         
     if not is_admin():
         abort(403)
@@ -202,6 +307,18 @@ def reset_team(name: str):
 
 @admin_api.route("/end_game")
 def end_game():
+    """
+    End the game.
+    
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Code
+    -----------
+    - S00000: The game is ended successfully.
+    """
     
     if not is_game_admin():
         abort(403)
@@ -213,6 +330,18 @@ def end_game():
 
 @admin_api.route("/start_game")
 def start_game():
+    """
+    Start the game.
+    
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Code
+    -----------
+    - S00000: The game is started successfully.
+    """
     
     if not is_game_admin():
         abort(403)
