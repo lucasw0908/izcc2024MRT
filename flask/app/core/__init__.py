@@ -27,6 +27,7 @@ class Core:
         self.visited = []
         self.choice: dict[int, list[str]] = {i: [] for i in range(1, 7)}
         self.collapse = Collapse()
+        self.collapse_list = COLLAPSE_LIST.copy()
         self.collapse_scheduler = BackgroundScheduler()
         self.prison_scheduler = BackgroundScheduler()
         
@@ -103,7 +104,7 @@ class Core:
         if collapse["final"]:
             for station in self.metro.graph.keys():
                 if station == END_STATION: continue
-                COLLAPSE_LIST.append(station)
+                self.collapse_list.append(station)
                 
             self.collapse.status += 1
                 
@@ -112,7 +113,7 @@ class Core:
             return None
         
         for station in collapse["stations"]:
-            COLLAPSE_LIST.append(station)
+            self.collapse_list.append(station)
             
         if self.collapse.status + 1 < len(COLLAPSE):
             self.collapse.next_time = COLLAPSE[self.collapse.status + 1]["time"]
@@ -132,7 +133,7 @@ class Core:
             return None
         
         for team in self.teams.values():
-            if team.location in COLLAPSE_LIST:
+            if team.location in self.collapse_list:
                 team.point -= COLLAPSE_DAMAGE
                 team.add_point_log(-COLLAPSE_DAMAGE, "Station collapsed")
                 self.socketio.emit("collapse_damage", team.name)
@@ -175,6 +176,18 @@ class Core:
             log.warning("Game already started.")
             return None
         
+        self.init_collapse()
+        self.init_prison()
+        
+        self.collapse = Collapse()
+        self.collapse_list = COLLAPSE_LIST.copy()
+        
+        for team in self.teams.values():
+            self.reset_team(team.name)
+            
+        if "admins" not in self.teams.keys():
+            self.create_team("admins", admins=ADMINS.copy())
+            
         self.is_running = True
         
         log.info("Game started.")

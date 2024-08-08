@@ -135,3 +135,15 @@ function reset_team() {
         .then(response => response.text())
         .then(response => { alert(response); });
 }
+
+function end_game() {
+    fetch(`/api/admin/end_game`)
+        .then(response => response.text())
+        .then(response => { alert(response); });
+}
+
+function start_game() {
+    fetch(`/api/admin/start_game`)
+        .then(response => response.text())
+        .then(response => { alert(response); });
+}
