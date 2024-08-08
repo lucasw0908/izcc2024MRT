@@ -48,15 +48,40 @@
 
 ### 縮圈
 
-指定時間後會開始往終點縮圈，且縮圈速度會越來越快，需注意自己所在的位置，如果持續留在圈外則會被扣分。
+指定時間後會開始往終點縮圈，需注意自己所在的位置，如果持續留在圈外則會被扣分
 
-- 第一階段 3:00
-- 第二階段 4:00
-- 第三階段 5:00  
+- 第一階段 15:00
+- 第二階段 16:00
+- 第三階段 17:00  
 
-### 抽卡
+### 站點
+
+可透過點擊獲得站點資訊，包含以下資訊
+
+- 是否為特殊站
+- 佔領隊伍
+- 任務敘述
+- 任務提示
+- 任務難度
+- 任務出口
+
+### 一般站
+
+包含一個任務，且點擊可獲得任務提示，完成任務後可佔領該站並獲得對應難度之分數，若是其他小隊行經我方佔領之站點，則須繳交相對應之分數
+
+### 特殊站
+
+- 存在任務
+- 特殊站在小隊到達前皆為隱藏狀態
 
 特殊站會顯示在地圖上，過完該站任務後可進行抽卡，有加分扣分以及額外任務。(目前有26張卡片)
+
+### 監獄站
+
+- 不存在任務
+- 監獄站在小隊到達前皆為隱藏狀態
+
+到達監獄站會進入隨機的囚禁時間，囚禁時間內無法進行擲骰子、完成任務等動作，時間上下限可在[一般遊戲設定](#一般遊戲設定)中進行設定
 
 ## 介面介紹
 
@@ -93,75 +118,21 @@
 
 ## 遊戲設定
 
-### 一般遊戲內容設定
+### 一般遊戲設定
 
 所有設定皆在
-[`game_config.json`](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/data/game_config.json)
+[game_config.json](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/data/game_config.json)
 中進行設定，且改變設定後須重新啟動程式以套用設定，
 另外參數說明可在
-[`game_config.py`](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/game_config.py)
-中獲取更詳細的資訊
+[game_config.py](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/game_config.py)
+亦或是參數說明文件中獲取更詳細的資訊
 
-#### 參數說明
-
-> [!Info]
-> 由於以下參數說明為程式內註解，均以英文為主
-
-`LANGUAGE`：The response language of api. Default is "en".
-
-`ADMINS`：The list of admin's discord username.
-
-`CARD_COUNT`：The number of card in the game.
-
-`DISTANCE`：
-The minimum effective distance between the team and the station.
-Default is 500.0.
-
-`START_STATION`：The default start station of every team.
-
-`END_STATION`：The goal station of every team.
-
-`DELETE_STATIONS`：The stations that will not be used in the game.
-
-`STATION_POINTS`：The points of every difficults of station.
-
-`IS_SPECIAL`：
-The probability of every station to be a special station.
-Default is 0.3.
-
-`IS_HIDDEN`：
-The probability of every normal(not prison or special) station to be a hidden station.
-Default is 0.1.
-
-`IMPRISONED_TIME`：
-The time of being imprisoned for every team.
-
-- `min`: The minimum time (minute) of being imprisoned. Default is 5.
-- `max`: The maximum time (minute) of being imprisoned. Default is 20.
-
-`COLLAPSE`：
-The collapse setting of the game.
-
-- `status`: The status code of collapse.
-- `time`: The time of this collapse. e.g. `"16:00"`
-- `final`: is this the final collapse.
-- `stations`: The stations that will collapse.
-if `final` is `True`, this field will be ignored.
-
-`COLLAPSE_DAMAGE_INTERVAL`：
-The interval of collapse damage in minute.
-Default is 10.
-
-`COLLAPSE_DAMAGE`：
-The damage of collapse.
-Default is 10.
-
-`COLLAPSE_LIST`：The list of stations that collapsed in the beginning.
+- [參數說明文件](https://github.com/lucasw0908/izcc2024MRT/blob/main/assets/parameter.md)
 
 ### 站點資訊設定
 
 所有設定皆在
-[`station_info.json`](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/data/station_info.json)
+[station_info.json](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/data/station_info.json)
 中進行設定，且改變設定後須重新啟動程式以套用設定
 
 範例格式如下
@@ -186,7 +157,7 @@ Default is 10.
 ### 組合資訊設定
 
 所有設定皆在
-[`combo.json`](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/data/combo.json)
+[combo.json](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/data/combo.json)
 中進行設定，且改變設定後須重新啟動程式以套用設定
 
 範例格式如下
@@ -216,8 +187,8 @@ Default is 10.
 
 文件內說明可能有遺漏或版本不符等問題，最新版本之API說明可參考
 
-- [`api.py`](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/views/api.py)
-- [`admin_api.py`](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/views/admin_api.py)
+- [api.py](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/views/api.py)
+- [admin_api.py](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/views/admin_api.py)
 
 ### 紀錄日誌
 
