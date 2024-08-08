@@ -246,11 +246,11 @@
 
 ### 主要開發者
 
-- [000](https://github.com/lucasw0908)：後端開發、遊戲核心設計、API設計、文件撰寫
+- [000](https://github.com/lucasw0908)：後端開發、遊戲核心設計、API設計、前端開發協助、文件撰寫
 - [A1u](https://github.com/ayooooou)：前端開發、介面設計、捷運圖製作、串接API、文件撰寫
 - [samuelhsieh0829](https://github.com/samuelhsieh0829)：前端開發、介面設計、串接API、伺服器維運與相關文件配置
 
-### 一般開發者
+### 其他開發者
 
 - [FranzLee](https://github.com/FranzLee)：擲骰子介面撰寫
 - [IanWen](https://github.com/IanWen103026)：優化擲骰子介面設計
