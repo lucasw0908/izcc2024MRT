@@ -127,7 +127,7 @@
 [game_config.py](https://github.com/lucasw0908/izcc2024MRT/blob/main/flask/app/game_config.py)
 亦或是參數說明文件中獲取更詳細的資訊
 
-- [參數說明文件](https://github.com/lucasw0908/izcc2024MRT/blob/main/assets/parameter.md)
+- [參數說明文件](https://github.com/lucasw0908/izcc2024MRT/blob/main/assets/Parameter.md)
 
 ### 站點資訊設定
 
@@ -198,7 +198,7 @@
 
 ### 狀態代碼
 
-為了本地化支援，本專案使用狀態代碼作為對後端回傳之說明訊息
+為了本地化支援，本專案使用狀態代碼作為後端回傳之說明訊息
 
 如欲新增語言可至以下資料夾內新增對應語言之翻譯文件
 
