@@ -382,6 +382,7 @@ class Core:
             self.teams[name].is_imprisoned = True
             self.teams[name].imprisoned_time = random.randint(IMPRISONED_TIME["min"], IMPRISONED_TIME["max"])
             self.teams[name].current_mission_finished = True
+            self.teams[name].stations.append(station.name)
             
             log.debug(f"Team {name} is imprisoned.")
             
