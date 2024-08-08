@@ -96,7 +96,7 @@ class Station:
             "tips": str(station["Tips"]),
             "is_special": random.random() <= IS_SPECIAL,
             "is_prison": station["Mission"] == "監獄",
-            "point": STATION_POINTS.get(station["Difficult"], 0),
+            "point": STATION_POINTS.get(str(station["Difficult"]), 0),
             "geohash": str(station["geohash"]),
         })
         
