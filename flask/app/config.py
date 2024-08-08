@@ -13,6 +13,9 @@ REDIRECT_URI = os.getenv("REDIRECT_URI") or "/oauth/callback"
 SQLALCHEMY_DATABASE_URI = os.getenv("SQLALCHEMY_DATABASE_URI")
 OAUTH_URL = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=identify+email"
 
+YELLOW_TEXT_COLOR = "\33[33m"
+RESET_TEXT_COLOR = "\33[0m"
+
 
 class Config(object):
     SECRET_KEY = os.urandom(12).hex()

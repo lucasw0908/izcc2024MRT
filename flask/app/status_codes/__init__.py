@@ -36,6 +36,8 @@ class StatusCodes:
     
     S90001 = "Localization file not found."
     
+    S99999 = "Game Over"
+    
     
     def __init__(self, language: str=None) -> None:
         self.codes = []

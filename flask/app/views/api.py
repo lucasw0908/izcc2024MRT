@@ -5,6 +5,7 @@ from flask import abort, Blueprint, jsonify, session
 from zenora import APIClient
 
 from ..core import core
+from ..config import RESET_TEXT_COLOR, YELLOW_TEXT_COLOR
 from ..modules.checker import is_admin, is_player
 from ..data import load_data
 from ..status_codes import STATUS_CODES, LANGUAGE
@@ -12,9 +13,6 @@ from ..status_codes import STATUS_CODES, LANGUAGE
 
 log = logging.getLogger(__name__)
 api = Blueprint("api", __name__, url_prefix="/api")
-
-yellow_text_color = "\33[33m"
-reset_text_color = "\33[0m"
 
 
 @api.route("/status_codes")
@@ -159,6 +157,9 @@ def join_team(name: str, player_name: str):
     
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
         
     if name not in core.teams:
         return STATUS_CODES.S00004
@@ -181,6 +182,9 @@ def leave_team(player_name: str):
     
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
         
     for team in core.teams.values():
         if player_name in team.players:
@@ -199,6 +203,9 @@ def move(name: str):
     
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
         
     if name not in core.teams:
         return STATUS_CODES.S00004
@@ -223,6 +230,9 @@ def move_to_location(name: str, location: str):
     
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
         
     if name not in core.teams:
         return STATUS_CODES.S00004
@@ -247,6 +257,9 @@ def add_point(name: str, point: int):
     
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
         
     if name not in core.teams:
         return STATUS_CODES.S00004
@@ -258,7 +271,7 @@ def add_point(name: str, point: int):
     bearer_client = APIClient(session.get("token"), bearer=True)
     current_user = bearer_client.users.get_current_user()        
     
-    log.log(INFO, f"{yellow_text_color}User \"{current_user.username}\" added {point} point(s) to {name}{reset_text_color}")
+    log.log(INFO, f"{YELLOW_TEXT_COLOR}User \"{current_user.username}\" added {point} point(s) to {name}{RESET_TEXT_COLOR}")
     core.teams[name].add_point_log(point, f"By {current_user.username}")
     
     return STATUS_CODES.S00000
@@ -269,6 +282,9 @@ def set_point(name: str, point: int):
     
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
         
     if name not in core.teams:
         return STATUS_CODES.S00004
@@ -278,7 +294,7 @@ def set_point(name: str, point: int):
     bearer_client = APIClient(session.get("token"), bearer=True)
     current_user = bearer_client.users.get_current_user()
 
-    log.log(INFO, f"{yellow_text_color}User \"{current_user.username}\" set {name}'s points to {point}{reset_text_color}")
+    log.log(INFO, f"{YELLOW_TEXT_COLOR}User \"{current_user.username}\" set {name}'s points to {point}{RESET_TEXT_COLOR}")
     core.teams[name].add_point_log(point - core.teams[name].point, f"By {current_user.username}")
     core.teams[name].point = point
     
@@ -290,6 +306,9 @@ def finish_mission(name: str):
     
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
     
     if name not in core.teams:
         return STATUS_CODES.S00004
@@ -312,6 +331,9 @@ def skip_mission(name: str):
     
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
     
     if name not in core.teams:
         return STATUS_CODES.S00004
@@ -334,6 +356,9 @@ def gps_location(name: str, latitude: float, longitude: float):
     
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
         
     latitude = float(latitude)
     longitude = float(longitude)

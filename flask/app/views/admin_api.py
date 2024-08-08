@@ -6,6 +6,7 @@ from zenora import APIClient
 from ..core import core
 from ..modules.checker import is_admin, is_game_admin
 from ..status_codes import STATUS_CODES
+from ..models import db
 
 
 log = logging.getLogger(__name__)
@@ -28,6 +29,9 @@ def create_team(name: str, station: str):
            
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
         
     if name in core.teams:
         return STATUS_CODES.S20003
@@ -44,6 +48,9 @@ def delete_team(name: str):
         
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
         
     team = core.teams.pop(name, None)
     if team is None:
@@ -57,6 +64,9 @@ def join_team(name: str, player_name: str):
     
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
         
     if name not in core.teams:
         return STATUS_CODES.S00004
@@ -71,6 +81,9 @@ def set_location(name: str, location: str):
     
     if not is_admin():
         abort(403)
+                
+    if core.is_running is False:
+        return STATUS_CODES.S99999
         
     if name not in core.teams:
         return STATUS_CODES.S00004
@@ -88,6 +101,9 @@ def imprison(name: str, time: int):
     
     if not is_admin():
         abort(403)
+            
+    if core.is_running is False:
+        return STATUS_CODES.S99999
         
     if name not in core.teams:
         return STATUS_CODES.S00004
@@ -102,6 +118,9 @@ def imprison(name: str, time: int):
 
 @admin_api.route("/release_team/<name>")
 def release_team(name: str):
+    
+    if core.is_running is False:
+        return STATUS_CODES.S99999
     
     if not is_admin():
         abort(403)
@@ -121,6 +140,9 @@ def finish_mission(name: str):
     
     if not is_admin():
         abort(403)
+        
+    if core.is_running is False:
+        return STATUS_CODES.S99999
     
     if name not in core.teams:
         return STATUS_CODES.S00004
@@ -136,6 +158,32 @@ def finish_mission(name: str):
     
     card = core.finish_mission(name=name)
     return STATUS_CODES.S00000 if card is None else card
+
+
+@admin_api.route("/save_team")
+def save_team():
+    
+    if not is_game_admin():
+        abort(403)
+        
+    db.create_all()
+        
+    core.save_team()
+    
+    return STATUS_CODES.S00000
+
+
+@admin_api.route("/load_team")
+def load_team():
+    
+    if not is_game_admin():
+        abort(403)
+        
+    db.create_all()
+        
+    core.load_team()
+    
+    return STATUS_CODES.S00000
 
 
 @admin_api.route("/reset_team/<name>")
@@ -159,5 +207,16 @@ def end_game():
         abort(403)
         
     core.end_game()
+    
+    return STATUS_CODES.S00000
+
+
+@admin_api.route("/start_game")
+def start_game():
+    
+    if not is_game_admin():
+        abort(403)
+        
+    core.start_game()
     
     return STATUS_CODES.S00000

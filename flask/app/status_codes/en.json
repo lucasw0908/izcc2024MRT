@@ -24,5 +24,9 @@
     
     "S50001": "Mission Error",
     "S50002": "Mission not finished.",
-    "S50003": "Mission already finished."
+    "S50003": "Mission already finished.",
+
+    "S90001": "Localization file not found.",
+    
+    "S99999": "Game Over"
 }

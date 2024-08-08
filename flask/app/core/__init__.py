@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 
 class Core:
     def __init__(self) -> None:
-        self.is_running = True
+        self.is_running = False
         self.metro = MetroSystem()
         self.socketio = None
         self.teams: dict[str, Team] = {}
@@ -31,6 +31,8 @@ class Core:
         self.prison_scheduler = BackgroundScheduler()
         
         self.create_team("admins", admins=ADMINS.copy())
+        
+        self.start_game()
         
         
     def init_socketio(self, socketio: SocketIO) -> None:
@@ -164,10 +166,25 @@ class Core:
                 
                 log.debug(f"Team {team.name} released.")
                 self.socketio.emit("release", team.name)
+                
+                
+    def start_game(self) -> None:
+        """Start the game."""
+        self.is_running = True
+        
+        log.info("Game started.")
+                
+            
+    def end_game(self) -> None:
+        """End the game."""
+        self.is_running = False
+        
+        log.info("Game ended.")
         
     
-    def load_data(self) -> None:
+    def load_team(self) -> None:
         """Load the data from the database."""
+        
         for team in Teams.query.all():
             team: Teams
             self.create_team(team.name, team.players, team.admins)
@@ -175,9 +192,8 @@ class Core:
         log.debug("Load data from the database.")
             
         
-    def save_data(self) -> None:
+    def save_team(self) -> None:
         """Save the data to the database."""
-        db.create_all()
         
         for team in self.teams.values():
             if team.name == "admins":
@@ -590,13 +606,6 @@ class Core:
         self.teams[name].point_log = []
         
         log.debug(f"Team {name} reset.")
-        
-        
-    def end_game(self) -> None:
-        """End the game."""
-        self.is_running = False
-        
-        log.info("Game ended.")
     
     
 core = Core()
