@@ -17,6 +17,8 @@ api = Blueprint("api", __name__, url_prefix="/api")
 
 @api.route("/status_codes")
 def status_codes_default():
+    """Get status codes in default language."""
+    
     try: 
         data = STATUS_CODES.localization(language=LANGUAGE, is_return=True)
         return jsonify(data)
@@ -27,6 +29,8 @@ def status_codes_default():
 
 @api.route("/status_codes/<language>")
 def status_codes(language: str):
+    """Get status codes in specified language."""
+    
     try: 
         data = STATUS_CODES.localization(language=language, is_return=True)
         return jsonify(data)
@@ -37,6 +41,7 @@ def status_codes(language: str):
 
 @api.route("/graph")
 def graph():
+    """Get the graph of the metro system."""
     
     if not is_player():
         abort(403)
@@ -46,6 +51,7 @@ def graph():
 
 @api.route("/stations")
 def stations():
+    """Get the `list` of stations."""
     
     if not is_player():
         abort(403)
@@ -74,6 +80,7 @@ def stations():
 
 @api.route("/station/<name>")
 def station(name: str):
+    """Get the information of the station."""
     
     if not is_player():
         abort(403)
@@ -103,6 +110,7 @@ def station(name: str):
 
 @api.route("/collapse_status")
 def collapse_status():
+    """Get the status of the collapse."""
     
     if not is_player():
         abort(403)
@@ -115,6 +123,7 @@ def collapse_status():
 
 @api.route("/next_collapse_time")
 def next_collapse_time():
+    """Get the next collapse time."""
     
     if not is_player():
         abort(403)
@@ -124,6 +133,8 @@ def next_collapse_time():
 
 @api.route("/combo")
 def combo():
+    """Get the combo of the game."""
+    
     
     if not is_player():
         abort(403)
@@ -133,6 +144,8 @@ def combo():
 
 @api.route("/teams")
 def teams():
+    """Get the `list` of teams."""
+    
     
     if not is_player():
         abort(403)
@@ -142,6 +155,7 @@ def teams():
 
 @api.route("/team/<name>")
 def team(name: str):
+    """Get the information of the team."""
     
     if not is_player():
         abort(403)
@@ -154,6 +168,15 @@ def team(name: str):
 
 @api.route("/join_team/<name>/<player_name>")
 def join_team(name: str, player_name: str):
+    """
+    Parameters
+    ----------
+    name: :type:`str`
+        The name of the team.
+        
+    player_name: :type:`str`
+        The name of the player.
+    """
     
     if not is_admin():
         abort(403)
@@ -179,6 +202,12 @@ def join_team(name: str, player_name: str):
 
 @api.route("/leave_team/<player_name>")
 def leave_team(player_name: str):
+    """
+    Parameters
+    ----------
+    player_name: :type:`str`
+        The name of the player.
+    """
     
     if not is_admin():
         abort(403)
@@ -200,6 +229,30 @@ def leave_team(player_name: str):
     
 @api.route("/move/<name>")
 def move(name: str):
+    """
+    Parameters
+    ----------
+    name: :type:`str`
+        The name of the team.
+        
+    Returns
+    -------
+    result: :type:`str` | :type:`dict`
+        The status code or the step and choice of the team.
+        
+        - step: :type:`int`
+            The step of the team. e.g. `3`
+            
+        - choice: :type:`list`
+            The choice of the team. e.g. `["七張", "景美"]`
+            
+    Status Codes
+    ------------
+    - S00004: The team does not exist.
+    - S20002: The team is imprisoned.
+    - S50002: The current mission is not finished.
+    - S99999: The game is not running.
+    """
     
     if not is_admin():
         abort(403)
@@ -227,6 +280,29 @@ def move(name: str):
 
 @api.route("/move_to_location/<name>/<location>")
 def move_to_location(name: str, location: str):
+    """
+    Parameters
+    ----------
+    name: :type:`str`
+        The name of the team.
+        
+    location: :type:`str`
+        The location of the team.
+        
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Codes
+    ------------
+    - S00000: Success
+    - S00004: The team does not exist.
+    - S20002: The team is imprisoned.
+    - S50002: The current mission is not finished.
+    - S00006: The location does not exist.
+    - S99999: The game is not running.
+    """
     
     if not is_admin():
         abort(403)
@@ -248,12 +324,34 @@ def move_to_location(name: str, location: str):
     
     core.teams[name].choice = []
     core.teams[name].step = 0
+    
+    core.move_to_location(name=name, location=location)
         
-    return jsonify(core.move_to_location(name=name, location=location))
+    return STATUS_CODES.S00000
 
 
 @api.route("/add_point/<name>/<point>")
 def add_point(name: str, point: int):
+    """
+    Parameters
+    ----------
+    name: :type:`str`
+        The name of the team.
+        
+    point: :type:`int`
+        The point to add.
+        
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Codes
+    ------------
+    - S00000: Success
+    - S00004: The team does not exist.
+    - S99999: The game is not running.
+    """
     
     if not is_admin():
         abort(403)
@@ -279,6 +377,26 @@ def add_point(name: str, point: int):
 
 @api.route("/set_point/<name>/<point>")
 def set_point(name: str, point: int):
+    """
+    Parameters
+    ----------
+    name: :type:`str`
+        The name of the team.
+        
+    point: :type:`int`
+        The point to set.
+        
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Codes
+    ------------
+    - S00000: Success
+    - S00004: The team does not exist.
+    - S99999: The game is not running
+    """
     
     if not is_admin():
         abort(403)
@@ -303,6 +421,26 @@ def set_point(name: str, point: int):
 
 @api.route("/finish_mission/<name>")
 def finish_mission(name: str):
+    """
+    Parameters
+    ----------
+    name: :type:`str`
+        The name of the team.
+        
+    Returns
+    -------
+    result: :type:`str`
+        The status code or the card.
+        
+    Status Codes
+    ------------
+    - S00000: Success
+    - S00004: The team does not exist.
+    - S20002: The team is imprisoned.
+    - S50003: The current mission is finished.
+    - S40002: The team is not at the target location.
+    - S99999: The game is not running
+    """
     
     if not is_admin():
         abort(403)
@@ -328,6 +466,26 @@ def finish_mission(name: str):
 
 @api.route("/skip_mission/<name>")
 def skip_mission(name: str):
+    """
+    Parameters
+    ----------
+    name: :type:`str`
+        The name of the team.
+        
+    Returns
+    -------
+    result: :type:`str`
+        The status code.
+        
+    Status Codes
+    ------------
+    - S00000: Success
+    - S00004: The team does not exist.
+    - S20002: The team is imprisoned.
+    - S50003: The current mission is finished.
+    - S40002: The team is not at the target location.
+    - S99999: The game is not running
+    """
     
     if not is_admin():
         abort(403)
@@ -353,6 +511,36 @@ def skip_mission(name: str):
 
 @api.route("/gps_location/<name>/<latitude>/<longitude>")
 def gps_location(name: str, latitude: float, longitude: float):
+    """
+    Parameters
+    ----------
+    name: :type:`str`
+        The name of the team.
+        
+    latitude: :type:`float`
+        The latitude of the team.
+        
+    longitude: :type:`float`
+        The longitude of the team.
+        
+    Returns
+    -------
+    result: :type:`str` | :type:`dict`
+        The status code or the result of the check position.
+            
+        - location: :type:`str`
+            The current station of the team.
+            
+        - distance: :type:`str`
+            The distance between the station and the position.
+        
+    Status Codes
+    ------------
+    - S00000: Success
+    - S00004: The team does not exist.
+    - S00006: The location does not exist.
+    - S99999: The game is not running
+    """
     
     if not is_admin():
         abort(403)

@@ -361,14 +361,6 @@ class Core:
 
         location: :type:`str`
             The name of the station to move to.
-            
-        Returns
-        -------
-        combos: :type:`list[str]`
-            The list of new combo.
-            
-        point: :type:`int`
-            The point to add.
         """
         
         if self.is_running is False:
@@ -532,7 +524,7 @@ class Core:
         return random.randint(1, faces)
     
     
-    def check_pos(self, name: str, geohash: str) -> dict[str, str]:
+    def check_pos(self, name: str, geohash: str) -> dict | None:
         """
         Check the position of the team.
         
@@ -543,6 +535,17 @@ class Core:
             
         geohash: :type:`str`
             The geohash of the position.
+            
+        Returns
+        -------
+        data: :type:`dict[str, str]`
+            The data of the position.
+            
+            - location: :type:`str`
+                The current station of the team.
+                
+            - distance: :type:`str`
+                The distance between the station and the position.
         """
         
         if self.is_running is False:
