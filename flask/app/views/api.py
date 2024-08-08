@@ -340,9 +340,6 @@ def gps_location(name: str, latitude: float, longitude: float):
 
     if name not in core.teams:
         return STATUS_CODES.S00004
-        
-    if core.teams[name].is_imprisoned:
-        return STATUS_CODES.S20002
     
     if longitude > 180 or longitude < -180 or latitude > 90 or latitude < -90:
         return STATUS_CODES.S00006
